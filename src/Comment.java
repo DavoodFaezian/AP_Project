@@ -1,0 +1,2 @@
+public class Comment {
+}
