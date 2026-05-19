@@ -1,16 +1,10 @@
 package MainClasses;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Account {
 
     private String password;
 
     private String userName;
-
-    private List<Album> albums = new ArrayList<>();
 
     private String id;
 
@@ -43,12 +37,5 @@ public class Account {
     public void setId(String id) {
         this.id = id;
     }
-
-    public List<Album> getAlbums() {
-        return albums;
-    }
-
-    public void setAlbums(List<Album> albums) {
-        this.albums = albums;
-    }
+    
 }
