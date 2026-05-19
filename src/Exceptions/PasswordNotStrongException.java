@@ -1,7 +1,7 @@
 package Exceptions;
 
 public class PasswordNotStrongException extends RuntimeException {
-  public PasswordNotStrongException(String message) {
-    super(message);
-  }
+    public PasswordNotStrongException(String message) {
+        super(message);
+    }
 }
