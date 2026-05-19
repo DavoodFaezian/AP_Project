@@ -5,7 +5,7 @@ public class Comment {
 
     private String id;
 
-    public Comment(Account ownerAccount, String script, String id) {
+    public Comment(String script, String id) {
         this.script = script;
         this.id = id;
     }
