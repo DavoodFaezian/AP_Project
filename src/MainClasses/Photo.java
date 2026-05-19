@@ -6,8 +6,6 @@ import java.util.List;
 
 public class Photo {
 
-    private byte[] information;
-
     private String photoName;
 
     private List<Comment> comments = new ArrayList<>();
@@ -24,9 +22,8 @@ public class Photo {
 
     private LocalDateTime dateOfUpload;
 
-    public Photo(List<String> captions, byte[] information, String photoName, List<Comment> comments, List<String> tags, boolean isFavorable, Album album, boolean permissionForWritingComment, LocalDateTime dateOfUpload) {
+    public Photo(List<String> captions, String photoName, List<Comment> comments, List<String> tags, boolean isFavorable, Album album, boolean permissionForWritingComment, LocalDateTime dateOfUpload) {
         this.captions = captions;
-        this.information = information;
         this.photoName = photoName;
         this.comments = comments;
         this.tags = tags;
@@ -34,10 +31,6 @@ public class Photo {
         this.album = album;
         this.permissionForWritingComment = permissionForWritingComment;
         this.dateOfUpload = dateOfUpload;
-    }
-
-    public byte[] getInformation() {
-        return information;
     }
 
     public String getPhotoName() {
@@ -70,10 +63,6 @@ public class Photo {
 
     public LocalDateTime getDateOfUpload() {
         return dateOfUpload;
-    }
-
-    public void setInformation(byte[] information) {
-        this.information = information;
     }
 
     public void setPhotoName(String photoName) {
