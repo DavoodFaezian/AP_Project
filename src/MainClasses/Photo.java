@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Photo {
+public class Photo implements Comparable<Photo>{
 
     private String photoName;
 
@@ -95,5 +95,12 @@ public class Photo {
 
     public void setDateOfUpload(LocalDateTime dateOfUpload) {
         this.dateOfUpload = dateOfUpload;
+    }
+
+    @Override
+    public int compareTo(Photo o) {
+        if(this.dateOfUpload.isBefore(o.getDateOfUpload())) return -1;
+        if(this.dateOfUpload.isEqual(o.getDateOfUpload())) return 0;
+        return 1;
     }
 }
