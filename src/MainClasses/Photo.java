@@ -18,22 +18,22 @@ public class Photo implements Comparable<Photo>{
 
     private boolean isFavorable;
 
-    private List<Album> albums;
+    private List<PhotoAlbum> albums = new ArrayList<>();
 
     private boolean permissionForWritingComment = true;
 
     private LocalDateTime dateOfUpload;
 
-    public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, boolean isFavorable, List<Album> albums, boolean permissionForWritingComment, LocalDateTime dateOfUpload) {
+    public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, boolean isFavorable, Album album, boolean permissionForWritingComment, LocalDateTime dateOfUpload) {
         this.owner = owner;
         this.captions = captions;
         this.photoName = photoName;
         this.comments = comments;
         this.tags = tags;
         this.isFavorable = isFavorable;
-        this.albums = albums;
         this.permissionForWritingComment = permissionForWritingComment;
         this.dateOfUpload = dateOfUpload;
+        albums.add(new PhotoAlbum(this , album));
     }
 
     public User getOwner(){
@@ -58,10 +58,6 @@ public class Photo implements Comparable<Photo>{
 
     public boolean isFavorable() {
         return isFavorable;
-    }
-
-    public List<Album> getAlbums() {
-        return albums;
     }
 
     public boolean isPermissionForWritingComment() {
@@ -94,10 +90,6 @@ public class Photo implements Comparable<Photo>{
 
     public void setFavorable(boolean favorable) {
         isFavorable = favorable;
-    }
-
-    public void setAlbums(List<Album> albums) {
-        this.albums = albums;
     }
 
     public void setPermissionForWritingComment(boolean permissionForWritingComment) {

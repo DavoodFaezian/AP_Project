@@ -9,14 +9,14 @@ public class Album {
 
     private String albumName;
 
-    private List<Photo> photos;
+    private List<PhotoAlbum> photos = new ArrayList<>();
 
     private String id;
 
-    public Album(User owner, String albumName , List<Photo> photos){
+    public Album(User owner, String albumName ,Photo photo){
         this.owner = owner;
         this.albumName = albumName;
-        this.photos = photos;
+        photos.add(new PhotoAlbum(photo , this));
     }
 
     public User getOwner(){
@@ -33,14 +33,6 @@ public class Album {
 
     public void setAlbumName(String albumName) {
         this.albumName = albumName;
-    }
-
-    public List<Photo> getPhotos() {
-        return photos;
-    }
-
-    public void setPhotos(List<Photo> photos) {
-        this.photos = photos;
     }
 
     public String getId() {
