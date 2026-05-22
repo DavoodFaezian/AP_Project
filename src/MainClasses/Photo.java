@@ -16,19 +16,19 @@ public class Photo implements Comparable<Photo>{
 
     private boolean isFavorable;
 
-    private Album album;
+    private List<Album> albums;
 
     private boolean permissionForWritingComment = true;
 
     private LocalDateTime dateOfUpload;
 
-    public Photo(List<String> captions, String photoName, List<Comment> comments, List<String> tags, boolean isFavorable, Album album, boolean permissionForWritingComment, LocalDateTime dateOfUpload) {
+    public Photo(List<String> captions, String photoName, List<Comment> comments, List<String> tags, boolean isFavorable, List<Album> albums, boolean permissionForWritingComment, LocalDateTime dateOfUpload) {
         this.captions = captions;
         this.photoName = photoName;
         this.comments = comments;
         this.tags = tags;
         this.isFavorable = isFavorable;
-        this.album = album;
+        this.albums = albums;
         this.permissionForWritingComment = permissionForWritingComment;
         this.dateOfUpload = dateOfUpload;
     }
@@ -53,8 +53,8 @@ public class Photo implements Comparable<Photo>{
         return isFavorable;
     }
 
-    public Album getAlbum() {
-        return album;
+    public List<Album> getAlbums() {
+        return albums;
     }
 
     public boolean isPermissionForWritingComment() {
@@ -85,8 +85,8 @@ public class Photo implements Comparable<Photo>{
         isFavorable = favorable;
     }
 
-    public void setAlbum(Album album) {
-        this.album = album;
+    public void setAlbums(List<Album> albums) {
+        this.albums = albums;
     }
 
     public void setPermissionForWritingComment(boolean permissionForWritingComment) {
