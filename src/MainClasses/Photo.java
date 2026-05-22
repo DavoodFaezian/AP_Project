@@ -6,6 +6,8 @@ import java.util.List;
 
 public class Photo implements Comparable<Photo>{
 
+    private User owner;
+
     private String photoName;
 
     private List<Comment> comments = new ArrayList<>();
@@ -22,7 +24,8 @@ public class Photo implements Comparable<Photo>{
 
     private LocalDateTime dateOfUpload;
 
-    public Photo(List<String> captions, String photoName, List<Comment> comments, List<String> tags, boolean isFavorable, List<Album> albums, boolean permissionForWritingComment, LocalDateTime dateOfUpload) {
+    public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, boolean isFavorable, List<Album> albums, boolean permissionForWritingComment, LocalDateTime dateOfUpload) {
+        this.owner = owner;
         this.captions = captions;
         this.photoName = photoName;
         this.comments = comments;
@@ -31,6 +34,10 @@ public class Photo implements Comparable<Photo>{
         this.albums = albums;
         this.permissionForWritingComment = permissionForWritingComment;
         this.dateOfUpload = dateOfUpload;
+    }
+
+    public User getOwner(){
+        return owner;
     }
 
     public String getPhotoName() {
@@ -63,6 +70,10 @@ public class Photo implements Comparable<Photo>{
 
     public LocalDateTime getDateOfUpload() {
         return dateOfUpload;
+    }
+
+    public void setOwner(User owner){
+        this.owner = owner;
     }
 
     public void setPhotoName(String photoName) {

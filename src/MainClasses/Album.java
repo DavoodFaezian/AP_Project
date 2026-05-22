@@ -5,15 +5,26 @@ import java.util.List;
 
 public class Album {
 
+    private User owner;
+
     private String albumName;
 
     private List<Photo> photos = new ArrayList<>();
 
     private String id;
 
-    public Album(String albumName , List<Photo> photos){
+    public Album(User owner, String albumName , List<Photo> photos){
+        this.owner = owner;
         this.albumName = albumName;
         this.photos = photos;
+    }
+
+    public User getOwner(){
+        return owner;
+    }
+
+    public void setOwner(User owner){
+        this.owner =owner;
     }
 
     public String getAlbumName() {
