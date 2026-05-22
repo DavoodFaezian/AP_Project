@@ -10,11 +10,11 @@ public class Photo implements Comparable<Photo>{
 
     private String photoName;
 
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments;
 
-    private List<String> tags = new ArrayList<>();
+    private List<String> tags;
 
-    private List<String> captions = new ArrayList<>();
+    private List<String> captions;
 
     private boolean isFavorable;
 

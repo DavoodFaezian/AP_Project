@@ -9,7 +9,7 @@ public class Album {
 
     private String albumName;
 
-    private List<Photo> photos = new ArrayList<>();
+    private List<Photo> photos;
 
     private String id;
 
