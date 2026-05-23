@@ -5,15 +5,37 @@ import java.util.List;
 
 public class User{
 
+    private String userName;
+
+    private String password;
+
     private Account account;
 
     private String id;
 
     private List<Album> albums = new ArrayList<>();
 
-    public User(Account account , String id){
+    public User(String userName, String password, Account account , String id){
+        this.userName = userName;
+        this.password = password;
         this.account = account;
         this.id = id;
+    }
+
+    public String getUserName(){
+        return userName;
+    }
+
+    public String getPassword(){
+        return password;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Account getAccount() {
@@ -33,13 +55,11 @@ public class User{
     }
 
     public void setAlbums(List<Album> albums) {
-
         this.albums = albums;
     }
 
     public void setId(String id) {
         this.id = id;
     }
-
-
+    
 }
