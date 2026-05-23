@@ -16,15 +16,17 @@ public class Photo implements Comparable<Photo>{
 
     private List<String> captions;
 
-    private boolean isFavorable;
+    private Boolean isFavorable;
 
     private List<PhotoAlbum> albums = new ArrayList<>();
 
-    private boolean permissionForWritingComment = true;
+    private Boolean permissionForWritingComment = true;
 
     private LocalDateTime dateOfUpload;
 
-    public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, boolean isFavorable, Album album, boolean permissionForWritingComment, LocalDateTime dateOfUpload) {
+    private String id;
+
+    public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForWritingComment, LocalDateTime dateOfUpload, String id) {
         this.owner = owner;
         this.captions = captions;
         this.photoName = photoName;
@@ -33,7 +35,10 @@ public class Photo implements Comparable<Photo>{
         this.isFavorable = isFavorable;
         this.permissionForWritingComment = permissionForWritingComment;
         this.dateOfUpload = dateOfUpload;
-        albums.add(new PhotoAlbum(this , album));
+        this.id = id;
+        if(album != null){
+            albums.add(new PhotoAlbum(this , album));
+        }
     }
 
     public User getOwner(){
@@ -56,16 +61,20 @@ public class Photo implements Comparable<Photo>{
         return captions;
     }
 
-    public boolean isFavorable() {
+    public Boolean isFavorable() {
         return isFavorable;
     }
 
-    public boolean isPermissionForWritingComment() {
+    public Boolean isPermissionForWritingComment() {
         return permissionForWritingComment;
     }
 
     public LocalDateTime getDateOfUpload() {
         return dateOfUpload;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public void setOwner(User owner){
@@ -88,16 +97,20 @@ public class Photo implements Comparable<Photo>{
         this.captions = captions;
     }
 
-    public void setFavorable(boolean favorable) {
+    public void setFavorable(Boolean favorable) {
         isFavorable = favorable;
     }
 
-    public void setPermissionForWritingComment(boolean permissionForWritingComment) {
+    public void setPermissionForWritingComment(Boolean permissionForWritingComment) {
         this.permissionForWritingComment = permissionForWritingComment;
     }
 
     public void setDateOfUpload(LocalDateTime dateOfUpload) {
         this.dateOfUpload = dateOfUpload;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

@@ -13,10 +13,10 @@ public class Album {
 
     private String id;
 
-    public Album(User owner, String albumName ,Photo photo){
+    public Album(User owner, String albumName, String id){
         this.owner = owner;
         this.albumName = albumName;
-        photos.add(new PhotoAlbum(photo , this));
+        this.id = id;
     }
 
     public User getOwner(){
