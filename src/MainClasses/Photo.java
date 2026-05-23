@@ -20,20 +20,22 @@ public class Photo implements Comparable<Photo>{
 
     private List<PhotoAlbum> albums = new ArrayList<>();
 
-    private Boolean permissionForWritingComment = true;
+    private Boolean permissionForLeavingComment;
 
     private LocalDateTime dateOfUpload;
 
+    private List<PhotoShare> sharedWithUsers = new ArrayList<>();
+
     private String id;
 
-    public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForWritingComment, LocalDateTime dateOfUpload, String id) {
+    public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment, LocalDateTime dateOfUpload, String id) {
         this.owner = owner;
         this.captions = captions;
         this.photoName = photoName;
         this.comments = comments;
         this.tags = tags;
         this.isFavorable = isFavorable;
-        this.permissionForWritingComment = permissionForWritingComment;
+        this.permissionForLeavingComment = permissionForLeavingComment;
         this.dateOfUpload = dateOfUpload;
         this.id = id;
         if(album != null){
@@ -65,8 +67,8 @@ public class Photo implements Comparable<Photo>{
         return isFavorable;
     }
 
-    public Boolean isPermissionForWritingComment() {
-        return permissionForWritingComment;
+    public Boolean isPermissionForLeavingComment() {
+        return permissionForLeavingComment;
     }
 
     public LocalDateTime getDateOfUpload() {
@@ -101,8 +103,8 @@ public class Photo implements Comparable<Photo>{
         isFavorable = favorable;
     }
 
-    public void setPermissionForWritingComment(Boolean permissionForWritingComment) {
-        this.permissionForWritingComment = permissionForWritingComment;
+    public void setPermissionForLeavingComment(Boolean permissionForLeavingComment) {
+        this.permissionForLeavingComment = permissionForLeavingComment;
     }
 
     public void setDateOfUpload(LocalDateTime dateOfUpload) {

@@ -11,6 +11,8 @@ public class Album {
 
     private List<PhotoAlbum> photos = new ArrayList<>();
 
+    private List<AlbumShare> sharedWithUsers = new ArrayList<>();
+
     private String id;
 
     public Album(User owner, String albumName, String id){
