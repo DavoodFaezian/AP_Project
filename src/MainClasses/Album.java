@@ -37,6 +37,10 @@ public class Album {
         this.albumName = albumName;
     }
 
+    public List<PhotoAlbum> getPhotos() {
+        return photos;
+    }
+
     public String getId() {
         return id;
     }

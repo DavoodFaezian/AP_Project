@@ -115,6 +115,16 @@ public class Photo implements Comparable<Photo>{
         this.id = id;
     }
 
+    public boolean addPhotoToAlbum(Album album){
+        if(album == null){
+            return false;
+        }
+        PhotoAlbum photoAlbum = new PhotoAlbum(this , album);
+        albums.add(photoAlbum);
+        album.getPhotos().add(photoAlbum);
+        return true;
+    }
+
     @Override
     public int compareTo(Photo o) {
         if(this.dateOfUpload.isBefore(o.getDateOfUpload())) return -1;
