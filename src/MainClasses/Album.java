@@ -2,6 +2,7 @@ package MainClasses;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Album {
 
@@ -19,6 +20,7 @@ public class Album {
         this.owner = owner;
         this.albumName = albumName;
         this.id = id;
+        this.owner.getAlbums().add(this);
     }
 
     public User getOwner(){
@@ -47,5 +49,17 @@ public class Album {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Album album = (Album) o;
+        return Objects.equals(getOwner(), album.getOwner()) && Objects.equals(getAlbumName(), album.getAlbumName()) && Objects.equals(getPhotos(), album.getPhotos()) && Objects.equals(sharedWithUsers, album.sharedWithUsers) && Objects.equals(getId(), album.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getOwner(), getAlbumName(), getPhotos(), sharedWithUsers, getId());
     }
 }

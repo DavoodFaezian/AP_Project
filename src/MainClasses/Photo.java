@@ -38,8 +38,9 @@ public class Photo implements Comparable<Photo>{
         this.permissionForLeavingComment = permissionForLeavingComment;
         this.dateOfUpload = dateOfUpload;
         this.id = id;
-        if(album != null){
+        if(album != null && album.getOwner().equals(this.owner)){
             albums.add(new PhotoAlbum(this , album));
+            album.getPhotos().add(new PhotoAlbum(this , album));
         }
     }
 
@@ -73,6 +74,10 @@ public class Photo implements Comparable<Photo>{
 
     public LocalDateTime getDateOfUpload() {
         return dateOfUpload;
+    }
+
+    public List<PhotoAlbum> getAlbums() {
+        return albums;
     }
 
     public String getId() {
@@ -118,6 +123,14 @@ public class Photo implements Comparable<Photo>{
     public boolean addPhotoToAlbum(Album album){
         if(album == null){
             return false;
+        }
+        if(!album.getOwner().equals(this.owner)){
+            return false;
+        }
+        for(PhotoAlbum a : albums){
+            if(a.album().equals(album)){
+                return false;
+            }
         }
         PhotoAlbum photoAlbum = new PhotoAlbum(this , album);
         albums.add(photoAlbum);

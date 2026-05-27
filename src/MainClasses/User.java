@@ -2,6 +2,7 @@ package MainClasses;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class User{
 
@@ -62,4 +63,15 @@ public class User{
         this.id = id;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(getUserName(), user.getUserName()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getAccount(), user.getAccount()) && Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUserName(), getPassword(), getAccount(), getId());
+    }
 }
