@@ -1,5 +1,8 @@
 package MainClasses;
 
+import Exceptions.NotOwnersAlbumException;
+import Exceptions.PhotoIsAlreadyExistsInThisAlbumException;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +41,11 @@ public class Photo implements Comparable<Photo>{
         this.permissionForLeavingComment = permissionForLeavingComment;
         this.dateOfUpload = dateOfUpload;
         this.id = id;
-        if(album != null && album.getOwner().equals(this.owner)){
+        if(album != null){
             albums.add(new PhotoAlbum(this , album));
             album.getPhotos().add(new PhotoAlbum(this , album));
         }
+        this.owner.getPhotos().add(this);
     }
 
     public User getOwner(){
@@ -120,22 +124,21 @@ public class Photo implements Comparable<Photo>{
         this.id = id;
     }
 
-    public boolean addPhotoToAlbum(Album album){
+    public void addPhotoToAlbum(Album album){
         if(album == null){
-            return false;
+            throw new NullPointerException("The parameter is null.");
         }
         if(!album.getOwner().equals(this.owner)){
-            return false;
+            throw new NotOwnersAlbumException("You can't add your photo to someone else's album.");
         }
         for(PhotoAlbum a : albums){
             if(a.album().equals(album)){
-                return false;
+                throw new PhotoIsAlreadyExistsInThisAlbumException("Photo is Already exists in this album.");
             }
         }
         PhotoAlbum photoAlbum = new PhotoAlbum(this , album);
         albums.add(photoAlbum);
         album.getPhotos().add(photoAlbum);
-        return true;
     }
 
     @Override

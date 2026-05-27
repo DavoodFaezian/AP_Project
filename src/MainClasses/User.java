@@ -14,6 +14,8 @@ public class User{
 
     private String id;
 
+    private List<Photo> photos = new ArrayList<>();
+
     private List<Album> albums = new ArrayList<>();
 
     public User(String userName, String password, Account account , String id){
@@ -29,6 +31,10 @@ public class User{
 
     public String getPassword(){
         return password;
+    }
+
+    public List<Album> getAlbums() {
+        return albums;
     }
 
     public void setUserName(String userName) {
@@ -51,8 +57,12 @@ public class User{
         return id;
     }
 
-    public List<Album> getAlbums() {
-        return albums;
+    public List<Photo> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
     }
 
     public void setAlbums(List<Album> albums) {
