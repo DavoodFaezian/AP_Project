@@ -159,7 +159,7 @@ public class Photo implements Comparable<Photo>{
                 throw new NotOwnersAlbumException("You can't remove your photo from someone else's album.");
             }
             if(!albums.contains(new PhotoAlbum(this , album))){
-                throw new PhotoDoesNotExistInThisAlbum("The photo does not exist in this album.");
+                throw new PhotoDoesNotExistInThisAlbum("Photo does not exist in this album.");
             }
             albums.remove(new PhotoAlbum(this , album));
             album.getPhotos().remove(new PhotoAlbum(this , album));
@@ -167,6 +167,63 @@ public class Photo implements Comparable<Photo>{
                 owner.getPhotos().remove(this);
             }
         }
+    }
+
+    public void transferPhoto(Album fromAlbum , Album toAlbum){
+        if(fromAlbum != null && toAlbum != null){
+            if(!fromAlbum.getOwner().equals(this.owner) || !toAlbum.getOwner().equals(this.owner)){
+                throw new NotOwnersAlbumException("Access denied.");
+            }
+            if(!albums.contains(new PhotoAlbum(this , fromAlbum))){
+                throw new PhotoDoesNotExistInOriginalAlbumException("Photo does not exist in original album.");
+            }
+            if(albums.contains(new PhotoAlbum(this , toAlbum))){
+                throw new PhotoIsAlreadyExistsInDestinationAlbumException("Photo is already exists in destination album.");
+            }
+            albums.remove(new PhotoAlbum(this , fromAlbum));
+            fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
+            albums.add(new PhotoAlbum(this , toAlbum));
+            toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
+        }
+        if(toAlbum == null && fromAlbum == null){
+            throw new InvalidTransferException("Invalid transfer.");
+        }
+        if(toAlbum == null){
+            transferWithOutDestinationAlbum(fromAlbum);
+        }
+        if(fromAlbum == null){
+            transferWithoutOriginalAlbum(toAlbum);
+        }
+    }
+
+    private void transferWithoutOriginalAlbum(Album toAlbum){
+        if(!toAlbum.getOwner().equals(this.owner)){
+            throw new NotOwnersAlbumException("Access denied.");
+        }
+        if(!albums.contains(new PhotoAlbum(this , null))){
+            throw new PhotoDoesNotExistException("Photo does not exist here.");
+        }
+        if(albums.contains(new PhotoAlbum(this , toAlbum))){
+            throw new PhotoIsAlreadyExistsInDestinationAlbumException("Photo is already exists in destination album.");
+        }
+        albums.remove(new PhotoAlbum(this , null));
+        albums.add(new PhotoAlbum(this , toAlbum));
+        toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
+    }
+
+    private void transferWithOutDestinationAlbum(Album fromAlbum){
+        if(!fromAlbum.getOwner().equals(this.owner)){
+            throw new NotOwnersAlbumException("Access denied.");
+        }
+        if(!albums.contains(new PhotoAlbum(this , fromAlbum))){
+            throw new PhotoDoesNotExistInOriginalAlbumException("Photo does not exist in original album.");
+        }
+        if(albums.contains(new PhotoAlbum(this , null))){
+            throw new PhotoIsAlreadyExistsException("Photo is already exists there.");
+        }
+        albums.remove(new PhotoAlbum(this , fromAlbum));
+        fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
+        albums.add(new PhotoAlbum(this , null));
     }
 
     @Override
