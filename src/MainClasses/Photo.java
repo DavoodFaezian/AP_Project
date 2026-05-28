@@ -1,8 +1,6 @@
 package MainClasses;
 
-import Exceptions.NotOwnersAlbumException;
-import Exceptions.PhotoDoesNotExistInThisAlbum;
-import Exceptions.PhotoIsAlreadyExistsInThisAlbumException;
+import Exceptions.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,6 +44,9 @@ public class Photo implements Comparable<Photo>{
         if(album != null){
             albums.add(new PhotoAlbum(this , album));
             album.getPhotos().add(new PhotoAlbum(this , album));
+        }
+        else{
+            albums.add(new PhotoAlbum(this , null));
         }
         this.owner.getPhotos().add(this);
     }
@@ -127,34 +128,44 @@ public class Photo implements Comparable<Photo>{
     }
 
     public void addPhotoToAlbum(Album album){
-        if(album == null){
-            throw new NullPointerException("The parameter is null.");
+        if(album == null && albums.contains(new PhotoAlbum(this , null))){
+            throw new PhotoIsAlreadyExistsException("Photo is already exists.");
         }
-        if(!album.getOwner().equals(this.owner)){
-            throw new NotOwnersAlbumException("You can't add your photo to someone else's album.");
+        if (album != null) {
+            if(!album.getOwner().equals(this.owner)){
+                throw new NotOwnersAlbumException("You can't add your photo to someone else's album.");
+            }
+            if(albums.contains(new PhotoAlbum(this , album))){
+                throw new PhotoIsAlreadyExistsInThisAlbumException("Photo is Already exists in this album.");
+            }
+            PhotoAlbum photoAlbum = new PhotoAlbum(this , album);
+            albums.add(photoAlbum);
+            album.getPhotos().add(photoAlbum);
         }
-        if(albums.contains(new PhotoAlbum(this , album))){
-            throw new PhotoIsAlreadyExistsInThisAlbumException("Photo is Already exists in this album.");
-        }
-        PhotoAlbum photoAlbum = new PhotoAlbum(this , album);
-        albums.add(photoAlbum);
-        album.getPhotos().add(photoAlbum);
     }
 
     public void removePhotoFromAlbum(Album album){
-        if(album == null){
-            throw new NullPointerException("The parameter is null.");
+        if(album == null && !albums.contains(new PhotoAlbum(this , null))){
+            throw new PhotoDoesNotExistException("Photo does not exist.");
         }
-        if(!album.getOwner().equals(this.owner)){
-            throw new NotOwnersAlbumException("You can't remove your photo from someone else's album.");
+        if(album == null && albums.contains(new PhotoAlbum(this , null))){
+            albums.remove(new PhotoAlbum(this , null));
+            if(albums.isEmpty()){
+                owner.getPhotos().remove(this);
+            }
         }
-        if(!albums.contains(new PhotoAlbum(this , album))){
-            throw new PhotoDoesNotExistInThisAlbum("The photo does not exist in this album.");
-        }
-        albums.remove(new PhotoAlbum(this , album));
-        album.getPhotos().remove(new PhotoAlbum(this , album));
-        if(albums.isEmpty()){
-            owner.getPhotos().remove(this);
+        if (album != null) {
+            if(!album.getOwner().equals(this.owner)){
+                throw new NotOwnersAlbumException("You can't remove your photo from someone else's album.");
+            }
+            if(!albums.contains(new PhotoAlbum(this , album))){
+                throw new PhotoDoesNotExistInThisAlbum("The photo does not exist in this album.");
+            }
+            albums.remove(new PhotoAlbum(this , album));
+            album.getPhotos().remove(new PhotoAlbum(this , album));
+            if(albums.isEmpty()){
+                owner.getPhotos().remove(this);
+            }
         }
     }
 

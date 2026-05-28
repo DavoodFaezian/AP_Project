@@ -2,7 +2,7 @@ package MainClasses;
 
 import java.util.Objects;
 
-record PhotoAlbum(Photo photo , Album album){
+public record PhotoAlbum(Photo photo , Album album){
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
