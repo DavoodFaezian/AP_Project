@@ -7,6 +7,7 @@ import Exceptions.PhotoIsAlreadyExistsInThisAlbumException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Photo implements Comparable<Photo>{
 
@@ -132,10 +133,8 @@ public class Photo implements Comparable<Photo>{
         if(!album.getOwner().equals(this.owner)){
             throw new NotOwnersAlbumException("You can't add your photo to someone else's album.");
         }
-        for(PhotoAlbum a : albums){
-            if(a.album().equals(album)){
-                throw new PhotoIsAlreadyExistsInThisAlbumException("Photo is Already exists in this album.");
-            }
+        if(albums.contains(new PhotoAlbum(this , album))){
+            throw new PhotoIsAlreadyExistsInThisAlbumException("Photo is Already exists in this album.");
         }
         PhotoAlbum photoAlbum = new PhotoAlbum(this , album);
         albums.add(photoAlbum);
@@ -149,15 +148,13 @@ public class Photo implements Comparable<Photo>{
         if(!album.getOwner().equals(this.owner)){
             throw new NotOwnersAlbumException("You can't remove your photo from someone else's album.");
         }
-        boolean isPhotoExistsInThisAlbum = false;
-        for(PhotoAlbum a : albums){
-            if (a.album().equals(album)) {
-                isPhotoExistsInThisAlbum = true;
-                break;
-            }
-        }
-        if(!isPhotoExistsInThisAlbum){
+        if(!albums.contains(new PhotoAlbum(this , album))){
             throw new PhotoDoesNotExistInThisAlbum("The photo does not exist in this album.");
+        }
+        albums.remove(new PhotoAlbum(this , album));
+        album.getPhotos().remove(new PhotoAlbum(this , album));
+        if(albums.isEmpty()){
+            owner.getPhotos().remove(this);
         }
     }
 
@@ -166,5 +163,17 @@ public class Photo implements Comparable<Photo>{
         if(this.dateOfUpload.isBefore(o.getDateOfUpload())) return -1;
         if(this.dateOfUpload.isEqual(o.getDateOfUpload())) return 0;
         return 1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Photo photo = (Photo) o;
+        return Objects.equals(getOwner(), photo.getOwner()) && Objects.equals(getPhotoName(), photo.getPhotoName()) && Objects.equals(getComments(), photo.getComments()) && Objects.equals(getTags(), photo.getTags()) && Objects.equals(getCaptions(), photo.getCaptions()) && Objects.equals(isFavorable, photo.isFavorable) && Objects.equals(getAlbums(), photo.getAlbums()) && Objects.equals(permissionForLeavingComment, photo.permissionForLeavingComment) && Objects.equals(getDateOfUpload(), photo.getDateOfUpload()) && Objects.equals(sharedWithUsers, photo.sharedWithUsers) && Objects.equals(getId(), photo.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getOwner(), getPhotoName(), getComments(), getTags(), getCaptions(), isFavorable, getAlbums(), permissionForLeavingComment, getDateOfUpload(), sharedWithUsers, getId());
     }
 }
