@@ -1,6 +1,7 @@
 package MainClasses;
 
 import Exceptions.NotOwnersAlbumException;
+import Exceptions.PhotoDoesNotExistInThisAlbum;
 import Exceptions.PhotoIsAlreadyExistsInThisAlbumException;
 
 import java.time.LocalDateTime;
@@ -139,6 +140,25 @@ public class Photo implements Comparable<Photo>{
         PhotoAlbum photoAlbum = new PhotoAlbum(this , album);
         albums.add(photoAlbum);
         album.getPhotos().add(photoAlbum);
+    }
+
+    public void removePhotoFromAlbum(Album album){
+        if(album == null){
+            throw new NullPointerException("The parameter is null.");
+        }
+        if(!album.getOwner().equals(this.owner)){
+            throw new NotOwnersAlbumException("You can't remove your photo from someone else's album.");
+        }
+        boolean isPhotoExistsInThisAlbum = false;
+        for(PhotoAlbum a : albums){
+            if (a.album().equals(album)) {
+                isPhotoExistsInThisAlbum = true;
+                break;
+            }
+        }
+        if(!isPhotoExistsInThisAlbum){
+            throw new PhotoDoesNotExistInThisAlbum("The photo does not exist in this album.");
+        }
     }
 
     @Override
