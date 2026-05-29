@@ -127,103 +127,68 @@ public class Photo implements Comparable<Photo>{
         this.id = id;
     }
 
-    public void addPhotoToAlbum(Album album){
-        if(album == null && albums.contains(new PhotoAlbum(this , null))){
+    private void validateAccess(Album album){
+        if(album != null)
+            if(!album.getOwner().equals(this.owner)){
+                throw new NotOwnersAlbumException("Access denied.");
+            }
+    }
+
+    private void validateForAdding(Album album){
+        validateAccess(album);
+        if(albums.contains(new PhotoAlbum(this , album))){
             throw new PhotoIsAlreadyExistsException("Photo is already exists.");
         }
-        if (album != null) {
-            if(!album.getOwner().equals(this.owner)){
-                throw new NotOwnersAlbumException("You can't add your photo to someone else's album.");
-            }
-            if(albums.contains(new PhotoAlbum(this , album))){
-                throw new PhotoIsAlreadyExistsInThisAlbumException("Photo is Already exists in this album.");
-            }
-            PhotoAlbum photoAlbum = new PhotoAlbum(this , album);
-            albums.add(photoAlbum);
-            album.getPhotos().add(photoAlbum);
+    }
+
+    public void addPhotoToAlbum(Album album){
+        validateForAdding(album);
+        albums.add(new PhotoAlbum(this , album));
+        if(album != null)
+            album.getPhotos().add(new PhotoAlbum(this , album));
+    }
+
+    private void validateForRemoving(Album album){
+        validateAccess(album);
+        if(!albums.contains(new PhotoAlbum(this , album))){
+            throw new PhotoDoesNotExistException("Photo does not exist.");
         }
     }
 
     public void removePhotoFromAlbum(Album album){
-        if(album == null && !albums.contains(new PhotoAlbum(this , null))){
-            throw new PhotoDoesNotExistException("Photo does not exist.");
-        }
-        if(album == null && albums.contains(new PhotoAlbum(this , null))){
-            albums.remove(new PhotoAlbum(this , null));
-            if(albums.isEmpty()){
-                owner.getPhotos().remove(this);
-            }
-        }
+        validateForRemoving(album);
+        albums.remove(new PhotoAlbum(this , album));
         if (album != null) {
-            if(!album.getOwner().equals(this.owner)){
-                throw new NotOwnersAlbumException("You can't remove your photo from someone else's album.");
-            }
-            if(!albums.contains(new PhotoAlbum(this , album))){
-                throw new PhotoDoesNotExistInThisAlbum("Photo does not exist in this album.");
-            }
-            albums.remove(new PhotoAlbum(this , album));
             album.getPhotos().remove(new PhotoAlbum(this , album));
-            if(albums.isEmpty()){
-                owner.getPhotos().remove(this);
-            }
+        }
+        if(albums.isEmpty()){
+            owner.getPhotos().remove(this);
+        }
+    }
+
+    public void validateForTransferring(Album fromAlbum , Album toAlbum){
+        validateAccess(fromAlbum);
+        validateAccess(toAlbum);
+        if(albums.contains(new PhotoAlbum(this , toAlbum))){
+            throw new PhotoIsAlreadyExistsException("Photo is already exists in destination album.");
+        }
+        if(!albums.contains(new PhotoAlbum(this , fromAlbum))){
+            throw new PhotoDoesNotExistException("Photo does not exist in original album.");
         }
     }
 
     public void transferPhoto(Album fromAlbum , Album toAlbum){
-        if(fromAlbum != null && toAlbum != null){
-            if(!fromAlbum.getOwner().equals(this.owner) || !toAlbum.getOwner().equals(this.owner)){
-                throw new NotOwnersAlbumException("Access denied.");
-            }
-            if(!albums.contains(new PhotoAlbum(this , fromAlbum))){
-                throw new PhotoDoesNotExistInOriginalAlbumException("Photo does not exist in original album.");
-            }
-            if(albums.contains(new PhotoAlbum(this , toAlbum))){
-                throw new PhotoIsAlreadyExistsInDestinationAlbumException("Photo is already exists in destination album.");
-            }
-            albums.remove(new PhotoAlbum(this , fromAlbum));
+        validateForTransferring(fromAlbum , toAlbum);
+        albums.remove(new PhotoAlbum(this , fromAlbum));
+        albums.add(new PhotoAlbum(this , toAlbum));
+        if (fromAlbum != null && toAlbum != null) {
             fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
-            albums.add(new PhotoAlbum(this , toAlbum));
+            toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
+        } if (fromAlbum != null){
+            fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
+        } if (toAlbum != null) {
             toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
         }
-        if(toAlbum == null && fromAlbum == null){
-            throw new InvalidTransferException("Invalid transfer.");
-        }
-        if(toAlbum == null){
-            transferWithOutDestinationAlbum(fromAlbum);
-        }
-        if(fromAlbum == null){
-            transferWithoutOriginalAlbum(toAlbum);
-        }
-    }
-
-    private void transferWithoutOriginalAlbum(Album toAlbum){
-        if(!toAlbum.getOwner().equals(this.owner)){
-            throw new NotOwnersAlbumException("Access denied.");
-        }
-        if(!albums.contains(new PhotoAlbum(this , null))){
-            throw new PhotoDoesNotExistException("Photo does not exist here.");
-        }
-        if(albums.contains(new PhotoAlbum(this , toAlbum))){
-            throw new PhotoIsAlreadyExistsInDestinationAlbumException("Photo is already exists in destination album.");
-        }
-        albums.remove(new PhotoAlbum(this , null));
-        albums.add(new PhotoAlbum(this , toAlbum));
-        toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
-    }
-
-    private void transferWithOutDestinationAlbum(Album fromAlbum){
-        if(!fromAlbum.getOwner().equals(this.owner)){
-            throw new NotOwnersAlbumException("Access denied.");
-        }
-        if(!albums.contains(new PhotoAlbum(this , fromAlbum))){
-            throw new PhotoDoesNotExistInOriginalAlbumException("Photo does not exist in original album.");
-        }
-        if(albums.contains(new PhotoAlbum(this , null))){
-            throw new PhotoIsAlreadyExistsException("Photo is already exists there.");
-        }
-        albums.remove(new PhotoAlbum(this , fromAlbum));
-        fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
-        albums.add(new PhotoAlbum(this , null));
     }
 
     @Override
