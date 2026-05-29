@@ -77,11 +77,11 @@ public class User{
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(getUserName(), user.getUserName()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getAccount(), user.getAccount()) && Objects.equals(getId(), user.getId());
+        return Objects.equals(getUserName(), user.getUserName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUserName(), getPassword(), getAccount(), getId());
+        return Objects.hashCode(getUserName());
     }
 }
