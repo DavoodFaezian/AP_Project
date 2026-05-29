@@ -184,11 +184,11 @@ public class Photo implements Comparable<Photo>{
         if (fromAlbum != null && toAlbum != null) {
             fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
             toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
-        } if (fromAlbum != null){
-            fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
-        } if (toAlbum != null) {
-            toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
         }
+        else if (fromAlbum != null)
+            fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
+        else if (toAlbum != null)
+            toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
     }
 
     @Override
