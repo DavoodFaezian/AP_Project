@@ -1,5 +1,6 @@
 package MainClasses;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +15,8 @@ public class Album {
 
     private List<AlbumShare> sharedWithUsers = new ArrayList<>();
 
+    private final LocalDateTime createdAt;
+
     private String id;
 
     public Album(User owner, String albumName, String id){
@@ -21,6 +24,7 @@ public class Album {
         this.albumName = albumName;
         this.id = id;
         this.owner.getAlbums().add(this);
+        createdAt = LocalDateTime.now();
     }
 
     public User getOwner(){

@@ -30,6 +30,8 @@ public class Photo{
 
     private List<PhotoShare> sharedWithUsers = new ArrayList<>();
 
+    private final LocalDateTime createdAt;
+
     private String id;
 
     public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment, String id) {
@@ -49,6 +51,7 @@ public class Photo{
             albums.add(new PhotoAlbum(this , null));
         }
         this.owner.getPhotos().add(this);
+        createdAt = LocalDateTime.now();
     }
 
     public User getOwner(){
