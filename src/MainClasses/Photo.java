@@ -4,10 +4,11 @@ import Exceptions.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class Photo implements Comparable<Photo>{
+public class Photo{
 
     private User owner;
 
@@ -25,13 +26,13 @@ public class Photo implements Comparable<Photo>{
 
     private Boolean permissionForLeavingComment;
 
-    private LocalDateTime dateOfUpload;
+    private LocalDateTime dateOfShare;
 
     private List<PhotoShare> sharedWithUsers = new ArrayList<>();
 
     private String id;
 
-    public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment, LocalDateTime dateOfUpload, String id) {
+    public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment, String id) {
         this.owner = owner;
         this.captions = captions;
         this.photoName = photoName;
@@ -39,7 +40,6 @@ public class Photo implements Comparable<Photo>{
         this.tags = tags;
         this.isFavorable = isFavorable;
         this.permissionForLeavingComment = permissionForLeavingComment;
-        this.dateOfUpload = dateOfUpload;
         this.id = id;
         if(album != null){
             albums.add(new PhotoAlbum(this , album));
@@ -79,10 +79,6 @@ public class Photo implements Comparable<Photo>{
         return permissionForLeavingComment;
     }
 
-    public LocalDateTime getDateOfUpload() {
-        return dateOfUpload;
-    }
-
     public List<PhotoAlbum> getAlbums() {
         return albums;
     }
@@ -119,10 +115,6 @@ public class Photo implements Comparable<Photo>{
         this.permissionForLeavingComment = permissionForLeavingComment;
     }
 
-    public void setDateOfUpload(LocalDateTime dateOfUpload) {
-        this.dateOfUpload = dateOfUpload;
-    }
-
     public void setId(String id) {
         this.id = id;
     }
@@ -130,14 +122,14 @@ public class Photo implements Comparable<Photo>{
     private void validateAccess(Album album){
         if(album != null)
             if(!album.getOwner().equals(this.owner)){
-                throw new NotOwnersAlbumException("Access denied.");
+                throw new AccessDeniedException("Access denied!!!");
             }
     }
 
     private void validateForAdding(Album album){
         validateAccess(album);
         if(albums.contains(new PhotoAlbum(this , album))){
-            throw new PhotoIsAlreadyExistsException("Photo is already exists.");
+            throw new PhotoIsAlreadyExistsException("Photo is already exists!!!");
         }
     }
 
@@ -151,7 +143,7 @@ public class Photo implements Comparable<Photo>{
     private void validateForRemoving(Album album){
         validateAccess(album);
         if(!albums.contains(new PhotoAlbum(this , album))){
-            throw new PhotoDoesNotExistException("Photo does not exist.");
+            throw new PhotoDoesNotExistException("Photo does not exist!!!");
         }
     }
 
@@ -170,9 +162,9 @@ public class Photo implements Comparable<Photo>{
         validateAccess(fromAlbum);
         validateAccess(toAlbum);
         if(!albums.contains(new PhotoAlbum(this , fromAlbum))){
-            throw new PhotoDoesNotExistException("Photo does not exist in original album.");
+            throw new PhotoDoesNotExistException("Photo does not exist in original album!!!");
         }if(albums.contains(new PhotoAlbum(this , toAlbum))){
-            throw new PhotoIsAlreadyExistsException("Photo is already exists in destination album.");
+            throw new PhotoIsAlreadyExistsException("Photo is already exists in destination album!!!");
         }
     }
 
@@ -190,22 +182,26 @@ public class Photo implements Comparable<Photo>{
             toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
     }
 
-    @Override
-    public int compareTo(Photo o) {
-        if(this.dateOfUpload.isBefore(o.getDateOfUpload())) return -1;
-        if(this.dateOfUpload.isEqual(o.getDateOfUpload())) return 0;
-        return 1;
+    private void validateUser(User user){
+        if(user == null){
+            throw new UserIsNullException("User is null!!!");
+        }
+    }
+
+    public void sharePhoto(User user){
+        validateUser(user);
+        this.sharedWithUsers.add(new PhotoShare(this.owner , user , this));
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Photo photo = (Photo) o;
-        return Objects.equals(getOwner(), photo.getOwner()) && Objects.equals(getPhotoName(), photo.getPhotoName()) && Objects.equals(getComments(), photo.getComments()) && Objects.equals(getTags(), photo.getTags()) && Objects.equals(getCaptions(), photo.getCaptions()) && Objects.equals(isFavorable, photo.isFavorable) && Objects.equals(getAlbums(), photo.getAlbums()) && Objects.equals(permissionForLeavingComment, photo.permissionForLeavingComment) && Objects.equals(getDateOfUpload(), photo.getDateOfUpload()) && Objects.equals(sharedWithUsers, photo.sharedWithUsers) && Objects.equals(getId(), photo.getId());
+        return Objects.equals(getOwner(), photo.getOwner()) && Objects.equals(getPhotoName(), photo.getPhotoName()) && Objects.equals(getComments(), photo.getComments()) && Objects.equals(getTags(), photo.getTags()) && Objects.equals(getCaptions(), photo.getCaptions()) && Objects.equals(isFavorable, photo.isFavorable) && Objects.equals(getAlbums(), photo.getAlbums()) && Objects.equals(permissionForLeavingComment, photo.permissionForLeavingComment) && Objects.equals(sharedWithUsers, photo.sharedWithUsers) && Objects.equals(getId(), photo.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getOwner(), getPhotoName(), getComments(), getTags(), getCaptions(), isFavorable, getAlbums(), permissionForLeavingComment, getDateOfUpload(), sharedWithUsers, getId());
+        return Objects.hash(getOwner(), getPhotoName(), getComments(), getTags(), getCaptions(), isFavorable, getAlbums(), permissionForLeavingComment, sharedWithUsers, getId());
     }
 }
