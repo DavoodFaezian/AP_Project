@@ -119,15 +119,7 @@ public class Photo{
         this.id = id;
     }
 
-    private void validateAccess(Album album){
-        if(album != null)
-            if(!album.getOwner().equals(this.owner)){
-                throw new AccessDeniedException("Access denied!!!");
-            }
-    }
-
     private void validateForAdding(Album album){
-        validateAccess(album);
         if(albums.contains(new PhotoAlbum(this , album))){
             throw new PhotoIsAlreadyExistsException("Photo is already exists!!!");
         }
@@ -141,7 +133,6 @@ public class Photo{
     }
 
     private void validateForRemoving(Album album){
-        validateAccess(album);
         if(!albums.contains(new PhotoAlbum(this , album))){
             throw new PhotoDoesNotExistException("Photo does not exist!!!");
         }
@@ -159,8 +150,6 @@ public class Photo{
     }
 
     public void validateForTransferring(Album fromAlbum , Album toAlbum){
-        validateAccess(fromAlbum);
-        validateAccess(toAlbum);
         if(!albums.contains(new PhotoAlbum(this , fromAlbum))){
             throw new PhotoDoesNotExistException("Photo does not exist in original album!!!");
         }if(albums.contains(new PhotoAlbum(this , toAlbum))){
