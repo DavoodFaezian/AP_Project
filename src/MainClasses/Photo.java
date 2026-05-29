@@ -169,11 +169,10 @@ public class Photo implements Comparable<Photo>{
     public void validateForTransferring(Album fromAlbum , Album toAlbum){
         validateAccess(fromAlbum);
         validateAccess(toAlbum);
-        if(albums.contains(new PhotoAlbum(this , toAlbum))){
-            throw new PhotoIsAlreadyExistsException("Photo is already exists in destination album.");
-        }
         if(!albums.contains(new PhotoAlbum(this , fromAlbum))){
             throw new PhotoDoesNotExistException("Photo does not exist in original album.");
+        }if(albums.contains(new PhotoAlbum(this , toAlbum))){
+            throw new PhotoIsAlreadyExistsException("Photo is already exists in destination album.");
         }
     }
 

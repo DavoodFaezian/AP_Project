@@ -76,4 +76,29 @@ public class PhotoTests {
         assertEquals(0 , user1.getPhotos().size());
     }
 
+    @Test
+    public void transferTest(){
+        User user1 = new User("Ali" , "123@" , new Account("126") , "124");
+        User user2 = new User("Amir" , "12345&" , new Account("19385") , "9348567");
+        User user3 = new User("Sabrina" , "7498257" , new Account("orwt84") , "oew8rt845");
+        Album album1 = new Album(user1 , "album1" , "125");
+        Album album2 = new Album(user1 , "album2" , "129");
+        Album album3 = new Album(user2 , "album3" , "9346570");
+        Photo photo1 = new Photo(user1 , null ,  "photo1" , null , null , false , album1 , false , null , "120");
+        Photo photo2 = new Photo(user1 , null ,  "photo2" , null , null , true , null , true , null , "121");
+        Photo photo3 = new Photo(user1 , null ,  "photo3" , null , null , false , album1 , true , null , "127");
+        Photo photo4 = new Photo(user2 , null ,  "photo4" , null , null , true , album3 , true , null , "1278567");
+        Photo photo5 = new Photo(user2 , null ,  "photo5" , null , null , true , album3 , true , null , "1278567");
+        Exception exp1 = assertThrows(PhotoDoesNotExistException.class , () -> {photo1.transferPhoto(album2 , album1);});
+        assertEquals("Photo does not exist in original album." , exp1.getMessage());
+        assertEquals(2 , album1.getPhotos().size());
+        assertDoesNotThrow(() -> {photo1.transferPhoto(album1 , null);});
+        Exception exp2 = assertThrows(PhotoIsAlreadyExistsException.class , () -> {photo1.transferPhoto(null , null);});
+        assertEquals("Photo is already exists in destination album." , exp2.getMessage());
+        assertEquals(1 , album1.getPhotos().size());
+        Exception exp3 = assertThrows(NotOwnersAlbumException.class , () -> {photo4.transferPhoto(album1 , album3);});
+        assertEquals("Access denied." , exp3.getMessage());
+    }
+
+
 }
