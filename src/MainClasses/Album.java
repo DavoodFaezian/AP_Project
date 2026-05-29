@@ -55,11 +55,11 @@ public class Album {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Album album = (Album) o;
-        return Objects.equals(getOwner(), album.getOwner()) && Objects.equals(getAlbumName(), album.getAlbumName()) && Objects.equals(getPhotos(), album.getPhotos()) && Objects.equals(sharedWithUsers, album.sharedWithUsers) && Objects.equals(getId(), album.getId());
+        return Objects.equals(getId(), album.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getOwner(), getAlbumName(), getPhotos(), sharedWithUsers, getId());
+        return Objects.hashCode(getId());
     }
 }

@@ -197,11 +197,11 @@ public class Photo{
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Photo photo = (Photo) o;
-        return Objects.equals(getOwner(), photo.getOwner()) && Objects.equals(getPhotoName(), photo.getPhotoName()) && Objects.equals(getComments(), photo.getComments()) && Objects.equals(getTags(), photo.getTags()) && Objects.equals(getCaptions(), photo.getCaptions()) && Objects.equals(isFavorable, photo.isFavorable) && Objects.equals(getAlbums(), photo.getAlbums()) && Objects.equals(permissionForLeavingComment, photo.permissionForLeavingComment) && Objects.equals(sharedWithUsers, photo.sharedWithUsers) && Objects.equals(getId(), photo.getId());
+        return Objects.equals(getId(), photo.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getOwner(), getPhotoName(), getComments(), getTags(), getCaptions(), isFavorable, getAlbums(), permissionForLeavingComment, sharedWithUsers, getId());
+        return Objects.hashCode(getId());
     }
 }
