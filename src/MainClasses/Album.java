@@ -17,6 +17,8 @@ public class Album {
 
     private final LocalDateTime createdAt;
 
+    private LocalDateTime lastModified;
+
     private String id;
 
     public Album(User owner, String albumName, String id){
@@ -53,6 +55,18 @@ public class Album {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     @Override

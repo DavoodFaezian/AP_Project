@@ -131,8 +131,10 @@ public class Photo{
     public void addPhotoToAlbum(Album album){
         validateForAdding(album);
         albums.add(new PhotoAlbum(this , album));
-        if(album != null)
-            album.getPhotos().add(new PhotoAlbum(this , album));
+        if(album != null) {
+            album.getPhotos().add(new PhotoAlbum(this, album));
+            album.setLastModified(LocalDateTime.now());
+        }
     }
 
     private void validateForRemoving(Album album){
@@ -146,6 +148,7 @@ public class Photo{
         albums.remove(new PhotoAlbum(this , album));
         if (album != null) {
             album.getPhotos().remove(new PhotoAlbum(this , album));
+            album.setLastModified(LocalDateTime.now());
         }
         if(albums.isEmpty()){
             owner.getPhotos().remove(this);
@@ -167,11 +170,17 @@ public class Photo{
         if (fromAlbum != null && toAlbum != null) {
             fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
             toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
+            fromAlbum.setLastModified(LocalDateTime.now());
+            toAlbum.setLastModified(LocalDateTime.now());
         }
-        else if (fromAlbum != null)
-            fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
-        else if (toAlbum != null)
-            toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
+        else if (fromAlbum != null) {
+            fromAlbum.getPhotos().remove(new PhotoAlbum(this, fromAlbum));
+            fromAlbum.setLastModified(LocalDateTime.now());
+        }
+        else if (toAlbum != null) {
+            toAlbum.getPhotos().add(new PhotoAlbum(this, toAlbum));
+            toAlbum.setLastModified(LocalDateTime.now());
+        }
     }
 
     private void validateUser(User user){
