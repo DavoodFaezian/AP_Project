@@ -19,12 +19,9 @@ public class Album extends BaseClass<Album> {
 
     private LocalDateTime lastModified;
 
-    private String id;
-
-    public Album(User owner, String albumName, String id){
+    public Album(User owner, String albumName){
         this.owner = owner;
         this.albumName = albumName;
-        this.id = id;
         this.owner.getAlbums().add(this);
         createdAt = LocalDateTime.now();
     }
@@ -47,14 +44,6 @@ public class Album extends BaseClass<Album> {
 
     public List<PhotoAlbum> getPhotos() {
         return photos;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public LocalDateTime getLastModified() {

@@ -30,11 +30,9 @@ public class Photo extends BaseClass<Photo>{
 
     private List<PhotoShare> sharedWithUsers = new ArrayList<>();
 
-    private final LocalDateTime createdAt;
+    private final LocalDateTime createdAt;;
 
-    private String id;
-
-    public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment, String id) {
+    public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment) {
         this.owner = owner;
         this.captions = captions;
         this.photoName = photoName;
@@ -42,7 +40,6 @@ public class Photo extends BaseClass<Photo>{
         this.tags = tags;
         this.isFavorable = isFavorable;
         this.permissionForLeavingComment = permissionForLeavingComment;
-        this.id = id;
         if(album != null){
             albums.add(new PhotoAlbum(this , album));
             album.getPhotos().add(new PhotoAlbum(this , album));
@@ -86,10 +83,6 @@ public class Photo extends BaseClass<Photo>{
         return albums;
     }
 
-    public String getId() {
-        return id;
-    }
-
     public void setOwner(User owner){
         this.owner = owner;
     }
@@ -116,10 +109,6 @@ public class Photo extends BaseClass<Photo>{
 
     public void setPermissionForLeavingComment(Boolean permissionForLeavingComment) {
         this.permissionForLeavingComment = permissionForLeavingComment;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     private void validateForAdding(Album album){
