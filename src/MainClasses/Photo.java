@@ -30,7 +30,13 @@ public class Photo extends BaseClass<Photo>{
 
     private List<PhotoShare> sharedWithUsers = new ArrayList<>();
 
-    private final LocalDateTime createdAt;;
+    private final LocalDateTime createdAt;
+
+    private LocalDateTime lastModified;
+
+    private void updateTime(){
+        lastModified = LocalDateTime.now();
+    }
 
     public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment) {
         this.owner = owner;
@@ -79,6 +85,16 @@ public class Photo extends BaseClass<Photo>{
         return permissionForLeavingComment;
     }
 
+    public void setAlbums(List<PhotoAlbum> albums) {
+        this.albums = albums;
+    }
+
+    private void validateUser(User user){
+        if(user == null){
+            throw new NullPointerException("User is null!!!");
+        }
+    }
+
     public List<PhotoAlbum> getAlbums() {
         return albums;
     }
@@ -89,26 +105,38 @@ public class Photo extends BaseClass<Photo>{
 
     public void setPhotoName(String photoName) {
         this.photoName = photoName;
+        updateTime();
+    }
+
+    private void validatePermission(boolean permissionForLeavingComment){
+         if(!permissionForLeavingComment){
+             throw new AccessDeniedException("You can't leave comment for this photo!!!");
+         }
     }
 
     public void setComments(List<Comment> comments) {
+        validatePermission(this.permissionForLeavingComment);
         this.comments = comments;
     }
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+        updateTime();
     }
 
     public void setCaptions(List<String> captions) {
         this.captions = captions;
+        updateTime();
     }
 
     public void setFavorable(Boolean favorable) {
         isFavorable = favorable;
+        updateTime();
     }
 
     public void setPermissionForLeavingComment(Boolean permissionForLeavingComment) {
         this.permissionForLeavingComment = permissionForLeavingComment;
+        updateTime();
     }
 
     private void validateForAdding(Album album){
@@ -172,15 +200,14 @@ public class Photo extends BaseClass<Photo>{
         }
     }
 
-    private void validateUser(User user){
-        if(user == null){
-            throw new UserIsNullException("User is null!!!");
-        }
+    private void updateDateOfShare(){
+        dateOfShare = LocalDateTime.now();
     }
 
     public void sharePhoto(User user){
         validateUser(user);
         this.sharedWithUsers.add(new PhotoShare(this.owner , user , this));
+        updateDateOfShare();
     }
 
     @Override
