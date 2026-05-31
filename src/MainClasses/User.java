@@ -39,10 +39,6 @@ public class User extends BaseClass<User>{
         this.password = password;
     }
 
-    public String getId() {
-        return id;
-    }
-
     public List<Photo> getPhotos() {
         return photos;
     }
