@@ -1,5 +1,6 @@
 package MainClasses;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +15,10 @@ public class Album extends BaseClass<Album> {
 
     private List<AlbumShare> sharedWithUsers = new ArrayList<>();
 
+    private final LocalDateTime createdAt;
+
+    private LocalDateTime lastModified;
+
     private String id;
 
     public Album(User owner, String albumName, String id){
@@ -21,6 +26,7 @@ public class Album extends BaseClass<Album> {
         this.albumName = albumName;
         this.id = id;
         this.owner.getAlbums().add(this);
+        createdAt = LocalDateTime.now();
     }
 
     public User getOwner(){
@@ -51,15 +57,27 @@ public class Album extends BaseClass<Album> {
         this.id = id;
     }
 
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Album album = (Album) o;
-        return Objects.equals(getOwner(), album.getOwner()) && Objects.equals(getAlbumName(), album.getAlbumName()) && Objects.equals(getPhotos(), album.getPhotos()) && Objects.equals(sharedWithUsers, album.sharedWithUsers) && Objects.equals(getId(), album.getId());
+        return Objects.equals(getId(), album.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getOwner(), getAlbumName(), getPhotos(), sharedWithUsers, getId());
+        return Objects.hashCode(getId());
     }
 }

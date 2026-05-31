@@ -30,6 +30,8 @@ public class Photo extends BaseClass<Photo>{
 
     private List<PhotoShare> sharedWithUsers = new ArrayList<>();
 
+    private final LocalDateTime createdAt;
+
     private String id;
 
     public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment, String id) {
@@ -49,6 +51,7 @@ public class Photo extends BaseClass<Photo>{
             albums.add(new PhotoAlbum(this , null));
         }
         this.owner.getPhotos().add(this);
+        createdAt = LocalDateTime.now();
     }
 
     public User getOwner(){
@@ -119,15 +122,7 @@ public class Photo extends BaseClass<Photo>{
         this.id = id;
     }
 
-    private void validateAccess(Album album){
-        if(album != null)
-            if(!album.getOwner().equals(this.owner)){
-                throw new AccessDeniedException("Access denied!!!");
-            }
-    }
-
     private void validateForAdding(Album album){
-        validateAccess(album);
         if(albums.contains(new PhotoAlbum(this , album))){
             throw new PhotoIsAlreadyExistsException("Photo is already exists!!!");
         }
@@ -136,12 +131,13 @@ public class Photo extends BaseClass<Photo>{
     public void addPhotoToAlbum(Album album){
         validateForAdding(album);
         albums.add(new PhotoAlbum(this , album));
-        if(album != null)
-            album.getPhotos().add(new PhotoAlbum(this , album));
+        if(album != null) {
+            album.getPhotos().add(new PhotoAlbum(this, album));
+            album.setLastModified(LocalDateTime.now());
+        }
     }
 
     private void validateForRemoving(Album album){
-        validateAccess(album);
         if(!albums.contains(new PhotoAlbum(this , album))){
             throw new PhotoDoesNotExistException("Photo does not exist!!!");
         }
@@ -152,6 +148,7 @@ public class Photo extends BaseClass<Photo>{
         albums.remove(new PhotoAlbum(this , album));
         if (album != null) {
             album.getPhotos().remove(new PhotoAlbum(this , album));
+            album.setLastModified(LocalDateTime.now());
         }
         if(albums.isEmpty()){
             owner.getPhotos().remove(this);
@@ -159,8 +156,6 @@ public class Photo extends BaseClass<Photo>{
     }
 
     public void validateForTransferring(Album fromAlbum , Album toAlbum){
-        validateAccess(fromAlbum);
-        validateAccess(toAlbum);
         if(!albums.contains(new PhotoAlbum(this , fromAlbum))){
             throw new PhotoDoesNotExistException("Photo does not exist in original album!!!");
         }if(albums.contains(new PhotoAlbum(this , toAlbum))){
@@ -175,11 +170,17 @@ public class Photo extends BaseClass<Photo>{
         if (fromAlbum != null && toAlbum != null) {
             fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
             toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
+            fromAlbum.setLastModified(LocalDateTime.now());
+            toAlbum.setLastModified(LocalDateTime.now());
         }
-        else if (fromAlbum != null)
-            fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
-        else if (toAlbum != null)
-            toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
+        else if (fromAlbum != null) {
+            fromAlbum.getPhotos().remove(new PhotoAlbum(this, fromAlbum));
+            fromAlbum.setLastModified(LocalDateTime.now());
+        }
+        else if (toAlbum != null) {
+            toAlbum.getPhotos().add(new PhotoAlbum(this, toAlbum));
+            toAlbum.setLastModified(LocalDateTime.now());
+        }
     }
 
     private void validateUser(User user){
@@ -197,11 +198,11 @@ public class Photo extends BaseClass<Photo>{
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Photo photo = (Photo) o;
-        return Objects.equals(getOwner(), photo.getOwner()) && Objects.equals(getPhotoName(), photo.getPhotoName()) && Objects.equals(getComments(), photo.getComments()) && Objects.equals(getTags(), photo.getTags()) && Objects.equals(getCaptions(), photo.getCaptions()) && Objects.equals(isFavorable, photo.isFavorable) && Objects.equals(getAlbums(), photo.getAlbums()) && Objects.equals(permissionForLeavingComment, photo.permissionForLeavingComment) && Objects.equals(sharedWithUsers, photo.sharedWithUsers) && Objects.equals(getId(), photo.getId());
+        return Objects.equals(getId(), photo.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getOwner(), getPhotoName(), getComments(), getTags(), getCaptions(), isFavorable, getAlbums(), permissionForLeavingComment, sharedWithUsers, getId());
+        return Objects.hashCode(getId());
     }
 }
