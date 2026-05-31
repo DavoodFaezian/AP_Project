@@ -5,9 +5,12 @@ public class Comment extends BaseClass<Comment> {
 
     private String script;
 
-    public Comment(User owner, String script) {
+    private String id;
+
+    public Comment(User owner, String script, String id) {
         this.owner = owner;
         this.script = script;
+        this.id = id;
     }
 
     public User getOwner() {
@@ -22,8 +25,15 @@ public class Comment extends BaseClass<Comment> {
         return script;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public void setScript(String script) {
         this.script = script;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 }
