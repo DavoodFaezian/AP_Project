@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class User{
+public class User extends BaseClass<User>{
 
     private String userName;
 

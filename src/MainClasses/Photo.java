@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class Photo{
+public class Photo extends BaseClass<Photo>{
 
     private User owner;
 

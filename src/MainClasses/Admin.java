@@ -1,5 +1,5 @@
 package MainClasses;
-public class Admin {
+public class Admin extends BaseClass<Admin> {
 
     private String adminName;
 

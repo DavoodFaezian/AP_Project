@@ -1,5 +1,5 @@
 package MainClasses;
-public class Comment {
+public class Comment extends BaseClass<Comment> {
 
     private User owner;
 
