@@ -1,6 +1,7 @@
 package Repositories;
 
-import Exceptions.ItemNotFoundExeption;
+import Exceptions.ItemNotFoundException;
+import Exceptions.ItemNotFoundException;
 import FileManager.GenericFileManager;
 import MainClasses.Comment;
 
@@ -38,7 +39,7 @@ public class CommentRepository {
     public Comment findCommentById(String id){
         Optional<Comment> comment = commentFileManager.findItemById(id);
         if(comment.isEmpty()){
-            throw new ItemNotFoundExeption("comment",id);
+            throw new ItemNotFoundException("comment",id);
         }
         return comment.get();
     }
