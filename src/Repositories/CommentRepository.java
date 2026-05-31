@@ -49,6 +49,6 @@ public class CommentRepository {
     public List<Comment> getCommentsByOwnerd(String ownerId){
         return commentFileManager.filterItems((comment)->comment.getOwner().getId().equals(ownerId));
     }
-    
+
 
 }

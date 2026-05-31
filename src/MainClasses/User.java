@@ -10,19 +10,13 @@ public class User extends BaseClass<User>{
 
     private String password;
 
-    private Account account;
-
-    private String id;
-
     private List<Photo> photos = new ArrayList<>();
 
     private List<Album> albums = new ArrayList<>();
 
-    public User(String userName, String password, Account account , String id){
+    public User(String userName, String password){
         this.userName = userName;
         this.password = password;
-        this.account = account;
-        this.id = id;
     }
 
     public String getUserName(){
@@ -45,18 +39,6 @@ public class User extends BaseClass<User>{
         this.password = password;
     }
 
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
-    public String getId() {
-        return id;
-    }
-
     public List<Photo> getPhotos() {
         return photos;
     }
@@ -67,10 +49,6 @@ public class User extends BaseClass<User>{
 
     public void setAlbums(List<Album> albums) {
         this.albums = albums;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     @Override
