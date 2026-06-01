@@ -11,11 +11,11 @@ public class Photo extends BaseClass<Photo>{
 
     private String photoName;
 
-    private List<Comment> comments;
+    private Set<Comment> comments;
 
-    private List<String> tags;
+    private Set<String> tags;
 
-    private List<String> captions;
+    private Set<String> captions;
 
     private Boolean isFavorable;
 
@@ -39,7 +39,7 @@ public class Photo extends BaseClass<Photo>{
         dateOfShare = LocalDateTime.now();
     }
 
-    public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment) {
+    public Photo(User owner , Set<String> captions, String photoName, Set<Comment> comments, Set<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment) {
         this.owner = owner;
         this.captions = captions;
         this.photoName = photoName;
@@ -77,15 +77,15 @@ public class Photo extends BaseClass<Photo>{
         return photoName;
     }
 
-    public List<Comment> getComments() {
+    public Set<Comment> getComments() {
         return comments;
     }
 
-    public List<String> getTags() {
+    public Set<String> getTags() {
         return tags;
     }
 
-    public List<String> getCaptions() {
+    public Set<String> getCaptions() {
         return captions;
     }
 
@@ -104,6 +104,12 @@ public class Photo extends BaseClass<Photo>{
     private <T> void validateParameter(T parameter){
         if(parameter == null){
             throw new NullPointerException("Parameter is null!!!");
+        }
+    }
+
+    private <T> void validateMemberShip(Set<T> parameters , T parameter){
+        if(!parameters.contains(parameter)){
+            throw new ItemDoesNotExistException("Item wasn't found!!!");
         }
     }
 
@@ -126,17 +132,17 @@ public class Photo extends BaseClass<Photo>{
          }
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(Set<Comment> comments) {
         validatePermission(this.permissionForLeavingComment);
         this.comments = comments;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(Set<String> tags) {
         this.tags = tags;
         updateTime();
     }
 
-    public void setCaptions(List<String> captions) {
+    public void setCaptions(Set<String> captions) {
         this.captions = captions;
         updateTime();
     }
@@ -159,11 +165,45 @@ public class Photo extends BaseClass<Photo>{
         validatePermission(this.permissionForLeavingComment);
         validateParameter(comment);
         this.comments.add(comment);
+        updateTime();
     }
 
     public void removeComment(Comment comment){
         validatePermission(this.permissionForLeavingComment);
         this.comments.remove(comment);
+        updateTime();
+    }
+
+    public void editComment(Comment comment , String script){
+        validatePermission(this.permissionForLeavingComment);
+        validateParameter(comment);
+        validateMemberShip(this.comments , comment);
+        comment.setScript(script);
+        updateTime();
+    }
+
+    public void addCaption(String caption){
+        validateParameter(caption);
+        captions.add(caption);
+        updateTime();
+    }
+
+    public void removeCaption(String caption){
+        validateParameter(caption);
+        captions.remove(caption);
+        updateTime();
+    }
+
+    public void addTag(String tag){
+        validateParameter(tag);
+        tags.add(tag);
+        updateTime();
+    }
+
+    public void removeTag(String tag){
+        validateParameter(tag);
+        tags.remove(tag);
+        updateTime();
     }
 
 

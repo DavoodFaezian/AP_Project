@@ -1,9 +1,7 @@
 package MainClasses;
 
-import Exceptions.PhotoDoesNotExistException;
+import Exceptions.ItemDoesNotExistException;
 import Exceptions.PhotoIsAlreadyExistsException;
-
-import java.util.Objects;
 
 public class PhotoAlbum{
 
@@ -31,7 +29,7 @@ public class PhotoAlbum{
 
     private void validateToRemove(Album album , Photo photo){
         if(!album.getPhotos().contains(photo)){
-            throw new PhotoDoesNotExistException("Photo does not exist!!!");
+            throw new ItemDoesNotExistException("Photo does not exist!!!");
         }
     }
 
