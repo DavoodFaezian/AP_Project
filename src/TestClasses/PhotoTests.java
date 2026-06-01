@@ -109,5 +109,12 @@ public class PhotoTests{
         assertTrue(album2.getPhotos().contains(photo2));
         Exception exp1 = assertThrows(PhotoIsAlreadyExistsException.class, () -> {service.addPhotoToAlbum(photo1 , album1);});
         assertEquals("Photo is already exists!!!" , exp1.getMessage());
+        assertDoesNotThrow(() -> service.addPhotoToAlbum(photo2 , album1));
+        assertEquals(2 , photo2.getAlbums().size());
+        assertTrue(album1.getPhotos().contains(photo2));
+        Exception exp2 = assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.addPhotoToAlbum(photo3 , null);});
+        assertEquals("Photo is already exists!!!" , exp2.getMessage());
+        assertDoesNotThrow(() -> service.addPhotoToAlbum(photo1 , null));
+        assertTrue(photo1.getAlbums().contains(null));
     }
 }

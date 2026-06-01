@@ -11,6 +11,12 @@ public class PhotoAlbum{
         }
     }
 
+    private void validateAddToNull(Photo photo){
+        if(photo.getAlbums().contains(null)){
+            throw new PhotoIsAlreadyExistsException("Photo is already exists!!!");
+        }
+    }
+
     private void validateToAdd(Album album , Photo photo){
         if(album.getPhotos().contains(photo)){
             throw new PhotoIsAlreadyExistsException("Photo is already exists!!!");
@@ -24,6 +30,7 @@ public class PhotoAlbum{
             album.getPhotos().add(photo);
             album.updateTime();
         }
+        validateAddToNull(photo);
         photo.getAlbums().add(album);
     }
 
