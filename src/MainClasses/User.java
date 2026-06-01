@@ -15,9 +15,11 @@ public class User extends BaseClass<User>{
 
     private String password;
 
-    private Set<Photo> photos = new TreeSet<>(Comparator.comparing(Photo::getCreatedAt));
+    private Set<Photo> photos = new HashSet<>();
 
-    private Set<Album> albums = new TreeSet<>(Comparator.comparing(Album::getCreatedAt));
+    private Set<Album> albums = new HashSet<>();
+
+    private Theme theme = Theme.LIGHT;
 
     private static final int MIN_LENGTH = 8;
 
@@ -51,7 +53,7 @@ public class User extends BaseClass<User>{
         }
     }
 
-    public User(String userName, String password){
+    public User(String userName, String password, Theme theme){
         validateUserName(userName);
         this.userName = userName;
         validatePassword(password);
@@ -59,6 +61,7 @@ public class User extends BaseClass<User>{
         validateStrength(password);
         validateDoesNotContainUserName(password);
         this.password = password;
+        this.theme = theme;
     }
 
     public String getUserName(){
@@ -71,6 +74,10 @@ public class User extends BaseClass<User>{
 
     public Set<Album> getAlbums() {
         return albums;
+    }
+
+    public Theme getTheme(){
+        return theme;
     }
 
     public void setUserName(String userName) {
@@ -96,6 +103,10 @@ public class User extends BaseClass<User>{
 
     public void setAlbums(Set<Album> albums) {
         this.albums = albums;
+    }
+
+    public void setTheme(Theme theme){
+        this.theme = theme;
     }
 
     @Override

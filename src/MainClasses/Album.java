@@ -9,7 +9,7 @@ public class Album extends BaseClass<Album> {
 
     private String albumName;
 
-    private Set<Photo> photos = new TreeSet<>(Comparator.comparing(Photo::getCreatedAt));
+    private Set<Photo> photos = new HashSet<>();
 
     private Set<User> sharedWithUsers = new HashSet<>();
 

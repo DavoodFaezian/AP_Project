@@ -15,11 +15,11 @@ public class Photo extends BaseClass<Photo>{
 
     private Set<String> tags;
 
-    private Set<String> captions;
+    private String caption;
 
     private Boolean isFavorable;
 
-    private Set<Album> albums = new TreeSet<>(Comparator.comparing(Album::getLastModified));
+    private Set<Album> albums = new HashSet<>();
 
     private Boolean permissionForLeavingComment;
 
@@ -39,19 +39,19 @@ public class Photo extends BaseClass<Photo>{
         dateOfShare = LocalDateTime.now();
     }
 
-    public Photo(User owner , Set<String> captions, String photoName, Set<Comment> comments, Set<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment) {
+    public Photo(User owner , String caption, String photoName,Set<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment) {
         this.owner = owner;
-        this.captions = captions;
+        this.caption = caption;
         this.photoName = photoName;
-        this.comments = comments;
         this.tags = tags;
         this.isFavorable = isFavorable;
         this.permissionForLeavingComment = permissionForLeavingComment;
         PhotoAlbum service = new PhotoAlbum();
         service.addPhotoToAlbum(this , album);
-        this.owner.getPhotos().add(this);
+        owner.getPhotos().add(this);
         createdAt = LocalDateTime.now();
     }
+
 
     public Set<User> getSharedWithUsers() {
         return sharedWithUsers;
@@ -85,8 +85,8 @@ public class Photo extends BaseClass<Photo>{
         return tags;
     }
 
-    public Set<String> getCaptions() {
-        return captions;
+    public String getCaption() {
+        return caption;
     }
 
     public Boolean isFavorable() {
@@ -135,6 +135,7 @@ public class Photo extends BaseClass<Photo>{
     public void setComments(Set<Comment> comments) {
         validatePermission(this.permissionForLeavingComment);
         this.comments = comments;
+        updateTime();
     }
 
     public void setTags(Set<String> tags) {
@@ -142,8 +143,8 @@ public class Photo extends BaseClass<Photo>{
         updateTime();
     }
 
-    public void setCaptions(Set<String> captions) {
-        this.captions = captions;
+    public void setCaption(String caption) {
+        this.caption = caption;
         updateTime();
     }
 
@@ -182,20 +183,9 @@ public class Photo extends BaseClass<Photo>{
         updateTime();
     }
 
-    public void addCaption(String caption){
-        validateParameter(caption);
-        captions.add(caption);
-        updateTime();
-    }
-
-    public void removeCaption(String caption){
-        validateParameter(caption);
-        captions.remove(caption);
-        updateTime();
-    }
-
     public void addTag(String tag){
         validateParameter(tag);
+        validateMemberShip(tags , tag);
         tags.add(tag);
         updateTime();
     }
@@ -205,7 +195,6 @@ public class Photo extends BaseClass<Photo>{
         tags.remove(tag);
         updateTime();
     }
-
 
     @Override
     public boolean equals(Object o) {

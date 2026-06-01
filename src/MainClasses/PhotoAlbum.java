@@ -13,7 +13,7 @@ public class PhotoAlbum{
 
     private void validateToAdd(Album album , Photo photo){
         if(album.getPhotos().contains(photo)){
-            throw new PhotoIsAlreadyExistsException("Photo is Already exists!!!");
+            throw new PhotoIsAlreadyExistsException("Photo is already exists!!!");
         }
     }
 
@@ -41,6 +41,9 @@ public class PhotoAlbum{
             album.updateTime();
         }
         photo.getAlbums().remove(album);
+        if(photo.getAlbums().isEmpty()){
+            photo.getOwner().getPhotos().remove(photo);
+        }
     }
 
     public void transferPhoto(Photo photo , Album fromAlbum , Album toAlbum){

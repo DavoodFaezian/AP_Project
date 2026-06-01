@@ -1,4 +1,4 @@
 package MainClasses;
-enum Theme{
+public enum Theme{
     DARK , LIGHT
 }
