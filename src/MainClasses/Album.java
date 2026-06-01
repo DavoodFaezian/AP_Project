@@ -11,13 +11,17 @@ public class Album extends BaseClass<Album> {
 
     private String albumName;
 
-    private List<PhotoAlbum> photos = new ArrayList<>();
+    private List<Photo> photos = new ArrayList<>();
 
     private List<AlbumShare> sharedWithUsers = new ArrayList<>();
 
     private final LocalDateTime createdAt;
 
     private LocalDateTime lastModified;
+
+    void updateTime(){
+        lastModified = LocalDateTime.now();
+    }
 
     public Album(User owner, String albumName){
         this.owner = owner;
@@ -42,7 +46,7 @@ public class Album extends BaseClass<Album> {
         this.albumName = albumName;
     }
 
-    public List<PhotoAlbum> getPhotos() {
+    public List<Photo> getPhotos() {
         return photos;
     }
 

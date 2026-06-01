@@ -22,7 +22,9 @@ public class Photo extends BaseClass<Photo>{
 
     private Boolean isFavorable;
 
-    private List<PhotoAlbum> albums = new ArrayList<>();
+    private List<Album> albums = new ArrayList<>();
+
+    private final PhotoAlbum service = new PhotoAlbum();
 
     private Boolean permissionForLeavingComment;
 
@@ -32,10 +34,8 @@ public class Photo extends BaseClass<Photo>{
 
     private final LocalDateTime createdAt;
 
-    private LocalDateTime lastModified;
-
-    private void updateTime(){
-        lastModified = LocalDateTime.now();
+    void updateTime(){
+        LocalDateTime lastModified = LocalDateTime.now();
     }
 
     public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment) {
@@ -46,13 +46,7 @@ public class Photo extends BaseClass<Photo>{
         this.tags = tags;
         this.isFavorable = isFavorable;
         this.permissionForLeavingComment = permissionForLeavingComment;
-        if(album != null){
-            albums.add(new PhotoAlbum(this , album));
-            album.getPhotos().add(new PhotoAlbum(this , album));
-        }
-        else{
-            albums.add(new PhotoAlbum(this , null));
-        }
+        service.addPhotoToAlbum(this , album);
         this.owner.getPhotos().add(this);
         createdAt = LocalDateTime.now();
     }
@@ -85,17 +79,17 @@ public class Photo extends BaseClass<Photo>{
         return permissionForLeavingComment;
     }
 
-    public void setAlbums(List<PhotoAlbum> albums) {
+    public void setAlbums(List<Album> albums) {
         this.albums = albums;
     }
 
-    private void validateUser(User user){
-        if(user == null){
-            throw new NullPointerException("User is null!!!");
+    private <T> void validateParameter(T parameter){
+        if(parameter == null){
+            throw new NullPointerException("Parameter is null!!!");
         }
     }
 
-    public List<PhotoAlbum> getAlbums() {
+    public List<Album> getAlbums() {
         return albums;
     }
 
@@ -139,65 +133,15 @@ public class Photo extends BaseClass<Photo>{
         updateTime();
     }
 
-    private void validateForAdding(Album album){
-        if(albums.contains(new PhotoAlbum(this , album))){
-            throw new PhotoIsAlreadyExistsException("Photo is already exists!!!");
-        }
+    public void addComment(Comment comment){
+        validatePermission(this.permissionForLeavingComment);
+        validateParameter(comment);
+        this.comments.add(comment);
     }
 
-    public void addPhotoToAlbum(Album album){
-        validateForAdding(album);
-        albums.add(new PhotoAlbum(this , album));
-        if(album != null) {
-            album.getPhotos().add(new PhotoAlbum(this, album));
-            album.setLastModified(LocalDateTime.now());
-        }
-    }
-
-    private void validateForRemoving(Album album){
-        if(!albums.contains(new PhotoAlbum(this , album))){
-            throw new PhotoDoesNotExistException("Photo does not exist!!!");
-        }
-    }
-
-    public void removePhotoFromAlbum(Album album){
-        validateForRemoving(album);
-        albums.remove(new PhotoAlbum(this , album));
-        if (album != null) {
-            album.getPhotos().remove(new PhotoAlbum(this , album));
-            album.setLastModified(LocalDateTime.now());
-        }
-        if(albums.isEmpty()){
-            owner.getPhotos().remove(this);
-        }
-    }
-
-    public void validateForTransferring(Album fromAlbum , Album toAlbum){
-        if(!albums.contains(new PhotoAlbum(this , fromAlbum))){
-            throw new PhotoDoesNotExistException("Photo does not exist in original album!!!");
-        }if(albums.contains(new PhotoAlbum(this , toAlbum))){
-            throw new PhotoIsAlreadyExistsException("Photo is already exists in destination album!!!");
-        }
-    }
-
-    public void transferPhoto(Album fromAlbum , Album toAlbum){
-        validateForTransferring(fromAlbum , toAlbum);
-        albums.remove(new PhotoAlbum(this , fromAlbum));
-        albums.add(new PhotoAlbum(this , toAlbum));
-        if (fromAlbum != null && toAlbum != null) {
-            fromAlbum.getPhotos().remove(new PhotoAlbum(this , fromAlbum));
-            toAlbum.getPhotos().add(new PhotoAlbum(this , toAlbum));
-            fromAlbum.setLastModified(LocalDateTime.now());
-            toAlbum.setLastModified(LocalDateTime.now());
-        }
-        else if (fromAlbum != null) {
-            fromAlbum.getPhotos().remove(new PhotoAlbum(this, fromAlbum));
-            fromAlbum.setLastModified(LocalDateTime.now());
-        }
-        else if (toAlbum != null) {
-            toAlbum.getPhotos().add(new PhotoAlbum(this, toAlbum));
-            toAlbum.setLastModified(LocalDateTime.now());
-        }
+    public void removeComment(Comment comment){
+        validatePermission(this.permissionForLeavingComment);
+        this.comments.remove(comment);
     }
 
     private void updateDateOfShare(){
@@ -205,7 +149,7 @@ public class Photo extends BaseClass<Photo>{
     }
 
     public void sharePhoto(User user){
-        validateUser(user);
+        validateParameter(user);
         this.sharedWithUsers.add(new PhotoShare(this.owner , user , this));
         updateDateOfShare();
     }

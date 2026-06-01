@@ -47,7 +47,7 @@ public class CommentRepository {
         return commentFileManager.filterItems((comment)->comment.getPhoto().getId().equals(photoId));
     }
 
-    public List<Comment> getCommentsByOwnerd(String ownerId){
+    public List<Comment> getCommentsByOwnered(String ownerId){
         return commentFileManager.filterItems((comment)->comment.getOwner().getId().equals(ownerId));
     }
 
