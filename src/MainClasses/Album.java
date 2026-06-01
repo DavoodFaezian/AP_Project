@@ -1,9 +1,7 @@
 package MainClasses;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Album extends BaseClass<Album> {
 
@@ -11,9 +9,9 @@ public class Album extends BaseClass<Album> {
 
     private String albumName;
 
-    private List<Photo> photos = new ArrayList<>();
+    private Set<Photo> photos = new TreeSet<>(Comparator.comparing(Photo::getCreatedAt));
 
-    private List<AlbumShare> sharedWithUsers = new ArrayList<>();
+    private Set<User> sharedWithUsers = new HashSet<>();
 
     private final LocalDateTime createdAt;
 
@@ -30,12 +28,12 @@ public class Album extends BaseClass<Album> {
         createdAt = LocalDateTime.now();
     }
 
-    public User getOwner(){
+    public User getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner){
-        this.owner =owner;
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public String getAlbumName() {
@@ -46,8 +44,24 @@ public class Album extends BaseClass<Album> {
         this.albumName = albumName;
     }
 
-    public List<Photo> getPhotos() {
+    public Set<Photo> getPhotos() {
         return photos;
+    }
+
+    public void setPhotos(Set<Photo> photos) {
+        this.photos = photos;
+    }
+
+    public Set<User> getSharedWithUsers() {
+        return sharedWithUsers;
+    }
+
+    public void setSharedWithUsers(Set<User> sharedWithUsers) {
+        this.sharedWithUsers = sharedWithUsers;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public LocalDateTime getLastModified() {
@@ -56,10 +70,6 @@ public class Album extends BaseClass<Album> {
 
     public void setLastModified(LocalDateTime lastModified) {
         this.lastModified = lastModified;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 
     @Override

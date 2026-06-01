@@ -1,8 +1,6 @@
 package MainClasses;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class User extends BaseClass<User>{
 
@@ -10,9 +8,9 @@ public class User extends BaseClass<User>{
 
     private String password;
 
-    private List<Photo> photos = new ArrayList<>();
+    private Set<Photo> photos = new TreeSet<>(Comparator.comparing(Photo::getCreatedAt));
 
-    private List<Album> albums = new ArrayList<>();
+    private Set<Album> albums = new TreeSet<>(Comparator.comparing(Album::getCreatedAt));
 
     public User(String userName, String password){
         this.userName = userName;
@@ -27,7 +25,7 @@ public class User extends BaseClass<User>{
         return password;
     }
 
-    public List<Album> getAlbums() {
+    public Set<Album> getAlbums() {
         return albums;
     }
 
@@ -39,15 +37,15 @@ public class User extends BaseClass<User>{
         this.password = password;
     }
 
-    public List<Photo> getPhotos() {
+    public Set<Photo> getPhotos() {
         return photos;
     }
 
-    public void setPhotos(List<Photo> photos) {
+    public void setPhotos(Set<Photo> photos) {
         this.photos = photos;
     }
 
-    public void setAlbums(List<Album> albums) {
+    public void setAlbums(Set<Album> albums) {
         this.albums = albums;
     }
 

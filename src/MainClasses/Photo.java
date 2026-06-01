@@ -3,10 +3,7 @@ package MainClasses;
 import Exceptions.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Photo extends BaseClass<Photo>{
 
@@ -22,20 +19,24 @@ public class Photo extends BaseClass<Photo>{
 
     private Boolean isFavorable;
 
-    private List<Album> albums = new ArrayList<>();
-
-    private final PhotoAlbum service = new PhotoAlbum();
+    private Set<Album> albums = new TreeSet<>(Comparator.comparing(Album::getLastModified));
 
     private Boolean permissionForLeavingComment;
 
     private LocalDateTime dateOfShare;
 
-    private List<PhotoShare> sharedWithUsers = new ArrayList<>();
+    private LocalDateTime lastModified;
+
+    private Set<User> sharedWithUsers = new HashSet<>();
 
     private final LocalDateTime createdAt;
 
     void updateTime(){
-        LocalDateTime lastModified = LocalDateTime.now();
+        lastModified = LocalDateTime.now();
+    }
+
+    void updateDateOfShare(){
+        dateOfShare = LocalDateTime.now();
     }
 
     public Photo(User owner , List<String> captions, String photoName, List<Comment> comments, List<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment) {
@@ -46,9 +47,26 @@ public class Photo extends BaseClass<Photo>{
         this.tags = tags;
         this.isFavorable = isFavorable;
         this.permissionForLeavingComment = permissionForLeavingComment;
+        PhotoAlbum service = new PhotoAlbum();
         service.addPhotoToAlbum(this , album);
         this.owner.getPhotos().add(this);
         createdAt = LocalDateTime.now();
+    }
+
+    public Set<User> getSharedWithUsers() {
+        return sharedWithUsers;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getDateOfShare() {
+        return dateOfShare;
+    }
+
+    public LocalDateTime getLastModified() {
+        return lastModified;
     }
 
     public User getOwner(){
@@ -79,7 +97,7 @@ public class Photo extends BaseClass<Photo>{
         return permissionForLeavingComment;
     }
 
-    public void setAlbums(List<Album> albums) {
+    public void setAlbums(Set<Album> albums) {
         this.albums = albums;
     }
 
@@ -89,7 +107,7 @@ public class Photo extends BaseClass<Photo>{
         }
     }
 
-    public List<Album> getAlbums() {
+    public Set<Album> getAlbums() {
         return albums;
     }
 
@@ -133,6 +151,10 @@ public class Photo extends BaseClass<Photo>{
         updateTime();
     }
 
+    public void setSharedWithUsers(Set<User> sharedWithUsers) {
+        this.sharedWithUsers = sharedWithUsers;
+    }
+
     public void addComment(Comment comment){
         validatePermission(this.permissionForLeavingComment);
         validateParameter(comment);
@@ -144,15 +166,6 @@ public class Photo extends BaseClass<Photo>{
         this.comments.remove(comment);
     }
 
-    private void updateDateOfShare(){
-        dateOfShare = LocalDateTime.now();
-    }
-
-    public void sharePhoto(User user){
-        validateParameter(user);
-        this.sharedWithUsers.add(new PhotoShare(this.owner , user , this));
-        updateDateOfShare();
-    }
 
     @Override
     public boolean equals(Object o) {
