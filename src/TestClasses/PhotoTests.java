@@ -1,3 +1,4 @@
+import Exceptions.ItemDoesNotExistException;
 import Exceptions.PhotoIsAlreadyExistsException;
 import MainClasses.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -116,5 +117,20 @@ public class PhotoTests{
         assertEquals("Photo is already exists!!!" , exp2.getMessage());
         assertDoesNotThrow(() -> service.addPhotoToAlbum(photo1 , null));
         assertTrue(photo1.getAlbums().contains(null));
+    }
+
+    @Test
+    public void removeTest(){
+        Exception exp1 = assertThrows(ItemDoesNotExistException.class , () -> {service.removePhotoFromAlbum(photo4 , album5);});
+        assertEquals("Photo does not exist!!!" , exp1.getMessage());
+        assertTrue(album4.getPhotos().contains(photo4));
+        assertDoesNotThrow(() -> {service.removePhotoFromAlbum(photo4 , album4);});
+        assertFalse(photo4.getAlbums().contains(album4));
+        assertEquals(1 , album4.getPhotos().size());
+        assertThrows(ItemDoesNotExistException.class,() -> {service.removePhotoFromAlbum(photo5 , null);});
+        service.addPhotoToAlbum(photo5 , null);
+        assertDoesNotThrow(() -> {service.removePhotoFromAlbum(photo5 , null);});
+        assertDoesNotThrow(() -> {service.removePhotoFromAlbum(photo5 , album4);});
+        assertFalse(user2.getPhotos().contains(photo5));
     }
 }

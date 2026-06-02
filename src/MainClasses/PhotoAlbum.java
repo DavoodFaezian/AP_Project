@@ -28,14 +28,23 @@ public class PhotoAlbum{
         if (album != null) {
             validateToAdd(album , photo);
             album.getPhotos().add(photo);
+            photo.getAlbums().add(album);
             album.updateTime();
         }
-        validateAddToNull(photo);
-        photo.getAlbums().add(album);
+        else {
+            validateAddToNull(photo);
+            photo.getAlbums().add(null);
+        }
     }
 
     private void validateToRemove(Album album , Photo photo){
         if(!album.getPhotos().contains(photo)){
+            throw new ItemDoesNotExistException("Photo does not exist!!!");
+        }
+    }
+
+    private void validateRemoveFromNull(Photo photo){
+        if(!photo.getAlbums().contains(null)){
             throw new ItemDoesNotExistException("Photo does not exist!!!");
         }
     }
@@ -45,9 +54,13 @@ public class PhotoAlbum{
         if(album != null){
             validateToRemove(album , photo);
             album.getPhotos().remove(photo);
+            photo.getAlbums().remove(album);
             album.updateTime();
         }
-        photo.getAlbums().remove(album);
+        else {
+            validateRemoveFromNull(photo);
+            photo.getAlbums().remove(null);
+        }
         if(photo.getAlbums().isEmpty()){
             photo.getOwner().getPhotos().remove(photo);
         }
