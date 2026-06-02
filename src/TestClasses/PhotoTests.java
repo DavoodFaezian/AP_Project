@@ -48,8 +48,6 @@ public class PhotoTests{
 
     private PhotoAlbum service;
 
-    private PhotoShare shareService;
-
     @BeforeEach
     public void before(){
 
@@ -96,7 +94,6 @@ public class PhotoTests{
         photo6 = new Photo(user2 , null , "photo6" , tags6 , true , album6 , true);
 
         service = new PhotoAlbum();
-        shareService = new PhotoShare();
 
     }
 
@@ -132,5 +129,23 @@ public class PhotoTests{
         assertDoesNotThrow(() -> {service.removePhotoFromAlbum(photo5 , null);});
         assertDoesNotThrow(() -> {service.removePhotoFromAlbum(photo5 , album4);});
         assertFalse(user2.getPhotos().contains(photo5));
+    }
+
+    @Test
+    public void transferTest(){
+        Exception exp1 = assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo6 , album4 , album5);});
+        assertEquals("Photo does not exist!!!" , exp1.getMessage());
+        assertFalse(album5.getPhotos().contains(photo6));
+        assertFalse(photo6.getAlbums().contains(album5));
+        service.addPhotoToAlbum(photo6 , album5);
+        Exception exp2 = assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.transferPhoto(photo6 , album6 , album5);});
+        assertEquals("Photo is already exists!!!" , exp2.getMessage());
+        assertDoesNotThrow(() -> {service.transferPhoto(photo4 , album4 , album5);});
+        assertFalse(album4.getPhotos().contains(photo4));
+        assertFalse(photo4.getAlbums().contains(album4));
+        assertTrue(album5.getPhotos().contains(photo4));
+        assertTrue(photo4.getAlbums().contains(album5));
+        assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.transferPhoto(photo6 , album5 ,album5);});
+        assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.transferPhoto(photo6 , null , null);});
     }
 }
