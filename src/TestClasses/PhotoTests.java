@@ -160,4 +160,15 @@ public class PhotoTests{
         assertTrue(photo5.getAlbums().contains(null));
         assertFalse(album4.getPhotos().contains(photo5));
     }
+
+    @Test
+    public void shareTest(){
+        Exception exp = assertThrows(NullPointerException.class , () -> {service.sharePhoto(null , user1 , user2);});
+        assertEquals("Photo is null!!!" , exp.getMessage());
+        assertDoesNotThrow(() -> {service.sharePhoto(photo1 , user1 , user2);});
+        assertTrue(user2.getPhotos().contains(photo1));
+        assertEquals(4 , user2.getPhotos().size());
+        assertTrue(photo1.getSharedWithUsers().contains(user2));
+    }
+
 }

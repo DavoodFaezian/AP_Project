@@ -102,11 +102,12 @@ public class PhotoAlbum{
         }
     }
 
-    public void sharePhoto(Photo photo , User user){
-        validateUser(user);
+    public void sharePhoto(Photo photo , User sender , User receiver){
+        validateUser(sender);
+        validateUser(receiver);
         validatePhoto(photo);
-        photo.getSharedWithUsers().add(user);
-        user.getPhotos().add(photo);
+        photo.getSharedWithUsers().add(receiver);
+        receiver.getPhotos().add(photo);
         photo.updateDateOfShare();
     }
 }
