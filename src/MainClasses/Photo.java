@@ -11,7 +11,7 @@ public class Photo extends BaseClass<Photo>{
 
     private String photoName;
 
-    private Set<Comment> comments;
+    private Set<Comment> comments = new HashSet<>();
 
     private Set<String> tags;
 

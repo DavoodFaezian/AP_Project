@@ -1,3 +1,4 @@
+import Exceptions.AccessDeniedException;
 import Exceptions.ItemDoesNotExistException;
 import Exceptions.PhotoIsAlreadyExistsException;
 import MainClasses.*;
@@ -169,6 +170,17 @@ public class PhotoTests{
         assertTrue(user2.getPhotos().contains(photo1));
         assertEquals(4 , user2.getPhotos().size());
         assertTrue(photo1.getSharedWithUsers().contains(user2));
+    }
+
+    @Test
+    public void leaveCommentTest(){
+        Exception exp = assertThrows(AccessDeniedException.class , () -> {photo2.addComment(comment3);});
+        assertEquals("You can't leave comment for this photo!!!" , exp.getMessage());
+        assertDoesNotThrow(() -> {photo1.addComment(comment1);});
+        assertTrue(photo1.getComments().contains(comment1));
+        assertDoesNotThrow(() -> {photo4.addComment(comment4);});
+        assertDoesNotThrow(() -> photo4.addComment(comment5));
+        assertEquals(2 , photo4.getComments().size());
     }
 
 }
