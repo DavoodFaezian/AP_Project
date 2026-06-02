@@ -181,6 +181,15 @@ public class PhotoTests{
         assertDoesNotThrow(() -> {photo4.addComment(comment4);});
         assertDoesNotThrow(() -> photo4.addComment(comment5));
         assertEquals(2 , photo4.getComments().size());
+        assertThrows(AccessDeniedException.class , () -> {photo2.removeComment(comment4);});
+        assertDoesNotThrow(() -> {photo1.removeComment(comment1);});
+        assertEquals(0 , photo1.getComments().size());
+        assertDoesNotThrow(() -> {photo4.editComment(comment4 , "I changed my mind.");});
+        assertEquals("I changed my mind." , comment4.getScript());
     }
 
+    @Test
+    public void setTagsTest(){
+
+    }
 }

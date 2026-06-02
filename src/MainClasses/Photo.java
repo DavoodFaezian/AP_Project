@@ -107,12 +107,6 @@ public class Photo extends BaseClass<Photo>{
         }
     }
 
-    private <T> void validateMemberShip(Set<T> parameters , T parameter){
-        if(!parameters.contains(parameter)){
-            throw new ItemDoesNotExistException("Item wasn't found!!!");
-        }
-    }
-
     public Set<Album> getAlbums() {
         return albums;
     }
@@ -178,14 +172,12 @@ public class Photo extends BaseClass<Photo>{
     public void editComment(Comment comment , String script){
         validatePermission(this.permissionForLeavingComment);
         validateParameter(comment);
-        validateMemberShip(this.comments , comment);
         comment.setScript(script);
         updateTime();
     }
 
     public void addTag(String tag){
         validateParameter(tag);
-        validateMemberShip(tags , tag);
         tags.add(tag);
         updateTime();
     }
