@@ -81,9 +81,11 @@ public class PhotoAlbum{
             toAlbum.updateTime();
         } else if (fromAlbum != null){
             validateToRemove(fromAlbum , photo);
+            validateAddToNull(photo);
             fromAlbum.getPhotos().remove(photo);
             fromAlbum.updateTime();
         } else if(toAlbum != null){
+            validateRemoveFromNull(photo);
             validateToAdd(toAlbum , photo);
             toAlbum.getPhotos().add(photo);
             toAlbum.updateTime();

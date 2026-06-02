@@ -146,6 +146,18 @@ public class PhotoTests{
         assertTrue(album5.getPhotos().contains(photo4));
         assertTrue(photo4.getAlbums().contains(album5));
         assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.transferPhoto(photo6 , album5 ,album5);});
-        assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.transferPhoto(photo6 , null , null);});
+        assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo4 , album4 ,album4);});
+        assertThrows(NullPointerException.class , () -> {service.transferPhoto(photo6 , null , null);});
+        assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo5 , null , album4);});
+        service.addPhotoToAlbum(photo6 , null);
+        assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.transferPhoto(photo6 , album5 , null);});
+        assertDoesNotThrow(() -> {service.transferPhoto(photo6 , null , album4);});
+        assertFalse(photo6.getAlbums().contains(null));
+        assertTrue(photo6.getAlbums().contains(album4));
+        assertTrue(album4.getPhotos().contains(photo6));
+        assertDoesNotThrow(() -> {service.transferPhoto(photo5 , album4 , null);});
+        assertFalse(photo5.getAlbums().contains(album4));
+        assertTrue(photo5.getAlbums().contains(null));
+        assertFalse(album4.getPhotos().contains(photo5));
     }
 }
