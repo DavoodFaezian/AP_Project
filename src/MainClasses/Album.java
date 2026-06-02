@@ -1,5 +1,7 @@
 package MainClasses;
 
+import Exceptions.FieldIsEmptyException;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -71,7 +73,18 @@ public class Album extends BaseClass<Album> {
     public void setLastModified(LocalDateTime lastModified) {
         this.lastModified = lastModified;
     }
-
+    public void shareAlbum(User user){
+        sharedWithUsers.add(user);
+    }
+    public void undoShareAlbum(User user){
+        sharedWithUsers.remove(user);
+    }
+    public boolean validate(){
+        if(this.albumName.isEmpty()){
+            throw new FieldIsEmptyException("Album name shouldn't be empty.","albumName");
+        }
+        return true;
+    }
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
