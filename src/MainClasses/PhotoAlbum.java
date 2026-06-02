@@ -87,4 +87,7 @@ public class PhotoAlbum{
         photo.getAlbums().remove(fromAlbum);
         photo.getAlbums().add(toAlbum);
     }
+
+    public void sharePhoto(Photo photo, User user1, User user2) {
+    }
 }

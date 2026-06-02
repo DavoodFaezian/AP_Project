@@ -3,6 +3,7 @@ package FileManager;
 import MainClasses.BaseClass;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -18,11 +19,21 @@ public class GenericFileManager<T extends BaseClass> {
     private final File filePath;
 
     public GenericFileManager(String fileName) {
-        this.filePath = Paths.get(CURRENT_DIR+fileName).toFile();
+
+        this.filePath = Paths.get(CURRENT_DIR+"\\"+fileName).toFile();
+        if(!filePath.exists()){
+            try {
+                Files.createFile(filePath.toPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return;
+        }
         try(ObjectInputStream in = new ObjectInputStream(
                 new BufferedInputStream(
                         new FileInputStream(filePath)))){
-            for (int i = 0; i < in.readInt(); i++) {
+            int itemsCount = in.readInt();
+            for (int i = 0; i < itemsCount; i++) {
                 T item = (T) in.readObject();
                 list.add(item);
             }
@@ -38,11 +49,11 @@ public class GenericFileManager<T extends BaseClass> {
 
     }
     public void afterLoad(){
-        for (var item:list){
-            item.afterLoad();
-        }
+//        for (var item:list){
+//            item.afterLoad();
+//        }
     }
-    public void Save() {
+    public void save() {
 
         try(ObjectOutputStream out = new ObjectOutputStream(
                 new BufferedOutputStream(
