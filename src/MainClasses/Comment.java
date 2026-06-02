@@ -32,7 +32,7 @@ public class Comment extends BaseClass<Comment> {
 
     @Override
     public void afterLoad() {
-        
+
     }
 
     public String getId() {

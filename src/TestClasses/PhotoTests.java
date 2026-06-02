@@ -1,3 +1,4 @@
+import Exceptions.AccessDeniedException;
 import Exceptions.ItemDoesNotExistException;
 import Exceptions.PhotoIsAlreadyExistsException;
 import MainClasses.*;
@@ -48,8 +49,6 @@ public class PhotoTests{
 
     private PhotoAlbum service;
 
-    private PhotoShare shareService;
-
     @BeforeEach
     public void before(){
 
@@ -96,7 +95,6 @@ public class PhotoTests{
         photo6 = new Photo(user2 , null , "photo6" , tags6 , true , album6 , true);
 
         service = new PhotoAlbum();
-        shareService = new PhotoShare();
 
     }
 
@@ -132,5 +130,66 @@ public class PhotoTests{
         assertDoesNotThrow(() -> {service.removePhotoFromAlbum(photo5 , null);});
         assertDoesNotThrow(() -> {service.removePhotoFromAlbum(photo5 , album4);});
         assertFalse(user2.getPhotos().contains(photo5));
+    }
+
+    @Test
+    public void transferTest(){
+        Exception exp1 = assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo6 , album4 , album5);});
+        assertEquals("Photo does not exist!!!" , exp1.getMessage());
+        assertFalse(album5.getPhotos().contains(photo6));
+        assertFalse(photo6.getAlbums().contains(album5));
+        service.addPhotoToAlbum(photo6 , album5);
+        Exception exp2 = assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.transferPhoto(photo6 , album6 , album5);});
+        assertEquals("Photo is already exists!!!" , exp2.getMessage());
+        assertDoesNotThrow(() -> {service.transferPhoto(photo4 , album4 , album5);});
+        assertFalse(album4.getPhotos().contains(photo4));
+        assertFalse(photo4.getAlbums().contains(album4));
+        assertTrue(album5.getPhotos().contains(photo4));
+        assertTrue(photo4.getAlbums().contains(album5));
+        assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.transferPhoto(photo6 , album5 ,album5);});
+        assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo4 , album4 ,album4);});
+        assertThrows(NullPointerException.class , () -> {service.transferPhoto(photo6 , null , null);});
+        assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo5 , null , album4);});
+        service.addPhotoToAlbum(photo6 , null);
+        assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.transferPhoto(photo6 , album5 , null);});
+        assertDoesNotThrow(() -> {service.transferPhoto(photo6 , null , album4);});
+        assertFalse(photo6.getAlbums().contains(null));
+        assertTrue(photo6.getAlbums().contains(album4));
+        assertTrue(album4.getPhotos().contains(photo6));
+        assertDoesNotThrow(() -> {service.transferPhoto(photo5 , album4 , null);});
+        assertFalse(photo5.getAlbums().contains(album4));
+        assertTrue(photo5.getAlbums().contains(null));
+        assertFalse(album4.getPhotos().contains(photo5));
+    }
+
+    @Test
+    public void shareTest(){
+        Exception exp = assertThrows(NullPointerException.class , () -> {service.sharePhoto(null , user1 , user2);});
+        assertEquals("Photo is null!!!" , exp.getMessage());
+        assertDoesNotThrow(() -> {service.sharePhoto(photo1 , user1 , user2);});
+        assertTrue(user2.getPhotos().contains(photo1));
+        assertEquals(4 , user2.getPhotos().size());
+        assertTrue(photo1.getSharedWithUsers().contains(user2));
+    }
+
+    @Test
+    public void leaveCommentTest(){
+        Exception exp = assertThrows(AccessDeniedException.class , () -> {photo2.addComment(comment3);});
+        assertEquals("You can't leave comment for this photo!!!" , exp.getMessage());
+        assertDoesNotThrow(() -> {photo1.addComment(comment1);});
+        assertTrue(photo1.getComments().contains(comment1));
+        assertDoesNotThrow(() -> {photo4.addComment(comment4);});
+        assertDoesNotThrow(() -> photo4.addComment(comment5));
+        assertEquals(2 , photo4.getComments().size());
+        assertThrows(AccessDeniedException.class , () -> {photo2.removeComment(comment4);});
+        assertDoesNotThrow(() -> {photo1.removeComment(comment1);});
+        assertEquals(0 , photo1.getComments().size());
+        assertDoesNotThrow(() -> {photo4.editComment(comment4 , "I changed my mind.");});
+        assertEquals("I changed my mind." , comment4.getScript());
+    }
+
+    @Test
+    public void setTagsTest(){
+
     }
 }
