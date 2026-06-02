@@ -5,25 +5,25 @@ import Exceptions.PhotoIsAlreadyExistsException;
 
 public class PhotoAlbum{
 
-    private void validatePhoto(Photo photo){
+    private static void validatePhoto(Photo photo){
         if(photo == null){
             throw new NullPointerException("Photo is null!!!");
         }
     }
 
-    private void validateAddToNull(Photo photo){
+    private static void validateAddToNull(Photo photo){
         if(photo.getAlbums().contains(null)){
             throw new PhotoIsAlreadyExistsException("Photo is already exists!!!");
         }
     }
 
-    private void validateToAdd(Album album , Photo photo){
+    private static void validateToAdd(Album album , Photo photo){
         if(album.getPhotos().contains(photo)){
             throw new PhotoIsAlreadyExistsException("Photo is already exists!!!");
         }
     }
 
-    public void addPhotoToAlbum(Photo photo , Album album){
+    public static void addPhotoToAlbum(Photo photo , Album album){
         validatePhoto(photo);
         if (album != null) {
             validateToAdd(album , photo);
@@ -37,19 +37,19 @@ public class PhotoAlbum{
         }
     }
 
-    private void validateToRemove(Album album , Photo photo){
+    private static void validateToRemove(Album album , Photo photo){
         if(!album.getPhotos().contains(photo)){
             throw new ItemDoesNotExistException("Photo does not exist!!!");
         }
     }
 
-    private void validateRemoveFromNull(Photo photo){
+    private static void validateRemoveFromNull(Photo photo){
         if(!photo.getAlbums().contains(null)){
             throw new ItemDoesNotExistException("Photo does not exist!!!");
         }
     }
 
-    public void removePhotoFromAlbum(Photo photo , Album album){
+    public static void removePhotoFromAlbum(Photo photo , Album album){
         validatePhoto(photo);
         if(album != null){
             validateToRemove(album , photo);
@@ -66,7 +66,7 @@ public class PhotoAlbum{
         }
     }
 
-    public void transferPhoto(Photo photo , Album fromAlbum , Album toAlbum){
+    public static void transferPhoto(Photo photo , Album fromAlbum , Album toAlbum){
         validatePhoto(photo);
         if(fromAlbum != null && toAlbum != null){
             validateToAdd(toAlbum , photo);

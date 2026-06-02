@@ -18,11 +18,13 @@ public class CommentRepository {
     }
     public void addComment(Comment comment){
         if(comment.validateAddComment()){
+            comment.getPhoto().addComment(comment);
             commentFileManager.addToList(comment);
         }
     }
     public void removeComment(Comment comment){
         if(comment.validateRemoveComment()){
+            comment.getPhoto().removeComment(comment);
             commentFileManager.removeFromList(comment);
         }
     }

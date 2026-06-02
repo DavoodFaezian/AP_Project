@@ -83,4 +83,9 @@ public class Album extends BaseClass<Album> {
     public int hashCode() {
         return Objects.hashCode(getId());
     }
+
+    @Override
+    public void afterLoad() {
+
+    }
 }

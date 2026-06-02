@@ -22,11 +22,12 @@ public class GenericFileManager<T extends BaseClass> {
         try(ObjectInputStream in = new ObjectInputStream(
                 new BufferedInputStream(
                         new FileInputStream(filePath)))){
-            in.readUTF();
             for (int i = 0; i < in.readInt(); i++) {
                 T item = (T) in.readObject();
                 list.add(item);
             }
+            afterLoad();
+
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -36,17 +37,19 @@ public class GenericFileManager<T extends BaseClass> {
         }
 
     }
-
+    public void afterLoad(){
+        for (var item:list){
+            item.afterLoad();
+        }
+    }
     public void Save() {
 
         try(ObjectOutputStream out = new ObjectOutputStream(
                 new BufferedOutputStream(
                         new FileOutputStream(filePath)))) {
-            out.writeUTF(T.fileHeader);
             out.writeInt(list.size());
             for (T item : list) {
                 out.writeObject(item);
-                out.write('\n');
             }
 
             out.flush();
