@@ -66,10 +66,6 @@ public class PhotoAlbum{
         }
     }
 
-    private void invalidTransfer(){
-        throw new NullPointerException("Invalid Transfer!!!");
-    }
-
     public void transferPhoto(Photo photo , Album fromAlbum , Album toAlbum){
         validatePhoto(photo);
         if(fromAlbum != null && toAlbum != null){
@@ -81,33 +77,17 @@ public class PhotoAlbum{
             toAlbum.updateTime();
         } else if (fromAlbum != null){
             validateToRemove(fromAlbum , photo);
-            validateAddToNull(photo);
             fromAlbum.getPhotos().remove(photo);
             fromAlbum.updateTime();
         } else if(toAlbum != null){
-            validateRemoveFromNull(photo);
             validateToAdd(toAlbum , photo);
             toAlbum.getPhotos().add(photo);
             toAlbum.updateTime();
-        } else{
-                invalidTransfer();
         }
         photo.getAlbums().remove(fromAlbum);
         photo.getAlbums().add(toAlbum);
     }
 
-    private void validateUser(User user){
-        if(user == null){
-            throw new NullPointerException("User is null!!!");
-        }
-    }
-
-    public void sharePhoto(Photo photo , User sender , User receiver){
-        validateUser(sender);
-        validateUser(receiver);
-        validatePhoto(photo);
-        photo.getSharedWithUsers().add(receiver);
-        receiver.getPhotos().add(photo);
-        photo.updateDateOfShare();
+    public void sharePhoto(Photo photo, User user1, User user2) {
     }
 }

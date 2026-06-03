@@ -29,6 +29,11 @@ public class Admin extends BaseClass<Admin> {
         this.password = password;
     }
 
+    @Override
+    public void afterLoad() {
+
+    }
+
     public String getId(){
         return id;
     }

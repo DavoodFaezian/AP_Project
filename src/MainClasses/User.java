@@ -120,4 +120,9 @@ public class User extends BaseClass<User>{
     public int hashCode() {
         return Objects.hashCode(getUserName());
     }
+
+    @Override
+    public void afterLoad() {
+
+    }
 }

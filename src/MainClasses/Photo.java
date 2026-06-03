@@ -1,6 +1,7 @@
 package MainClasses;
 
 import Exceptions.*;
+import Repositories.CommentRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -198,5 +199,11 @@ public class Photo extends BaseClass<Photo>{
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
+    }
+
+    @Override
+    public void afterLoad() {
+        List<Comment> comments = CommentRepository.getInstance().getCommentsByPhotoId(this.id);
+        this.comments = new HashSet<>(comments);
     }
 }
