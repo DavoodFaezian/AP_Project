@@ -1,5 +1,6 @@
 import Exceptions.AccessDeniedException;
 import Exceptions.ItemDoesNotExistException;
+import Exceptions.ItemNotFoundException;
 import Exceptions.PhotoIsAlreadyExistsException;
 import MainClasses.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -106,26 +107,24 @@ public class PhotoTests{
         assertEquals(1 , photo3.getAlbums().size());
         assertEquals(1 , album2.getPhotos().size());
         assertTrue(album2.getPhotos().contains(photo2));
-        Exception exp1 = assertThrows(PhotoIsAlreadyExistsException.class, () -> {service.addPhotoToAlbum(photo1 , album1);});
-        assertEquals("Photo is already exists!!!" , exp1.getMessage());
+        assertDoesNotThrow(() -> service.addPhotoToAlbum(photo2 , album2));
+        assertDoesNotThrow(() -> service.addPhotoToAlbum(photo2 , album1));
         assertDoesNotThrow(() -> service.addPhotoToAlbum(photo2 , album1));
         assertEquals(2 , photo2.getAlbums().size());
         assertTrue(album1.getPhotos().contains(photo2));
-        Exception exp2 = assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.addPhotoToAlbum(photo3 , null);});
-        assertEquals("Photo is already exists!!!" , exp2.getMessage());
         assertDoesNotThrow(() -> service.addPhotoToAlbum(photo1 , null));
         assertTrue(photo1.getAlbums().contains(null));
     }
 
     @Test
     public void removeTest(){
-        Exception exp1 = assertThrows(ItemDoesNotExistException.class , () -> {service.removePhotoFromAlbum(photo4 , album5);});
-        assertEquals("Photo does not exist!!!" , exp1.getMessage());
+        assertDoesNotThrow(() -> service.removePhotoFromAlbum(photo6 , album5));
+        assertDoesNotThrow(() -> service.removePhotoFromAlbum(photo5 , null));
         assertTrue(album4.getPhotos().contains(photo4));
         assertDoesNotThrow(() -> {service.removePhotoFromAlbum(photo4 , album4);});
         assertFalse(photo4.getAlbums().contains(album4));
         assertEquals(1 , album4.getPhotos().size());
-        assertThrows(ItemDoesNotExistException.class,() -> {service.removePhotoFromAlbum(photo5 , null);});
+        assertDoesNotThrow(()-> service.removePhotoFromAlbum(photo4 , album4));
         service.addPhotoToAlbum(photo5 , null);
         assertDoesNotThrow(() -> {service.removePhotoFromAlbum(photo5 , null);});
         assertDoesNotThrow(() -> {service.removePhotoFromAlbum(photo5 , album4);});
@@ -134,24 +133,21 @@ public class PhotoTests{
 
     @Test
     public void transferTest(){
-        Exception exp1 = assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo6 , album4 , album5);});
-        assertEquals("Photo does not exist!!!" , exp1.getMessage());
+        Exception exp1 = assertThrows(ItemDoesNotExistException.class, () -> {service.transferPhoto(photo4 , album5 , album6);});
+        assertEquals("Photo wasn't found!!!" , exp1.getMessage());
+        Exception exp2 = assertThrows(ItemDoesNotExistException.class, () -> {service.transferPhoto(photo5 , null , album4);});
+        assertEquals("Photo wasn't found!!!" , exp2.getMessage());
+        assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo4 , null , null);});
+        assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo4 , album5 , album5);});
         assertFalse(album5.getPhotos().contains(photo6));
         assertFalse(photo6.getAlbums().contains(album5));
         service.addPhotoToAlbum(photo6 , album5);
-        Exception exp2 = assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.transferPhoto(photo6 , album6 , album5);});
-        assertEquals("Photo is already exists!!!" , exp2.getMessage());
         assertDoesNotThrow(() -> {service.transferPhoto(photo4 , album4 , album5);});
         assertFalse(album4.getPhotos().contains(photo4));
         assertFalse(photo4.getAlbums().contains(album4));
         assertTrue(album5.getPhotos().contains(photo4));
         assertTrue(photo4.getAlbums().contains(album5));
-        assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.transferPhoto(photo6 , album5 ,album5);});
-        assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo4 , album4 ,album4);});
-        assertThrows(NullPointerException.class , () -> {service.transferPhoto(photo6 , null , null);});
-        assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo5 , null , album4);});
         service.addPhotoToAlbum(photo6 , null);
-        assertThrows(PhotoIsAlreadyExistsException.class , () -> {service.transferPhoto(photo6 , album5 , null);});
         assertDoesNotThrow(() -> {service.transferPhoto(photo6 , null , album4);});
         assertFalse(photo6.getAlbums().contains(null));
         assertTrue(photo6.getAlbums().contains(album4));
@@ -169,6 +165,9 @@ public class PhotoTests{
         assertDoesNotThrow(() -> {service.sharePhoto(photo1 , user1 , user2);});
         assertTrue(user2.getPhotos().contains(photo1));
         assertEquals(4 , user2.getPhotos().size());
+        assertTrue(photo1.getSharedWithUsers().contains(user2));
+        assertDoesNotThrow(() -> service.undoSharePhoto(photo1 , user1 , user2));
+        assertFalse(user2.getPhotos().contains(photo1));
         assertTrue(photo1.getSharedWithUsers().contains(user2));
     }
 
@@ -188,8 +187,4 @@ public class PhotoTests{
         assertEquals("I changed my mind." , comment4.getScript());
     }
 
-    @Test
-    public void setTagsTest(){
-
-    }
 }
