@@ -58,6 +58,7 @@ public class Comment extends BaseClass<Comment> {
     public boolean validateRemoveComment() {
         return true;
     }
+
     public boolean validateAddComment(){
         if(script.isEmpty()){
             throw new FieldIsEmptyException("Comment should at least contain one character.","script");

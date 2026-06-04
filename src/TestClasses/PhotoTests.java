@@ -170,9 +170,11 @@ public class PhotoTests{
         Exception exp2 = assertThrows(NullPointerException.class , () -> {service.sharePhoto(null , user1 , user2);});
         assertEquals("Photo is null!!!" , exp2.getMessage());
         assertDoesNotThrow(() -> {service.sharePhoto(photo1 , user1 , user2);});
+        assertTrue(user2.getSharedPhotos().contains(photo1));
         assertTrue(photo1.getSharedWithUsers().contains(user2));
         assertDoesNotThrow(() -> service.undoSharePhoto(photo1 , user1 , user2));
         assertFalse(photo1.getSharedWithUsers().contains(user2));
+        assertFalse(user2.getSharedPhotos().contains(photo1));
     }
 
     @Test

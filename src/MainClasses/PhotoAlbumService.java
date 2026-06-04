@@ -102,6 +102,7 @@ public class PhotoAlbumService{
         validateUser(receiver);
         validatePhoto(photo);
         validateAccess(photo , sender);
+        receiver.getSharedPhotos().add(photo);
         photo.getSharedWithUsers().add(receiver);
         photo.updateDateOfShare();
     }
@@ -111,6 +112,7 @@ public class PhotoAlbumService{
         validateUser(receiver);
         validatePhoto(photo);
         validateAccess(photo , sender);
+        receiver.getSharedPhotos().remove(photo);
         photo.getSharedWithUsers().remove(receiver);
     }
 }

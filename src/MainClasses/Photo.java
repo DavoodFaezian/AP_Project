@@ -2,6 +2,7 @@ package MainClasses;
 
 import Exceptions.*;
 import Repositories.CommentRepository;
+import Repositories.PhotoRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;

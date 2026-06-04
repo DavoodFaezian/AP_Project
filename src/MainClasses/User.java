@@ -6,7 +6,6 @@ import Exceptions.PasswordNotLongEnoughException;
 import Exceptions.PasswordNotStrongException;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class User extends BaseClass<User>{
@@ -18,6 +17,8 @@ public class User extends BaseClass<User>{
     private Set<Photo> photos = new HashSet<>();
 
     private Set<Album> albums = new HashSet<>();
+
+    private Set<Photo> sharedPhotos = new HashSet<>();
 
     private Theme theme = Theme.LIGHT;
 
@@ -76,6 +77,10 @@ public class User extends BaseClass<User>{
         return albums;
     }
 
+    public Set<Photo> getSharedPhotos() {
+        return sharedPhotos;
+    }
+
     public Theme getTheme(){
         return theme;
     }
@@ -103,6 +108,10 @@ public class User extends BaseClass<User>{
 
     public void setAlbums(Set<Album> albums) {
         this.albums = albums;
+    }
+
+    public void setSharedPhotos(Set<Photo> sharedPhotos) {
+        this.sharedPhotos = sharedPhotos;
     }
 
     public void setTheme(Theme theme){
