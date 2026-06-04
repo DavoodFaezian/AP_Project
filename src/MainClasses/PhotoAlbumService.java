@@ -2,6 +2,7 @@ package MainClasses;
 
 import Exceptions.AccessDeniedException;
 import Exceptions.ItemDoesNotExistException;
+import Repositories.PhotoRepository;
 
 public class PhotoAlbumService{
 
@@ -28,6 +29,7 @@ public class PhotoAlbumService{
         else {
             photo.getAlbums().add(null);
         }
+        PhotoRepository.getInstance().savePhoto(photo);
     }
 
     public void removePhotoFromAlbum(Photo photo , Album album){
@@ -44,6 +46,7 @@ public class PhotoAlbumService{
         if(photo.getAlbums().isEmpty()){
             photo.getOwner().getPhotos().remove(photo);
         }
+        PhotoRepository.getInstance().savePhoto(photo);
     }
 
     public void validateToRemove(Album album , Photo photo){
@@ -83,6 +86,7 @@ public class PhotoAlbumService{
         }
         photo.getAlbums().remove(fromAlbum);
         photo.getAlbums().add(toAlbum);
+        PhotoRepository.getInstance().savePhoto(photo);
     }
 
     private void validateUser(User user){
@@ -105,6 +109,7 @@ public class PhotoAlbumService{
         receiver.getSharedPhotos().add(photo);
         photo.getSharedWithUsers().add(receiver);
         photo.updateDateOfShare();
+        PhotoRepository.getInstance().savePhoto(photo);
     }
 
     public void undoSharePhoto(Photo photo , User sender , User receiver){
@@ -114,5 +119,6 @@ public class PhotoAlbumService{
         validateAccess(photo , sender);
         receiver.getSharedPhotos().remove(photo);
         photo.getSharedWithUsers().remove(receiver);
+        PhotoRepository.getInstance().savePhoto(photo);
     }
 }

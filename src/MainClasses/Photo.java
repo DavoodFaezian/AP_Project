@@ -120,6 +120,7 @@ public class Photo extends BaseClass<Photo>{
     public void setPhotoName(String photoName) {
         this.photoName = photoName;
         updateTime();
+        PhotoRepository.getInstance().savePhoto(this);
     }
 
     private void validatePermission(boolean permissionForLeavingComment){
@@ -142,16 +143,19 @@ public class Photo extends BaseClass<Photo>{
     public void setCaption(String caption) {
         this.caption = caption;
         updateTime();
+        PhotoRepository.getInstance().savePhoto(this);
     }
 
     public void setFavorable(Boolean favorable) {
         isFavorable = favorable;
         updateTime();
+        PhotoRepository.getInstance().savePhoto(this);
     }
 
     public void setPermissionForLeavingComment(Boolean permissionForLeavingComment) {
         this.permissionForLeavingComment = permissionForLeavingComment;
         updateTime();
+        PhotoRepository.getInstance().savePhoto(this);
     }
 
     public void setSharedWithUsers(Set<User> sharedWithUsers) {
@@ -163,12 +167,14 @@ public class Photo extends BaseClass<Photo>{
         validateParameter(comment);
         this.comments.add(comment);
         updateTime();
+        PhotoRepository.getInstance().savePhoto(this);
     }
 
     public void removeComment(Comment comment){
         validatePermission(this.permissionForLeavingComment);
         this.comments.remove(comment);
         updateTime();
+        PhotoRepository.getInstance().savePhoto(this);
     }
 
     public void editComment(Comment comment , String script){
@@ -176,18 +182,21 @@ public class Photo extends BaseClass<Photo>{
         validateParameter(comment);
         comment.setScript(script);
         updateTime();
+        PhotoRepository.getInstance().savePhoto(this);
     }
 
     public void addTag(String tag){
         validateParameter(tag);
         tags.add(tag);
         updateTime();
+        PhotoRepository.getInstance().savePhoto(this);
     }
 
     public void removeTag(String tag){
         validateParameter(tag);
         tags.remove(tag);
         updateTime();
+        PhotoRepository.getInstance().savePhoto(this);
     }
 
     @Override
