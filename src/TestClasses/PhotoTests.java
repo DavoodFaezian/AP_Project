@@ -1,7 +1,5 @@
 import Exceptions.AccessDeniedException;
 import Exceptions.ItemDoesNotExistException;
-import Exceptions.ItemNotFoundException;
-import Exceptions.PhotoIsAlreadyExistsException;
 import MainClasses.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +46,7 @@ public class PhotoTests{
     private Photo photo5;
     private Photo photo6;
 
-    private PhotoAlbum service;
+    private PhotoAlbumService service;
 
     @BeforeEach
     public void before(){
@@ -95,7 +93,7 @@ public class PhotoTests{
         photo5 = new Photo(user2 , caption5 , "photo5" , null , true , album4 , false);
         photo6 = new Photo(user2 , null , "photo6" , tags6 , true , album6 , true);
 
-        service = new PhotoAlbum();
+        service = new PhotoAlbumService();
 
     }
 
@@ -106,6 +104,8 @@ public class PhotoTests{
         assertEquals(1 , photo1.getAlbums().size());
         assertEquals(1 , photo3.getAlbums().size());
         assertEquals(1 , album2.getPhotos().size());
+        Exception exp = assertThrows(AccessDeniedException.class , () -> service.addPhotoToAlbum(photo4 , album1));
+        assertEquals("Access Denied!!!" , exp.getMessage());
         assertTrue(album2.getPhotos().contains(photo2));
         assertDoesNotThrow(() -> service.addPhotoToAlbum(photo2 , album2));
         assertDoesNotThrow(() -> service.addPhotoToAlbum(photo2 , album1));
@@ -118,6 +118,8 @@ public class PhotoTests{
 
     @Test
     public void removeTest(){
+        Exception exp = assertThrows(AccessDeniedException.class , () -> service.removePhotoFromAlbum(photo1 , album4));
+        assertEquals("Access Denied!!!" , exp.getMessage());
         assertDoesNotThrow(() -> service.removePhotoFromAlbum(photo6 , album5));
         assertDoesNotThrow(() -> service.removePhotoFromAlbum(photo5 , null));
         assertTrue(album4.getPhotos().contains(photo4));
@@ -137,6 +139,9 @@ public class PhotoTests{
         assertEquals("Photo wasn't found!!!" , exp1.getMessage());
         Exception exp2 = assertThrows(ItemDoesNotExistException.class, () -> {service.transferPhoto(photo5 , null , album4);});
         assertEquals("Photo wasn't found!!!" , exp2.getMessage());
+        Exception exp3 = assertThrows(AccessDeniedException.class , () -> service.transferPhoto(photo1 , album4 , album2));
+        assertEquals("Access Denied!!!" , exp3.getMessage());
+        assertThrows(AccessDeniedException.class , () -> service.transferPhoto(photo1 , album1 , album5));
         assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo4 , null , null);});
         assertThrows(ItemDoesNotExistException.class , () -> {service.transferPhoto(photo4 , album5 , album5);});
         assertFalse(album5.getPhotos().contains(photo6));
@@ -160,15 +165,14 @@ public class PhotoTests{
 
     @Test
     public void shareTest(){
-        Exception exp = assertThrows(NullPointerException.class , () -> {service.sharePhoto(null , user1 , user2);});
-        assertEquals("Photo is null!!!" , exp.getMessage());
+        Exception exp1 = assertThrows(AccessDeniedException.class , () -> service.sharePhoto(photo5 , user1 , user2));
+        assertEquals("Access Denied!!!" , exp1.getMessage());
+        Exception exp2 = assertThrows(NullPointerException.class , () -> {service.sharePhoto(null , user1 , user2);});
+        assertEquals("Photo is null!!!" , exp2.getMessage());
         assertDoesNotThrow(() -> {service.sharePhoto(photo1 , user1 , user2);});
-        assertTrue(user2.getPhotos().contains(photo1));
-        assertEquals(4 , user2.getPhotos().size());
         assertTrue(photo1.getSharedWithUsers().contains(user2));
         assertDoesNotThrow(() -> service.undoSharePhoto(photo1 , user1 , user2));
-        assertFalse(user2.getPhotos().contains(photo1));
-        assertTrue(photo1.getSharedWithUsers().contains(user2));
+        assertFalse(photo1.getSharedWithUsers().contains(user2));
     }
 
     @Test

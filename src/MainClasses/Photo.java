@@ -47,7 +47,7 @@ public class Photo extends BaseClass<Photo>{
         this.tags = tags;
         this.isFavorable = isFavorable;
         this.permissionForLeavingComment = permissionForLeavingComment;
-        PhotoAlbum service = new PhotoAlbum();
+        PhotoAlbumService service = new PhotoAlbumService();
         service.addPhotoToAlbum(this , album);
         owner.getPhotos().add(this);
         createdAt = LocalDateTime.now();

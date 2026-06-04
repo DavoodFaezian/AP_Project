@@ -1,6 +1,3 @@
-import Exceptions.AccessDeniedException;
-import Exceptions.ItemDoesNotExistException;
-import Exceptions.PhotoIsAlreadyExistsException;
 import FileManager.GenericFileManager;
 import MainClasses.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -55,7 +51,7 @@ public class GenericFileManagerTests{
     private Photo photo5;
     private Photo photo6;
 
-    private PhotoAlbum service;
+    private PhotoAlbumService service;
 
     @BeforeEach
     public void before(){
@@ -102,7 +98,7 @@ public class GenericFileManagerTests{
         photo5 = new Photo(user2 , caption5 , "photo5" , null , true , album4 , false);
         photo6 = new Photo(user2 , null , "photo6" , tags6 , true , album6 , true);
 
-        service = new PhotoAlbum();
+        service = new PhotoAlbumService();
 
     }
 
