@@ -48,6 +48,9 @@ public class UserRepository {
         return user.get();
     }
 
+    public boolean isUserIdValid(String userId){
+        return userFileManager.exists(u->u.getId().equals(userId));
+    }
     public List<User> getAllUsers() {
         return userFileManager.getAll();
     }
