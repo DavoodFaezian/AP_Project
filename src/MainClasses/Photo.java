@@ -4,8 +4,6 @@ import Exceptions.*;
 import Repositories.AlbumRepository;
 import Repositories.CommentRepository;
 import Services.PhotoAlbumService;
-import ViewModels.Photo.CreatePhotoViewModel;
-import ViewModels.Photo.EditPhotoViewModel;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -29,7 +27,9 @@ public class Photo extends BaseClass<Photo>{
     private LocalDateTime dateOfShare;
 
     private LocalDateTime lastModified;
+
     private Set<String> commentIds = new HashSet<>();
+
     private Set<String> albumIds = new HashSet<>();
 
     private Set<String> sharedUserIds = new HashSet<>();
@@ -62,6 +62,7 @@ public class Photo extends BaseClass<Photo>{
 
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
+        updateTime();
     }
 
     public String getPhotoName() {
@@ -70,6 +71,7 @@ public class Photo extends BaseClass<Photo>{
 
     public void setPhotoName(String photoName) {
         this.photoName = photoName;
+        updateTime();
     }
 
     public Set<String> getTags() {
@@ -78,6 +80,7 @@ public class Photo extends BaseClass<Photo>{
 
     public void setTags(Set<String> tags) {
         this.tags = tags;
+        updateTime();
     }
 
     public String getCaption() {
@@ -86,6 +89,7 @@ public class Photo extends BaseClass<Photo>{
 
     public void setCaption(String caption) {
         this.caption = caption;
+        updateTime();
     }
 
     public Boolean getFavorable() {
@@ -110,6 +114,7 @@ public class Photo extends BaseClass<Photo>{
 
     public void setCommentIds(Set<String> commentIds) {
         this.commentIds = commentIds;
+        updateTime();
     }
 
     public Set<String> getPhotoAlbumIds() {
@@ -118,6 +123,7 @@ public class Photo extends BaseClass<Photo>{
 
     public void setPhotoAlbumIds(Set<String> photoAlbumIds) {
         this.albumIds = photoAlbumIds;
+        updateTime();
     }
 
     public Set<String> getSharedUserIds() {
@@ -126,7 +132,9 @@ public class Photo extends BaseClass<Photo>{
 
     public void setSharedUserIds(Set<String> sharedUserIds) {
         this.sharedUserIds = sharedUserIds;
+        updateTime();
     }
+
     public void validate(){
         if(photoName.isEmpty()){
             throw new FieldIsEmptyException("Photo name cannot be empty.", "photoName");

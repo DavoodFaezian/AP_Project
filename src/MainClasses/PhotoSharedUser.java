@@ -4,7 +4,9 @@ import Repositories.PhotoRepository;
 import Repositories.UserRepository;
 
 public class PhotoSharedUser extends BaseClass<PhotoSharedUser>{
+
     private String photoId;
+
     private String sharedUserId;
 
     public PhotoSharedUser(String photoId, String sharedUserId) {

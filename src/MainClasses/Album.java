@@ -1,6 +1,5 @@
 package MainClasses;
 
-import ViewModels.Album.EditAlbumViewModel;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -12,6 +11,7 @@ public class Album extends BaseClass<Album> {
     private String albumName;
 
     private Set<String> photoIds = new HashSet<>();
+
     private LocalDateTime lastModified;
 
     private final LocalDateTime createdAt;
@@ -34,6 +34,7 @@ public class Album extends BaseClass<Album> {
 
     public void setPhotoIds(Set<String> photoAlbumIds) {
         this.photoIds = photoAlbumIds;
+        updateTime();
     }
 
     public String getAlbumName() {
@@ -42,6 +43,7 @@ public class Album extends BaseClass<Album> {
 
     public void setAlbumName(String albumName) {
         this.albumName = albumName;
+        updateTime();
     }
 
     public String getOwnerId() {
@@ -50,12 +52,9 @@ public class Album extends BaseClass<Album> {
 
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
-    }
-
-    public void editAlbum(EditAlbumViewModel editAlbum){
-        this.albumName = editAlbum.getAlbumName();
         updateTime();
     }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
