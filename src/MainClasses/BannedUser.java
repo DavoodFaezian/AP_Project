@@ -39,8 +39,5 @@ public class BannedUser extends BaseClass<BannedUser> {
         isUserAllowToShare = userAllowToShare;
     }
 
-    @Override
-    public void afterLoad() {
 
-    }
 }

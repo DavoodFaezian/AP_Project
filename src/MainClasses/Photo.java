@@ -1,19 +1,21 @@
 package MainClasses;
 
 import Exceptions.*;
+import Repositories.AlbumRepository;
 import Repositories.CommentRepository;
-import Repositories.PhotoRepository;
+import Services.PhotoAlbumService;
+import ViewModels.Photo.CreatePhotoViewModel;
+import ViewModels.Photo.EditPhotoViewModel;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Photo extends BaseClass<Photo>{
 
-    private User owner;
+    private String ownerId;
 
     private String photoName;
-
-    private Set<Comment> comments = new HashSet<>();
 
     private Set<String> tags;
 
@@ -21,15 +23,16 @@ public class Photo extends BaseClass<Photo>{
 
     private Boolean isFavorable;
 
-    private Set<Album> albums = new HashSet<>();
 
     private Boolean permissionForLeavingComment;
 
     private LocalDateTime dateOfShare;
 
     private LocalDateTime lastModified;
+    private Set<String > commentIds = new HashSet<>();
+    private Set<String> albumIds = new HashSet<>();
 
-    private Set<User> sharedWithUsers = new HashSet<>();
+    private Set<String> sharedUserIds = new HashSet<>();
 
     private final LocalDateTime createdAt;
 
@@ -37,166 +40,92 @@ public class Photo extends BaseClass<Photo>{
         lastModified = LocalDateTime.now();
     }
 
-    void updateDateOfShare(){
+    public void updateDateOfShare(){
         dateOfShare = LocalDateTime.now();
     }
 
-    public Photo(User owner , String caption, String photoName,Set<String> tags, Boolean isFavorable, Album album, Boolean permissionForLeavingComment) {
-        this.owner = owner;
-        this.caption = caption;
+    public Photo(String ownerId, String photoName, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment, Set<String> albumIds) {
+        this.ownerId = ownerId;
         this.photoName = photoName;
         this.tags = tags;
+        this.caption = caption;
         this.isFavorable = isFavorable;
         this.permissionForLeavingComment = permissionForLeavingComment;
-        PhotoAlbumService service = new PhotoAlbumService();
-        service.addPhotoToAlbum(this , album);
-        owner.getPhotos().add(this);
+        this.albumIds = albumIds;
         createdAt = LocalDateTime.now();
+
     }
 
-
-    public Set<User> getSharedWithUsers() {
-        return sharedWithUsers;
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getDateOfShare() {
-        return dateOfShare;
-    }
-
-    public LocalDateTime getLastModified() {
-        return lastModified;
-    }
-
-    public User getOwner(){
-        return owner;
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getPhotoName() {
         return photoName;
     }
 
-    public Set<Comment> getComments() {
-        return comments;
+    public void setPhotoName(String photoName) {
+        this.photoName = photoName;
     }
 
     public Set<String> getTags() {
         return tags;
     }
 
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+
     public String getCaption() {
         return caption;
     }
 
-    public Boolean isFavorable() {
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public Boolean getFavorable() {
         return isFavorable;
+    }
+
+    public void setFavorable(Boolean favorable) {
+        isFavorable = favorable;
     }
 
     public Boolean isPermissionForLeavingComment() {
         return permissionForLeavingComment;
     }
 
-    public void setAlbums(Set<Album> albums) {
-        this.albums = albums;
-    }
-
-    private <T> void validateParameter(T parameter){
-        if(parameter == null){
-            throw new NullPointerException("Parameter is null!!!");
-        }
-    }
-
-    public Set<Album> getAlbums() {
-        return albums;
-    }
-
-    public void setOwner(User owner){
-        this.owner = owner;
-    }
-
-    public void setPhotoName(String photoName) {
-        this.photoName = photoName;
-        updateTime();
-        PhotoRepository.getInstance().savePhoto(this);
-    }
-
-    private void validatePermission(boolean permissionForLeavingComment){
-         if(!permissionForLeavingComment){
-             throw new AccessDeniedException("You can't leave comment for this photo!!!");
-         }
-    }
-
-    public void setComments(Set<Comment> comments) {
-        validatePermission(this.permissionForLeavingComment);
-        this.comments = comments;
-        updateTime();
-    }
-
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
-        updateTime();
-    }
-
-    public void setCaption(String caption) {
-        this.caption = caption;
-        updateTime();
-        PhotoRepository.getInstance().savePhoto(this);
-    }
-
-    public void setFavorable(Boolean favorable) {
-        isFavorable = favorable;
-        updateTime();
-        PhotoRepository.getInstance().savePhoto(this);
-    }
-
     public void setPermissionForLeavingComment(Boolean permissionForLeavingComment) {
         this.permissionForLeavingComment = permissionForLeavingComment;
-        updateTime();
-        PhotoRepository.getInstance().savePhoto(this);
     }
 
-    public void setSharedWithUsers(Set<User> sharedWithUsers) {
-        this.sharedWithUsers = sharedWithUsers;
+    public Set<String> getCommentIds() {
+        return commentIds;
     }
 
-    public void addComment(Comment comment){
-        validatePermission(this.permissionForLeavingComment);
-        validateParameter(comment);
-        this.comments.add(comment);
-        updateTime();
-        PhotoRepository.getInstance().savePhoto(this);
+    public void setCommentIds(Set<String> commentIds) {
+        this.commentIds = commentIds;
     }
 
-    public void removeComment(Comment comment){
-        validatePermission(this.permissionForLeavingComment);
-        this.comments.remove(comment);
-        updateTime();
-        PhotoRepository.getInstance().savePhoto(this);
+    public Set<String> getPhotoAlbumIds() {
+        return albumIds;
     }
 
-    public void editComment(Comment comment , String script){
-        validatePermission(this.permissionForLeavingComment);
-        validateParameter(comment);
-        comment.setScript(script);
-        updateTime();
-        PhotoRepository.getInstance().savePhoto(this);
+    public void setPhotoAlbumIds(Set<String> photoAlbumIds) {
+        this.albumIds = photoAlbumIds;
     }
 
-    public void addTag(String tag){
-        validateParameter(tag);
-        tags.add(tag);
-        updateTime();
-        PhotoRepository.getInstance().savePhoto(this);
+    public Set<String> getSharedUserIds() {
+        return sharedUserIds;
     }
 
-    public void removeTag(String tag){
-        validateParameter(tag);
-        tags.remove(tag);
-        updateTime();
-        PhotoRepository.getInstance().savePhoto(this);
+    public void setSharedUserIds(Set<String> sharedUserIds) {
+        this.sharedUserIds = sharedUserIds;
     }
 
     @Override
@@ -211,9 +140,5 @@ public class Photo extends BaseClass<Photo>{
         return Objects.hashCode(getId());
     }
 
-    @Override
-    public void afterLoad() {
-        List<Comment> comments = CommentRepository.getInstance().getCommentsByPhotoId(this.id);
-        this.comments = new HashSet<>(comments);
-    }
+
 }

@@ -14,11 +14,11 @@ public class User extends BaseClass<User>{
 
     private String password;
 
-    private Set<Photo> photos = new HashSet<>();
+    private Set<String> photoIds = new HashSet<>();
 
-    private Set<Album> albums = new HashSet<>();
+    private Set<String> albumIds = new HashSet<>();
 
-    private Set<Photo> sharedPhotos = new HashSet<>();
+    private Set<String> sharedPhotoIds = new HashSet<>();
 
     private Theme theme = Theme.LIGHT;
 
@@ -73,13 +73,6 @@ public class User extends BaseClass<User>{
         return password;
     }
 
-    public Set<Album> getAlbums() {
-        return albums;
-    }
-
-    public Set<Photo> getSharedPhotos() {
-        return sharedPhotos;
-    }
 
     public Theme getTheme(){
         return theme;
@@ -98,20 +91,28 @@ public class User extends BaseClass<User>{
         this.password = password;
     }
 
-    public Set<Photo> getPhotos() {
-        return photos;
+    public Set<String> getPhotoIds() {
+        return photoIds;
     }
 
-    public void setPhotos(Set<Photo> photos) {
-        this.photos = photos;
+    public void setPhotoIds(Set<String> photoIds) {
+        this.photoIds = photoIds;
     }
 
-    public void setAlbums(Set<Album> albums) {
-        this.albums = albums;
+    public Set<String> getAlbumIds() {
+        return albumIds;
     }
 
-    public void setSharedPhotos(Set<Photo> sharedPhotos) {
-        this.sharedPhotos = sharedPhotos;
+    public void setAlbumIds(Set<String> albumIds) {
+        this.albumIds = albumIds;
+    }
+
+    public Set<String> getSharedPhotoIds() {
+        return sharedPhotoIds;
+    }
+
+    public void setSharedPhotoIds(Set<String> sharedPhotoIds) {
+        this.sharedPhotoIds = sharedPhotoIds;
     }
 
     public void setTheme(Theme theme){
@@ -127,11 +128,10 @@ public class User extends BaseClass<User>{
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getUserName());
+        return Objects.hash(userName, password);
     }
 
-    @Override
-    public void afterLoad() {
 
+    public void validateRemoveUser() {
     }
 }

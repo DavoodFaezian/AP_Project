@@ -1,41 +1,39 @@
 package MainClasses;
 
-import Exceptions.FieldIsEmptyException;
+import ViewModels.Album.EditAlbumViewModel;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 public class Album extends BaseClass<Album> {
 
-    private User owner;
+    private String ownerId;
 
     private String albumName;
 
-    private Set<Photo> photos = new HashSet<>();
-
-    private Set<User> sharedWithUsers = new HashSet<>();
+    private Set<String> photoIds = new HashSet<>();
+    private LocalDateTime lastModified;
 
     private final LocalDateTime createdAt;
 
-    private LocalDateTime lastModified;
-
-    void updateTime(){
-        lastModified = LocalDateTime.now();
-    }
-
-    public Album(User owner, String albumName){
-        this.owner = owner;
+    public Album(String ownerId, String albumName, Set<String> photoIds) {
+        this.ownerId = ownerId;
         this.albumName = albumName;
-        this.owner.getAlbums().add(this);
+        this.photoIds = photoIds;
         createdAt = LocalDateTime.now();
     }
 
-    public User getOwner() {
-        return owner;
+
+    public void updateTime(){
+        lastModified = LocalDateTime.now();
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public Set<String> getPhotoIds() {
+        return photoIds;
+    }
+
+    public void setPhotoIds(Set<String> photoAlbumIds) {
+        this.photoIds = photoAlbumIds;
     }
 
     public String getAlbumName() {
@@ -46,44 +44,17 @@ public class Album extends BaseClass<Album> {
         this.albumName = albumName;
     }
 
-    public Set<Photo> getPhotos() {
-        return photos;
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    public void setPhotos(Set<Photo> photos) {
-        this.photos = photos;
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
-    public Set<User> getSharedWithUsers() {
-        return sharedWithUsers;
-    }
-
-    public void setSharedWithUsers(Set<User> sharedWithUsers) {
-        this.sharedWithUsers = sharedWithUsers;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(LocalDateTime lastModified) {
-        this.lastModified = lastModified;
-    }
-    public void shareAlbum(User user){
-        sharedWithUsers.add(user);
-    }
-    public void undoShareAlbum(User user){
-        sharedWithUsers.remove(user);
-    }
-    public boolean validate(){
-        if(this.albumName.isEmpty()){
-            throw new FieldIsEmptyException("Album name shouldn't be empty.","albumName");
-        }
-        return true;
+    public void editAlbum(EditAlbumViewModel editAlbum){
+        this.albumName = editAlbum.getAlbumName();
+        updateTime();
     }
     @Override
     public boolean equals(Object o) {
@@ -97,8 +68,8 @@ public class Album extends BaseClass<Album> {
         return Objects.hashCode(getId());
     }
 
-    @Override
-    public void afterLoad() {
+
+    public void validateRemoveAlbum() {
 
     }
 }
