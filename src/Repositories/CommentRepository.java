@@ -1,5 +1,6 @@
 package Repositories;
 
+import Exceptions.CommentNotAllowedException;
 import Exceptions.ItemNotFoundException;
 import Exceptions.ItemNotFoundException;
 import FileManager.GenericFileManager;
@@ -22,6 +23,12 @@ public class CommentRepository {
     }
 
     public void addComment(Comment comment){
+        comment.validate();
+        if(!PhotoRepository.getInstance().findPhotoById(comment.getPhotoId()).isPermissionForLeavingComment()){
+            throw new CommentNotAllowedException("You cannot comment on this photo");
+        }
+
+
         commentFileManager.addToList(comment);
         commentFileManager.save();
     }

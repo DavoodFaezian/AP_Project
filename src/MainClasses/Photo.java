@@ -29,7 +29,7 @@ public class Photo extends BaseClass<Photo>{
     private LocalDateTime dateOfShare;
 
     private LocalDateTime lastModified;
-    private Set<String > commentIds = new HashSet<>();
+    private Set<String> commentIds = new HashSet<>();
     private Set<String> albumIds = new HashSet<>();
 
     private Set<String> sharedUserIds = new HashSet<>();
@@ -127,6 +127,15 @@ public class Photo extends BaseClass<Photo>{
     public void setSharedUserIds(Set<String> sharedUserIds) {
         this.sharedUserIds = sharedUserIds;
     }
+    public void validate(){
+        if(photoName.isEmpty()){
+            throw new FieldIsEmptyException("Photo name cannot be empty.", "photoName");
+        }
+        if(caption.isEmpty()){
+            throw new FieldIsEmptyException("Caption cannot be empty.", "caption");
+        }
+    }
+    
 
     @Override
     public boolean equals(Object o) {

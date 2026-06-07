@@ -42,15 +42,16 @@ public class Comment extends BaseClass<Comment> {
         this.photoId = photoId;
     }
 
-    public boolean validateEditComment(String script) {
-        if(script.isEmpty()){
-           throw new FieldIsEmptyException("Comment should at least contain one character.","script");
-        }
-        return true;
-    }
 
-    public void editComment(String script) {
-        validateEditComment(script);
+    public void validate() {
+        if(script.isEmpty()){
+            throw new FieldIsEmptyException("","script");
+        }
+    }
+    public void editComment(String script){
+        if(script.isEmpty()){
+            throw new FieldIsEmptyException("","script");
+        }
         this.script = script;
     }
 }
