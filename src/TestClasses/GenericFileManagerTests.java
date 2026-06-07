@@ -1,5 +1,6 @@
 import FileManager.GenericFileManager;
 import MainClasses.*;
+import Services.PhotoAlbumService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -69,11 +70,11 @@ public class GenericFileManagerTests{
         String script3 = "I think I'm gonna be hungry.";
         String script4 = "Wow, this city is so crowded.";
         String script5 = "I love abstract art.";
-        comment1 = new Comment(user2 , script1 , "12",photo1);
-        comment2 = new Comment(user2 , script2 , "123",photo1);
-        comment3 = new Comment(user2 , script3 , "1234",photo2);
-        comment4 = new Comment(user1 , script4 , "12345",photo3);
-        comment5 = new Comment(user1 , script5 , "123456",photo4);
+        comment1 = new Comment(user2 , script1 , photo1);
+        comment2 = new Comment(user2 , script2 , photo1);
+        comment3 = new Comment(user2 , script3 , photo2);
+        comment4 = new Comment(user1 , script4 , photo3);
+        comment5 = new Comment(user1 , script5 , photo4);
 
         tags1.add("nature");
         tags1.add("beautiful");

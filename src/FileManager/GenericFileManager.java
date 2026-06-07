@@ -37,7 +37,6 @@ public class GenericFileManager<T extends BaseClass> {
                 T item = (T) in.readObject();
                 list.add(item);
             }
-            afterLoad();
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -47,11 +46,6 @@ public class GenericFileManager<T extends BaseClass> {
             throw new RuntimeException("An error was caught trying to read the file.");
         }
 
-    }
-    public void afterLoad(){
-//        for (var item:list){
-//            item.afterLoad();
-//        }
     }
     public void save() {
 
@@ -98,7 +92,7 @@ public class GenericFileManager<T extends BaseClass> {
         }
         return Optional.empty();
     }
-    public void EditItem(T item){
+    public void editItem(T item){
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getId().equals(item.getId())) {
                 list.set(i, item);
@@ -109,5 +103,12 @@ public class GenericFileManager<T extends BaseClass> {
     }
     public ArrayList<T> getAll() {
         return list;
+    }
+
+    public void removeFromListIf(Predicate<T> ...conditions) {
+        var allConditions = Arrays.stream(conditions)
+                                .reduce(Predicate::and)
+                                .orElse(c->false);
+        list.removeIf(allConditions);
     }
 }
