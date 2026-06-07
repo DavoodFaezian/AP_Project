@@ -10,23 +10,30 @@ import java.util.Optional;
 public class PhotoRepository {
 
     private final GenericFileManager<Photo> photoFileManager;
-
-    private PhotoRepository(){
-        this.photoFileManager = new GenericFileManager<Photo>(Photo.fileName);
+    private static final PhotoRepository instance = new PhotoRepository();
+    private PhotoRepository() {
+        this.photoFileManager = new GenericFileManager<>("photo.txt");
+    }
+    public static PhotoRepository getInstance() {
+        return instance;
     }
 
-    public static PhotoRepository getInstance(){
-        return new PhotoRepository();
+    public void addPhoto(Photo photo) {
+        photoFileManager.addToList(photo);
+        photoFileManager.save();
     }
 
-    public void savePhoto(Photo photo){
-        for(int i = 0 ; i < photoFileManager.getAll().size() ; i++){
-            if(photo.equals(photoFileManager.getAll().get(i))){
-                photoFileManager.getAll().set(i , photo);
-                break;
-            }
-        }
+    public void removePhoto(Photo photo) {
+        photoFileManager.removeFromList(photo);
+        photoFileManager.save();
     }
+
+    public void removePhoto(String id) {
+        Photo remove = findPhotoById(id);
+        removePhoto(remove);
+    }
+
+
 
     public Photo findPhotoById(String id){
         Optional<Photo> photo = photoFileManager.findItemById(id);
@@ -36,8 +43,11 @@ public class PhotoRepository {
         return photo.get();
     }
 
-    public List<Photo> findPhotoByOwner(String ownerId){
-        return photoFileManager.filterItems(p -> p.getOwner().getId().equals(ownerId));
-    }
 
+    public List<Photo> findPhotoByOwner(String ownerId){
+        return photoFileManager.filterItems(p -> p.getOwnerId().equals(ownerId));
+    }
+    public void save(){
+        photoFileManager.save();
+    }
 }

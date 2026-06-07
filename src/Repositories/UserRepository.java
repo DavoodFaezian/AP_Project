@@ -4,52 +4,51 @@ import Exceptions.ItemNotFoundException;
 import FileManager.GenericFileManager;
 import MainClasses.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public class UserRepository {
 
     private final GenericFileManager<User> userFileManager;
+    private static final UserRepository instance = new UserRepository();
 
-    private UserRepository(){
-        this.userFileManager = new GenericFileManager<>(User.fileName);
+    private UserRepository() {
+        this.userFileManager = new GenericFileManager<>("user.txt");
     }
 
-    public UserRepository getInstance(){
+    public static UserRepository getInstance() {
         return new UserRepository();
     }
 
-    public void saveUser(User user){
-        for(int i = 0 ; i < userFileManager.getAll().size(); i++){
-            if(user.getId().equals(userFileManager.getAll().get(i).getId())){
-                userFileManager.getAll().set(i , user);
-                break;
-            }
-        }
+    public void addUser(User user) {
+         userFileManager.addToList(user);
+         userFileManager.save();
     }
 
-    public User findUserById(String id){
+    public void removeUser(User user) {
+        user.validateRemoveUser();
+        userFileManager.removeFromList(user);
+        userFileManager.save();
+
+    }
+
+    public void removeUser(String id) {
+        User remove = findUserById(id);
+        removeUser(remove);
+    }
+
+
+    public User findUserById(String id) {
         Optional<User> user = userFileManager.findItemById(id);
-        if(user.isEmpty()){
-            throw new ItemNotFoundException("User was not found!!!" , id);
+
+        if (user.isEmpty()) {
+            throw new ItemNotFoundException("user", id);
         }
+
         return user.get();
     }
 
-    public User findUserByUserName(String userName){
-        for(int i = 0 ; i < userFileManager.getAll().size() ; i++){
-            if(userName.equals(userFileManager.getAll().get(i).getUserName())){
-                return userFileManager.getAll().get(i);
-            }
-        }
-        throw new ItemNotFoundException("User was not found!!!" , "user");
-    }
-
-    public User findUserByPassword(String password){
-        for(int i = 0 ; i < userFileManager.getAll().size() ; i++){
-            if(password.equals(userFileManager.getAll().get(i).getPassword())){
-                return userFileManager.getAll().get(i);
-            }
-        }
-        throw new ItemNotFoundException("User was not found!!!" , "user");
+    public List<User> getAllUsers() {
+        return userFileManager.getAll();
     }
 }

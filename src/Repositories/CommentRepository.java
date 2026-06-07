@@ -11,27 +11,24 @@ import java.util.Optional;
 public class CommentRepository {
 
     private final GenericFileManager<Comment> commentFileManager;
+    private static final CommentRepository instance = new CommentRepository();
 
     private CommentRepository(){
-        this.commentFileManager = new GenericFileManager<>(Comment.fileName);
+        this.commentFileManager = new GenericFileManager<>("comment.txt");
     }
 
     public static CommentRepository getInstance(){
-        return new CommentRepository();
+        return instance;
     }
 
     public void addComment(Comment comment){
-        if(comment.validateAddComment()){
-            comment.getPhoto().addComment(comment);
-            commentFileManager.addToList(comment);
-        }
+        commentFileManager.addToList(comment);
+        commentFileManager.save();
     }
 
     public void removeComment(Comment comment){
-        if(comment.validateRemoveComment()){
-            comment.getPhoto().removeComment(comment);
-            commentFileManager.removeFromList(comment);
-        }
+       commentFileManager.removeFromList(comment);
+       commentFileManager.save();
     }
 
     public void removeComment(String id){
@@ -39,12 +36,6 @@ public class CommentRepository {
         removeComment(remove);
     }
 
-    public void editComment(String id,String script){
-        Optional<Comment> edit = commentFileManager.findItemById(id);
-        if(edit.get().validateEditComment(script)){
-            edit.get().setScript(script);
-        }
-    }
 
     public Comment findCommentById(String id){
         Optional<Comment> comment = commentFileManager.findItemById(id);
@@ -55,11 +46,11 @@ public class CommentRepository {
     }
 
     public List<Comment> getCommentsByPhotoId(String photoId){
-        return commentFileManager.filterItems((comment)->comment.getPhoto().getId().equals(photoId));
+        return commentFileManager.filterItems((comment)->comment.getPhotoId().equals(photoId));
     }
 
     public List<Comment> getCommentsByOwner(String ownerId){
-        return commentFileManager.filterItems((comment)->comment.getOwner().getId().equals(ownerId));
+        return commentFileManager.filterItems((comment)->comment.getOwnerId().equals(ownerId));
     }
 
 }
