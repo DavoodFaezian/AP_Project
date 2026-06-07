@@ -64,7 +64,26 @@ public class User extends BaseClass<User>{
         this.password = password;
         this.theme = theme;
     }
+    public void addPhotoToSharedPhotos(String photoId){
+        sharedPhotoIds.add(photoId);
+    }
+    public void removePhotoFromSharedPhotos(String photoId){
+        sharedPhotoIds.remove(photoId);
+    }
 
+    public void addPhotoToPhotos(String photoId){
+        photoIds.add(photoId);
+    }
+    public void removePhotoFromPhotos(String photoId){
+        photoIds.remove(photoId);
+    }
+
+    public void addAlbumToAlbums(String albumId){
+        albumIds.add(albumId);
+    }
+    public void removeAlbumFromAlbums(String albumId){
+        albumIds.remove(albumId);
+    }
     public String getUserName(){
         return userName;
     }

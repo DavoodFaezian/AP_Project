@@ -55,6 +55,25 @@ public class Photo extends BaseClass<Photo>{
         createdAt = LocalDateTime.now();
 
     }
+    public void addComment(String commentId){
+        commentIds.add(commentId);
+    }
+    public void removeComment(String commentId){
+        commentIds.remove(commentId);
+    }
+    public void addAlbum(String albumId){
+        albumIds.add(albumId);
+    }
+    public void removeAlbum(String albumId){
+        albumIds.remove(albumId);
+    }
+    public void addSharedUser(String userId){
+        sharedUserIds.add(userId);
+    }
+    public void removeSharedUser(String userId){
+        sharedUserIds.remove(userId);
+    }
+
 
     public String getOwnerId() {
         return ownerId;
@@ -143,7 +162,7 @@ public class Photo extends BaseClass<Photo>{
             throw new FieldIsEmptyException("Caption cannot be empty.", "caption");
         }
     }
-    
+
 
     @Override
     public boolean equals(Object o) {

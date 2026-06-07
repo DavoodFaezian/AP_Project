@@ -1,46 +1,55 @@
 package Services;
 
 import Exceptions.AccessDeniedException;
+import Exceptions.ItemDoesNotExistException;
 import MainClasses.Photo;
 import MainClasses.User;
 import Repositories.PhotoRepository;
 import Repositories.UserRepository;
 
-public class UserSharedPhotoService{
+import java.util.ArrayList;
 
-    private void validateAccess(String photoId , String senderId){
+public class UserSharedPhotoService {
+
+    private void validateAccess(String photoId , String userId){
+        if(!PhotoRepository.getInstance().findPhotoById(photoId).getOwnerId().equals(userId)){
+            throw new AccessDeniedException("Access Denied!!!");
+        }
+    }
+    private void validateSharePhotoInputs(String photoId, String senderId, String receiverId){
+        if(!(UserRepository.getInstance().isUserIdValid(senderId)&&
+                UserRepository.getInstance().isUserIdValid(receiverId)&&
+                PhotoRepository.getInstance().isPhotoIdValid(photoId))){
+            throw new ItemDoesNotExistException("Photo, sender or receiver doesn't exist");
+
+        }
+    }
+
+    public void sharePhoto(String photoId, String senderId, String receiverId){
         Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
-        if(!photo.getOwnerId().equals(senderId)){
-            throw new AccessDeniedException("Access denied!!!");
-        }
+        User receiver = UserRepository.getInstance().findUserById(receiverId);
+        validateSharePhotoInputs(photoId,senderId,receiverId);
+        validateAccess(photoId, senderId);
+        photo.updateDateOfShare();
+
     }
 
-    private void validate(String item){
-        if(item.isEmpty()){
-            throw new NullPointerException("Parameter is null!!!");
-        }
-    }
-
-    public void sharePhoto(String photoId , String senderId , String receiverId){
-        validate(photoId);
-        validate(senderId);
-        validate(receiverId);
+    public void undoSharePhoto(String photoId, String senderId, String receiverId){
+        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
+        User receiver = UserRepository.getInstance().findUserById(receiverId);
+        validateSharePhotoInputs(photoId,senderId,receiverId);
         validateAccess(photoId , senderId);
-        User receiver = UserRepository.getInstance().findUserById(receiverId);
-        receiver.getSharedPhotoIds().add(photoId);
-        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
-        photo.getSharedUserIds().add(receiverId);
-        photo.updateDateOfShare();
+        receiver.removePhotoFromPhotos(photoId);
+        photo.removeSharedUser(receiverId);
     }
 
-    public void undoSharePhoto(String photoId , String senderId , String receiverId){
-        validate(photoId);
-        validate(senderId);
-        validate(receiverId);
-        User receiver = UserRepository.getInstance().findUserById(receiverId);
-        receiver.getSharedPhotoIds().remove(photoId);
-        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
-        photo.getSharedUserIds().remove(receiverId);
-        photo.updateDateOfShare();
+    public ArrayList<Photo> getPhotosByUserId(String userId){
+        User user = UserRepository.getInstance().findUserById(userId);
+        ArrayList<Photo> res = new ArrayList<>();
+        for(var photoId : user.getPhotoIds()){
+            res.add(PhotoRepository.getInstance().findPhotoById(photoId));
+        }
+        return res;
+
     }
 }

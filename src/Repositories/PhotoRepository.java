@@ -47,6 +47,9 @@ public class PhotoRepository {
     public List<Photo> findPhotoByOwner(String ownerId){
         return photoFileManager.filterItems(p -> p.getOwnerId().equals(ownerId));
     }
+    public boolean isPhotoIdValid(String photoId){
+        return photoFileManager.exists(p->p.getId().equals(photoId));
+    }
     public void save(){
         photoFileManager.save();
     }

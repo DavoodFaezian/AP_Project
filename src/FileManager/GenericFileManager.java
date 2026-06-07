@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -103,6 +104,13 @@ public class GenericFileManager<T extends BaseClass> {
     }
     public ArrayList<T> getAll() {
         return list;
+    }
+    public boolean exists(Predicate<T> ...conditions){
+        Predicate<T> allConditions = Arrays.stream(conditions)
+                .reduce(Predicate::and)
+                .orElse(c->false);
+        return list.stream()
+                .anyMatch(allConditions);
     }
 
     public void removeFromListIf(Predicate<T> ...conditions) {
