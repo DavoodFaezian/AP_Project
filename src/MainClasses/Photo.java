@@ -44,16 +44,13 @@ public class Photo extends BaseClass<Photo>{
         dateOfShare = LocalDateTime.now();
     }
 
-    public Photo(String ownerId, String photoName, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment, Set<String> albumIds) {
+    public Photo(String ownerId, String photoName, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment) {
         this.ownerId = ownerId;
         this.photoName = photoName;
         this.tags = tags;
         this.caption = caption;
         this.isFavorable = isFavorable;
         this.permissionForLeavingComment = permissionForLeavingComment;
-        if(albumIds != null){
-            this.albumIds = albumIds;
-        }
         createdAt = LocalDateTime.now();
 
     }

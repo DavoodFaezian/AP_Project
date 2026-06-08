@@ -70,12 +70,12 @@ public class CommentRepositoryTests {
 
 
 
-        album1 = new Album(user1.getId() , "album1" , null);
-        album2 = new Album(user1.getId() , "album2" , null);
-        album3 = new Album(user1.getId(), "album3" , null);
-        album4 = new Album(user2.getId(), "album4" , null);
-        album5 = new Album(user2.getId(), "album5" , null);
-        album6 = new Album(user2.getId(), "album6" , null);
+        album1 = new Album(user1.getId() , "album1");
+        album2 = new Album(user1.getId() , "album2");
+        album3 = new Album(user1.getId(), "album3");
+        album4 = new Album(user2.getId(), "album4");
+        album5 = new Album(user2.getId(), "album5");
+        album6 = new Album(user2.getId(), "album6");
         HashSet<String> albumIds1 = new HashSet<>();
         albumIds1.add(album1.getId());
         albumIds1.add(album2.getId());
@@ -86,12 +86,12 @@ public class CommentRepositoryTests {
         albumIds1.add(album5.getId());
         albumIds1.add(album6.getId());
 
-        photo1 = new Photo(user1.getId(),"photo1" , null , caption1 , true , true , null);
-        photo2 = new Photo(user1.getId(),"photo1" , null , caption2 , true , true , null);
-        photo3 = new Photo(user1.getId(), "photo3" , null , caption3 , true , true , null);
-        photo4 = new Photo(user2.getId(), "photo4" , null , caption4 , true , true , null);
-        photo5 = new Photo(user2.getId(), "photo5" , null , caption5 , false , true , null);
-        photo6 = new Photo(user2.getId(), "photo6" , null , null , true , false , null);
+        photo1 = new Photo(user1.getId(),"photo1" , null , caption1 , true , true);
+        photo2 = new Photo(user1.getId(),"photo1" , null , caption2 , true , true);
+        photo3 = new Photo(user1.getId(), "photo3" , null , caption3 , true , true);
+        photo4 = new Photo(user2.getId(), "photo4" , null , caption4 , true , true);
+        photo5 = new Photo(user2.getId(), "photo5" , null , caption5 , false , true);
+        photo6 = new Photo(user2.getId(), "photo6" , null , null , true , false);
 
         comment1 = new Comment(user1.getId(), script1,photo1.getId());
         comment2 = new Comment(user1.getId(), script2,photo2.getId());
