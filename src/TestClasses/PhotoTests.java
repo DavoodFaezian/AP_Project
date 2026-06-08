@@ -80,38 +80,19 @@ public class PhotoTests{
         tags6.add("art");
         tags6.add("abstract");
 
-        Set<String> photoIds1 = new HashSet<>();
-        photoIds1.add(photo1.getId());
-        var photoIds2 = new HashSet<String>();
-        photoIds2.add(photo2.getId());
-        var photoIds4 = new HashSet<String>();
-        photoIds4.add(photo4.getId());
-        var photoIds6 = new HashSet<String>();
-        photoIds6.add(photo6.getId());
+        album1 = new Album(user1.getId() , "album1");
+        album2 = new Album(user1.getId() , "album2");
+        album3 = new Album(user1.getId() , "album3");
+        album4 = new Album(user2.getId() , "album4");
+        album5 = new Album(user2.getId() , "album5");
+        album6 = new Album(user2.getId() , "album6");
 
-        album1 = new Album(user1.getId() , "album1" ,  photoIds1);
-        album2 = new Album(user1.getId() , "album2" , photoIds2);
-        album3 = new Album(user1.getId() , "album3" , null);
-        album4 = new Album(user2.getId() , "album4" , photoIds4);
-        album5 = new Album(user2.getId() , "album5" , null);
-        album6 = new Album(user2.getId() , "album6" , photoIds6);
-
-        var albumIds1 = new HashSet<String>();
-        albumIds1.add(album1.getId());
-        var albumIds2 = new HashSet<String>();
-        albumIds2.add(album2.getId());
-        var albumIds3 = new HashSet<String>();
-        albumIds3.add(album3.getId());
-        var albumIds4 = new HashSet<String>();
-        albumIds4.add(album4.getId());
-
-
-        photo1 = new Photo(user1.getId() ,"photo1" , tags1 , caption1 , true , true , albumIds1);
-        photo2 = new Photo(user1.getId() ,"photo1" , tags2 , caption2 , true , false , albumIds2);
-        photo3 = new Photo(user1.getId() , "photo3" , tags3 , caption3 , true , true , albumIds3);
-        photo4 = new Photo(user2.getId() ,"photo4" , tags4 , caption4 , true , true , albumIds4);
-        photo5 = new Photo(user2.getId() , "photo5" , null , caption5 , false , false , null);
-        photo6 = new Photo(user2.getId() ,"photo6" , tags6 , null , true , true , null);
+        photo1 = new Photo(user1.getId() ,"photo1" , tags1 , caption1 , true , true);
+        photo2 = new Photo(user1.getId() ,"photo1" , tags2 , caption2 , true , false);
+        photo3 = new Photo(user1.getId() , "photo3" , tags3 , caption3 , true , true);
+        photo4 = new Photo(user2.getId() ,"photo4" , tags4 , caption4 , true , true);
+        photo5 = new Photo(user2.getId() , "photo5" , null , caption5 , false , false);
+        photo6 = new Photo(user2.getId() ,"photo6" , tags6 , null , true , true);
 
 
 
@@ -121,6 +102,6 @@ public class PhotoTests{
 
     @Test
     public void addTest(){
-        assertEquals(3 , user1.getPhotoIds().size());
+        assertThrows(AccessDeniedException.class , () -> service.addPhotoToAlbum(photo1.getId(), album4.getId()));
     }
 }
