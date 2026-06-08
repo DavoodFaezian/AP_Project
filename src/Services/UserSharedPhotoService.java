@@ -30,6 +30,8 @@ public class UserSharedPhotoService {
         User receiver = UserRepository.getInstance().findUserById(receiverId);
         validateSharePhotoInputs(photoId,senderId,receiverId);
         validateAccess(photoId, senderId);
+        receiver.getSharedPhotoIds().add(photoId);
+        photo.getSharedUserIds().add(receiverId);
         photo.updateDateOfShare();
 
     }
@@ -39,7 +41,7 @@ public class UserSharedPhotoService {
         User receiver = UserRepository.getInstance().findUserById(receiverId);
         validateSharePhotoInputs(photoId,senderId,receiverId);
         validateAccess(photoId , senderId);
-        receiver.removePhotoFromPhotos(photoId);
+        receiver.getSharedPhotoIds().remove(photoId);
         photo.removeSharedUser(receiverId);
     }
 

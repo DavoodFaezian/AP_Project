@@ -53,13 +53,13 @@ public class PhotoAlbumService{
     public void validateToRemove(String photoId , String albumId){
         Album album = AlbumRepository.getInstance().findAlbumById(albumId);
         if(!album.getPhotoIds().contains(photoId)){
-            throw new ItemNotFoundException("Item was not found!!!" , "photo");
+            throw new ItemNotFoundException("photo" , photoId);
         }
     }
 
     private void validateToRemoveFromNull(Photo photo){
         if(!photo.getPhotoAlbumIds().contains("")){
-            throw new ItemNotFoundException("Item was not found!!!" , "photo");
+            throw new ItemNotFoundException("photo" , photo.getId());
         }
     }
 
@@ -70,7 +70,7 @@ public class PhotoAlbumService{
             Album toAlbum = AlbumRepository.getInstance().findAlbumById(toAlbumId);
             validateAccess(photo , fromAlbum);
             validateAccess(photo , toAlbum);
-            validateToRemove(fromAlbumId , photoId);
+            validateToRemove(photoId , fromAlbumId);
             fromAlbum.getPhotoIds().remove(photoId);
             fromAlbum.updateTime();
             toAlbum.getPhotoIds().add(photoId);
@@ -78,7 +78,8 @@ public class PhotoAlbumService{
         } else if (!fromAlbumId.isEmpty()){
             Album fromAlbum = AlbumRepository.getInstance().findAlbumById(fromAlbumId);
             validateAccess(photo , fromAlbum);
-            validateToRemove(fromAlbumId , photoId);
+            validateToRemove(photoId , fromAlbumId);
+            fromAlbum.getPhotoIds().remove(photoId);
             fromAlbum.updateTime();
         } else if (!toAlbumId.isEmpty()){
             validateToRemoveFromNull(photo);
