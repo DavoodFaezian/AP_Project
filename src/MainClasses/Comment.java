@@ -44,13 +44,16 @@ public class Comment extends BaseClass<Comment> {
 
 
     public void validate() {
+        if(script == null){
+            throw new NullPointerException("script is required.");
+        }
         if(script.isEmpty()){
-            throw new FieldIsEmptyException("","script");
+            throw new FieldIsEmptyException("script cannot be empty!","script");
         }
     }
     public void editComment(String script){
         if(script.isEmpty()){
-            throw new FieldIsEmptyException("","script");
+            throw new FieldIsEmptyException("script cannot be empty!","script");
         }
         this.script = script;
     }

@@ -16,10 +16,12 @@ public class Album extends BaseClass<Album> {
 
     private final LocalDateTime createdAt;
 
-    public Album(String ownerId, String albumName, Set<String> photoIds) {
+    public Album(String ownerId, String albumName) {
         this.ownerId = ownerId;
         this.albumName = albumName;
-        this.photoIds = photoIds;
+        if(photoIds!=null){
+            this.photoIds = photoIds;
+        }
         createdAt = LocalDateTime.now();
     }
 
