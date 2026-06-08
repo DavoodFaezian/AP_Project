@@ -5,6 +5,7 @@ import Exceptions.ItemNotFoundException;
 import Exceptions.ItemNotFoundException;
 import FileManager.GenericFileManager;
 import MainClasses.Comment;
+import MainClasses.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,14 +22,17 @@ public class CommentRepository {
     public static CommentRepository getInstance(){
         return instance;
     }
+    public void validateCommentForeignKeys(Comment comment){
+        if(!UserRepository.getInstance().isUserIdValid(comment.getOwnerId())){
+            throw new ItemNotFoundException("user",comment.getOwnerId());
+        }
+        if(!PhotoRepository.getInstance().findPhotoById(comment.getPhotoId()).isPermissionForLeavingComment()){
+            throw new CommentNotAllowedException("You cannot comment on this photo");
+        }}
 
     public void addComment(Comment comment){
         comment.validate();
-        if(!PhotoRepository.getInstance().findPhotoById(comment.getPhotoId()).isPermissionForLeavingComment()){
-            throw new CommentNotAllowedException("You cannot comment on this photo");
-        }
-
-
+        validateCommentForeignKeys(comment);
         commentFileManager.addToList(comment);
         commentFileManager.save();
     }
@@ -51,6 +55,10 @@ public class CommentRepository {
         }
         return comment.get();
     }
+    public void editComment(Comment comment){
+        Comment edit = findCommentById(comment.getId());
+        edit.editComment(comment.getScript());
+    }
 
     public List<Comment> getCommentsByPhotoId(String photoId){
         return commentFileManager.filterItems((comment)->comment.getPhotoId().equals(photoId));
@@ -58,6 +66,13 @@ public class CommentRepository {
 
     public List<Comment> getCommentsByOwner(String ownerId){
         return commentFileManager.filterItems((comment)->comment.getOwnerId().equals(ownerId));
+    }
+    public List<Comment> getAllComments(){
+        return commentFileManager.getAll();
+    }
+
+    public void save(){
+        commentFileManager.save();
     }
 
 }

@@ -17,7 +17,7 @@ public class UserRepository {
     }
 
     public static UserRepository getInstance() {
-        return new UserRepository();
+        return instance;
     }
 
     public void addUser(User user) {

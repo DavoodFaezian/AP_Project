@@ -19,7 +19,9 @@ public class Album extends BaseClass<Album> {
     public Album(String ownerId, String albumName, Set<String> photoIds) {
         this.ownerId = ownerId;
         this.albumName = albumName;
-        this.photoIds = photoIds;
+        if(photoIds!=null){
+            this.photoIds = photoIds;
+        }
         createdAt = LocalDateTime.now();
     }
 

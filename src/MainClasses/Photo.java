@@ -51,7 +51,9 @@ public class Photo extends BaseClass<Photo>{
         this.caption = caption;
         this.isFavorable = isFavorable;
         this.permissionForLeavingComment = permissionForLeavingComment;
-        this.albumIds = albumIds;
+        if(albumIds != null){
+            this.albumIds = albumIds;
+        }
         createdAt = LocalDateTime.now();
 
     }

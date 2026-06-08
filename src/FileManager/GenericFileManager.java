@@ -20,11 +20,20 @@ public class GenericFileManager<T extends BaseClass> {
     private final File filePath;
 
     public GenericFileManager(String fileName) {
+        Path path = Paths.get(CURRENT_DIR.toString(), "files");
 
-        this.filePath = Paths.get(CURRENT_DIR+"\\"+fileName).toFile();
+        try {
+            Files.createDirectories(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        this.filePath = Paths.get(CURRENT_DIR.toString(),"files",fileName).toFile();
         if(!filePath.exists()){
             try {
                 Files.createFile(filePath.toPath());
+                save();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -85,10 +94,9 @@ public class GenericFileManager<T extends BaseClass> {
 
     }
     public Optional<T> findItemById(String id){
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getId().equals(id)) {
-                list.remove(i);
-                return Optional.of(list.get(i));
+        for (T t : list) {
+            if (t.getId().equals(id)) {
+                return Optional.of(t);
             }
         }
         return Optional.empty();
@@ -118,5 +126,9 @@ public class GenericFileManager<T extends BaseClass> {
                                 .reduce(Predicate::and)
                                 .orElse(c->false);
         list.removeIf(allConditions);
+    }
+    public void removeAll(){
+        list.clear();
+        save();
     }
 }
