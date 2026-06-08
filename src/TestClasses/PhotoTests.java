@@ -80,20 +80,20 @@ public class PhotoTests{
         tags6.add("art");
         tags6.add("abstract");
 
-        album1 = new Album("1" , "album1" , null);
-        album2 = new Album("1" , "album2" , null);
-        album3 = new Album("1", "album3" , null);
-        album4 = new Album("2", "album4" , null);
-        album5 = new Album("2", "album5" , null);
-        album6 = new Album("2", "album6" , null);
+        album1 = new Album("1" , "album1");
+        album2 = new Album("1" , "album2");
+        album3 = new Album("1", "album3");
+        album4 = new Album("2", "album4");
+        album5 = new Album("2", "album5");
+        album6 = new Album("2", "album6");
 
 
-        photo1 = new Photo("1" ,"photo1" , tags1 , caption1 , true , true , null);
-        photo2 = new Photo("1" ,"photo1" , tags2 , caption2 , true , false , null);
-        photo3 = new Photo("1" , "photo3" , tags3 , caption3 , true , true , null);
-        photo4 = new Photo("2","photo4" , tags4 , caption4 , true , true , null);
-        photo5 = new Photo("2", "photo5" , null , caption5 , false , false , null);
-        photo6 = new Photo("2","photo6" , tags6 , null , true , true , null);
+        photo1 = new Photo("1" ,"photo1" , tags1 , caption1 , true , true);
+        photo2 = new Photo("1" ,"photo1" , tags2 , caption2 , true , false);
+        photo3 = new Photo("1" , "photo3" , tags3 , caption3 , true , true);
+        photo4 = new Photo("2","photo4" , tags4 , caption4 , true , true);
+        photo5 = new Photo("2", "photo5" , null , caption5 , false , false);
+        photo6 = new Photo("2","photo6" , tags6 , null , true , true);
 
         service = new PhotoAlbumService();
 

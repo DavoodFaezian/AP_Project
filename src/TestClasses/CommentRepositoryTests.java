@@ -6,7 +6,9 @@ import Repositories.AlbumRepository;
 import Repositories.CommentRepository;
 import Repositories.PhotoRepository;
 import Repositories.UserRepository;
+import Services.CommentService;
 import Services.PhotoAlbumService;
+import ViewModels.Comment.CommentViewModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -155,16 +157,12 @@ public class CommentRepositoryTests {
         initialComments.add(comment2);
         initialComments.add(comment3);
         assertEquals(initialComments, CommentRepository.getInstance().getAllComments());
-        comment1.editComment("new comment");
-
-        comment3.editComment(null);
-        assertThrows(NullPointerException.class,()->CommentRepository.getInstance().addComment(comment5));
-        assertThrows(NullPointerException.class,()->CommentRepository.getInstance().editComment(
-                new Comment(user1.getId(),null,photo1.getId())
-        ));
-        assertThrows(NullPointerException.class,()->CommentRepository.getInstance().editComment(
-                new Comment(user1.getId(),"",photo1.getId())
-        ));
+        CommentService.editComment(new CommentViewModel(comment2.getId(),"New comment"));
+        CommentService.editComment(new CommentViewModel(comment3.getId(),"Edited"));
+        assertEquals("New comment", comment2.getScript());
+        assertEquals("Edited", comment3.getScript());
+        assertThrows(NullPointerException.class,()->CommentService.editComment(new CommentViewModel(comment1.getId(),null)));
+        assertThrows(FieldIsEmptyException.class,()->CommentService.editComment(new CommentViewModel(comment1.getId(),"")));
 
 
     }
