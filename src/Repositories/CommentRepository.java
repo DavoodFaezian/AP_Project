@@ -55,10 +55,6 @@ public class CommentRepository {
         }
         return comment.get();
     }
-    public void editComment(Comment comment){
-        Comment edit = findCommentById(comment.getId());
-        edit.editComment(comment.getScript());
-    }
 
     public List<Comment> getCommentsByPhotoId(String photoId){
         return commentFileManager.filterItems((comment)->comment.getPhotoId().equals(photoId));
