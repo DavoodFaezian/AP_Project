@@ -23,12 +23,11 @@ public class PhotoAlbumService{
     }
 
     public void addPhotoToAlbum(String photoId , String albumId){
+        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
         if(albumId.isEmpty()){
-            Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
             photo.getPhotoAlbumIds().add(albumId);
         }
         else {
-            Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
             Album album = AlbumRepository.getInstance().findAlbumById(albumId);
             validateAccess(photo , album);
             photo.getPhotoAlbumIds().add(albumId);
@@ -38,12 +37,11 @@ public class PhotoAlbumService{
     }
 
     public void removePhotoFromAlbum(String photoId , String albumId){
+        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
         if(albumId.isEmpty()){
-            Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
             photo.getPhotoAlbumIds().remove(albumId);
         }
         else {
-            Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
             Album album = AlbumRepository.getInstance().findAlbumById(albumId);
             validateAccess(photo , album);
             photo.getPhotoAlbumIds().remove(albumId);

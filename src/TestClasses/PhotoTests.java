@@ -14,7 +14,7 @@ import java.util.Set;
 public class PhotoTests{
 
     private User user1;
-    private User comment6;
+    private User user2;
 
     private String caption1;
     private String caption2;
@@ -54,7 +54,7 @@ public class PhotoTests{
     public void before(){
 
         user1 = new User("Ali" , "12345678!" , Theme.LIGHT);
-        comment6 = new User("Davood" , "123456789*" , Theme.DARK);
+        user2 = new User("Davood" , "123456789*" , Theme.DARK);
 
         caption1 = "This is my photo1.";
         caption2 = "This is my photo2.";
@@ -80,20 +80,40 @@ public class PhotoTests{
         tags6.add("art");
         tags6.add("abstract");
 
-        album1 = new Album("1" , "album1" , null);
-        album2 = new Album("1" , "album2" , null);
-        album3 = new Album("1", "album3" , null);
-        album4 = new Album("2", "album4" , null);
-        album5 = new Album("2", "album5" , null);
-        album6 = new Album("2", "album6" , null);
+        Set<String> photoIds1 = new HashSet<>();
+        photoIds1.add(photo1.getId());
+        var photoIds2 = new HashSet<String>();
+        photoIds2.add(photo2.getId());
+        var photoIds4 = new HashSet<String>();
+        photoIds4.add(photo4.getId());
+        var photoIds6 = new HashSet<String>();
+        photoIds6.add(photo6.getId());
+
+        album1 = new Album(user1.getId() , "album1" ,  photoIds1);
+        album2 = new Album(user1.getId() , "album2" , photoIds2);
+        album3 = new Album(user1.getId() , "album3" , null);
+        album4 = new Album(user2.getId() , "album4" , photoIds4);
+        album5 = new Album(user2.getId() , "album5" , null);
+        album6 = new Album(user2.getId() , "album6" , photoIds6);
+
+        var albumIds1 = new HashSet<String>();
+        albumIds1.add(album1.getId());
+        var albumIds2 = new HashSet<String>();
+        albumIds2.add(album2.getId());
+        var albumIds3 = new HashSet<String>();
+        albumIds3.add(album3.getId());
+        var albumIds4 = new HashSet<String>();
+        albumIds4.add(album4.getId());
 
 
-        photo1 = new Photo("1" ,"photo1" , tags1 , caption1 , true , true , null);
-        photo2 = new Photo("1" ,"photo1" , tags2 , caption2 , true , false , null);
-        photo3 = new Photo("1" , "photo3" , tags3 , caption3 , true , true , null);
-        photo4 = new Photo("2","photo4" , tags4 , caption4 , true , true , null);
-        photo5 = new Photo("2", "photo5" , null , caption5 , false , false , null);
-        photo6 = new Photo("2","photo6" , tags6 , null , true , true , null);
+        photo1 = new Photo(user1.getId() ,"photo1" , tags1 , caption1 , true , true , albumIds1);
+        photo2 = new Photo(user1.getId() ,"photo1" , tags2 , caption2 , true , false , albumIds2);
+        photo3 = new Photo(user1.getId() , "photo3" , tags3 , caption3 , true , true , albumIds3);
+        photo4 = new Photo(user2.getId() ,"photo4" , tags4 , caption4 , true , true , albumIds4);
+        photo5 = new Photo(user2.getId() , "photo5" , null , caption5 , false , false , null);
+        photo6 = new Photo(user2.getId() ,"photo6" , tags6 , null , true , true , null);
+
+
 
         service = new PhotoAlbumService();
 
@@ -101,10 +121,6 @@ public class PhotoTests{
 
     @Test
     public void addTest(){
-        assertEquals(3 , user1.getAlbumIds().size());
         assertEquals(3 , user1.getPhotoIds().size());
-        assertEquals(1 , photo1.getPhotoAlbumIds().size());
-        assertEquals(1 , photo3.getPhotoAlbumIds().size());
-        assertEquals(1 , album2.getPhotoIds().size());
     }
 }

@@ -3,6 +3,7 @@ package MainClasses;
 import Exceptions.*;
 import Repositories.AlbumRepository;
 import Repositories.CommentRepository;
+import Repositories.UserRepository;
 import Services.PhotoAlbumService;
 
 import java.time.LocalDateTime;
@@ -44,7 +45,7 @@ public class Photo extends BaseClass<Photo>{
         dateOfShare = LocalDateTime.now();
     }
 
-    public Photo(String ownerId, String photoName, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment, Set<String> albumIds) {
+    public Photo(String ownerId, String photoName, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment) {
         this.ownerId = ownerId;
         this.photoName = photoName;
         this.tags = tags;
@@ -55,6 +56,7 @@ public class Photo extends BaseClass<Photo>{
         createdAt = LocalDateTime.now();
 
     }
+
     public void addComment(String commentId){
         commentIds.add(commentId);
     }
