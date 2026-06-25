@@ -53,7 +53,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ClipPath(
             clipper:  WaveClipper(),
             child: Container(
-              height: 100,
+              height: 180,
             
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -70,7 +70,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
 
           Positioned(
-            top: 35,
+            top: 70,
             left: 70,
 
             child: Column(
@@ -81,7 +81,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   "Sign Up...",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 25,
+                    fontSize: 30,
                   ),
                 ),
               ],
@@ -100,6 +100,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 child: Column(
                 
                   children: [
+
+                    SizedBox(height: 100),
                 
                     Image.asset(
                       'assets/images/Photos-pana (1).png',
