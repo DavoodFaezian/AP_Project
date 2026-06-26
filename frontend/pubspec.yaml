@@ -37,6 +37,9 @@ dependencies:
   shared_preferences: ^2.5.5
   image_picker: ^1.2.2
   local_auth: ^3.0.1
+  google_fonts: ^8.1.0
+  flutter_animate: ^4.5.2
+  lottie: ^3.4.0
 
 dev_dependencies:
   flutter_test:
