@@ -1,203 +1,212 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/app_bar_background.dart';
+import 'package:test_app/image_actions_sheet.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeScreenState extends State<HomeScreen> {
 
-  Color drawerIconColor = Colors.grey;
+  /// آیا کاربر وارد حالت انتخاب چندتایی شده؟
+  bool isSelectionMode = false;
 
-  int _selectedIndex = 0;
-
-  final List<Widget> _pages = [
-    Center(child: Text("home")),   
-    Center(child: Text("album")),
-    Center(child: Text("search")),
-  ];
+  /// لیست عکس‌های انتخاب شده
+  final List<int> selectedImages = [];
 
   @override
   Widget build(BuildContext context) {
-
-    
-
     return Scaffold(
+      appBar: _buildAppBar(),
 
-      appBar: AppBar(
-          title: Text("Photo Gallery")
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: GridView.builder(
+          itemCount: 20, // TODO: تعداد عکس‌ها
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 0.9,
+          ),
+          itemBuilder: (context, index) {
+            return _buildImageCard(index);
+          },
+        ),
       ),
 
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // TODO: Navigate to Upload Screen
+        },
+        shape: CircleBorder(),
+        backgroundColor: Color(0xFF1257FA),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+          ),
+      ),
+    );
+  }
 
-      drawer: Drawer(
+  //-----------------------------------------
+  // AppBar
+  //-----------------------------------------
 
-        child: ListView(
+  PreferredSizeWidget _buildAppBar() {
+    if (isSelectionMode) {
+      return AppBar(
 
-          padding: EdgeInsets.zero,
+        foregroundColor: Colors.white,
+        flexibleSpace: AppBarBackground(),
+        title: Text("${selectedImages.length} Selected"),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            setState(() {
+              isSelectionMode = false;
+              selectedImages.clear();
+            });
+          },
+        ),
+        actions: [
 
-          children: [
+          IconButton(
+            onPressed: () {
+              showImageActionsSheet(context);
+            },
+            icon: const Icon(Icons.more_vert_outlined),
+          )
 
-            Container(
+        ],
+      );
+    }
 
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF5B21B6),
-                    Color(0xFFA855F7),
-                  ]
-                ),
-              ),
-              
-              child: Column(
+    return AppBar(
+      foregroundColor: Colors.white,
+      flexibleSpace: AppBarBackground(),
+      title: const Text("Home"),
+      actions: [
 
-                mainAxisAlignment: MainAxisAlignment.center,
+        IconButton(
+          onPressed: () {
+            // TODO: Search Screen
+          },
+          icon: const Icon(Icons.search),
+        ),
 
-                children: [
-                  
-                  SizedBox(height: 50,),
+        IconButton(
+          onPressed: () {
+            // TODO: Filter
+          },
+          icon: const Icon(Icons.filter_list),
+        ),
 
-                  Stack(
+        IconButton(
+          onPressed: () {
+            // TODO: Sort
+          },
+          icon: const Icon(Icons.sort),
+        ),
+      ],
+    );
+  }
 
-                    children: [
+  //-----------------------------------------
+  // Image Card
+  //-----------------------------------------
 
-                      CircleAvatar(
-                        radius: 50,
-                        child: Icon(
-                          Icons.person,
-                          size: 60,
-                        ),
-                      ),
+  Widget _buildImageCard(int index) {
 
-                      Positioned(
-                        bottom: -11,
-                        right: -11,
-                        child: IconButton(
-                          onPressed: () {}, 
-                          icon: Icon(
-                            Icons.photo_camera,
-                            color: Colors.lightBlue,
-                            size: 35
-                            )
-                          )
-                        ),
-                    ],
-                  ),
+    final isSelected = selectedImages.contains(index);
 
-                  SizedBox(height: 25),
-                  
-                  Text(
-                    "Username",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    )
-                  ),
+    return GestureDetector(
 
-                  SizedBox(height: 25)
+      onTap: () {
 
-              ],),
-            ),
+        if (isSelectionMode) {
 
-            Column(
+          setState(() {
+
+            if (isSelected) {
+              selectedImages.remove(index);
+            } else {
+              selectedImages.add(index);
+            }
+
+            if (selectedImages.isEmpty) {
+              isSelectionMode = false;
+            }
+
+          });
+
+          return;
+        }
+
+        // TODO:
+        // Navigate to Image Detail Screen
+
+      },
+
+      onLongPress: () {
+
+        setState(() {
+
+          isSelectionMode = true;
+          selectedImages.add(index);
+
+        });
+
+      },
+
+      child: Stack(
+
+        children: [
+
+          Card(
+            elevation: 3,
+            clipBehavior: Clip.antiAlias,
+            child: Column(
 
               children: [
-                
-                ListTile(
-                  leading: Icon(
-                    Icons.person,
-                    color: drawerIconColor,
+
+                Expanded(
+                  child: Container(
+                    color: Colors.grey.shade300,
+
+                    child: const Center(
+                      child: Icon(
+                        Icons.image,
+                        size: 60,
+                      ),
+                    ),
                   ),
-
-                  title: Text("Profile"),
-
-                  onTap: () {
-
-                  },
                 ),
 
-                ListTile(
-                  leading: Icon(
-                    Icons.settings,
-                    color: drawerIconColor
-                    ),
-
-                  title: Text("Settings"),
-
-                  onTap: () {
-
-                  }
-                ),
-
-                ListTile(
-                  leading: Icon(
-                    Icons.info,
-                    color: drawerIconColor,
-                    ),
-
-                  title: Text("About"),
-
-                  onTap: () {},
-                ),
-
-                Divider(
-                  thickness: 1,
-                  color: Colors.grey,
-                ),
-
-                ListTile(
-                  leading: Icon(
-                    Icons.logout,
-                    color: drawerIconColor,
-                    ),
-
-                  title: Text("Log out"),
-
-                  onTap:() {
-                    
-                  },
-                )
               ],
-            )
-          ],
-
-        )
-      ),
-
-      body: _pages[_selectedIndex],
-
-      bottomNavigationBar: BottomNavigationBar(
-
-        currentIndex: _selectedIndex,
-
-
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-
-        selectedItemColor: Colors.deepPurple,
-
-        unselectedItemColor: Colors.grey,
-
-        items: const [
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: "Home",
+            ),
           ),
 
-          BottomNavigationBarItem(
-            icon: Icon(Icons.photo_album_rounded),
-            label: "Albums",
-          ),
+          if (isSelectionMode)
+            Positioned(
+              top: 8,
+              right: 8,
+              child: CircleAvatar(
+                radius: 12,
+                backgroundColor:
+                    isSelected ? Colors.blue : Colors.white,
+                child: Icon(
+                  Icons.check,
+                  size: 16,
+                  color:
+                      isSelected ? Colors.white : Colors.grey,
+                ),
+              ),
+            ),
 
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search_rounded),
-            label: "Search",
-          ),
         ],
       ),
     );
