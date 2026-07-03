@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/delete_confirmation_dialog.dart';
 
 class ImageActionsSheet extends StatelessWidget {
-  const ImageActionsSheet({super.key});
+
+  final List<int> selectedImages;
+
+  const ImageActionsSheet({
+    super.key,
+    required this.selectedImages
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +34,14 @@ class ImageActionsSheet extends StatelessWidget {
             iconColor: Colors.red,
             titleTextStyle: TextStyle(
               color: Colors.red , 
-              fontSize: 18), 
+              fontSize: 18),
+              onTap: () {
+                Navigator.pop(context);
+                showDeleteDialog(
+                  context,
+                  selectedImages.length,
+                );
+              },
           ),
           
           
@@ -39,9 +53,14 @@ class ImageActionsSheet extends StatelessWidget {
   }
 }
 
-void showImageActionsSheet(BuildContext context) {
+void showImageActionsSheet(
+  BuildContext context,
+  List<int> selectedImages,
+) {
   showModalBottomSheet(
     context: context,
-    builder: (_) => const ImageActionsSheet(),
+    builder: (_) => ImageActionsSheet(
+      selectedImages: selectedImages,
+    ),
   );
 }

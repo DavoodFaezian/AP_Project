@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/home_screen.dart';
+import 'package:test_app/search_screen.dart';
 
 class NavigatorPage extends StatefulWidget {
   const NavigatorPage({super.key});
@@ -17,7 +18,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
   final List<Widget> _pages = [
     HomeScreen(),
     Center(child: Text("album")),
-    Center(child: Text("search")),
+    SearchScreen()
   ];
 
   @override

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/app_bar_background.dart';
 import 'package:test_app/image_actions_sheet.dart';
 import 'package:test_app/custom_appbar.dart';
 import 'package:test_app/custom_drawer.dart';
@@ -40,7 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              showImageActionsSheet(context);
+              showImageActionsSheet(
+                context,
+                selectedImages
+              );
             },
             icon: const Icon(Icons.more_vert),
           ),
@@ -49,13 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     : CustomAppBar(
         title: "Home",
         actions: [
-          IconButton(
-            onPressed: () {
-              // TODO: Search
-            },
-            icon: const Icon(Icons.search),
-          ),
-
+        
           IconButton(
             onPressed: () {
               // TODO: Filter
@@ -189,7 +185,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-
         ],
       ),
     );
