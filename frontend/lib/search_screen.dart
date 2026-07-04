@@ -28,7 +28,7 @@ class _SearchScreenState extends State<SearchScreen> {
         children: [
 
           Image.asset(
-              'assets/images/File searching-rafiki.png',
+              'assets/images/File searching-rafiki (1).png',
               width:  220,
               height: 220,
           ),
@@ -37,7 +37,10 @@ class _SearchScreenState extends State<SearchScreen> {
 
           const Text(
             "Search photos",
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ), 
           ),
         ],
        )
@@ -51,7 +54,7 @@ class _SearchScreenState extends State<SearchScreen> {
         children: [
 
           Image.asset(
-              'assets/images/File searching-rafiki.png',
+              'assets/images/File searching-rafiki (1).png',
               width:  220,
               height: 220,
           ),
