@@ -3,6 +3,8 @@ import 'package:test_app/image_actions_sheet.dart';
 import 'package:test_app/custom_appbar.dart';
 import 'package:test_app/custom_drawer.dart';
 import 'package:test_app/custom_fab.dart';
+import 'package:test_app/image_grid.dart';
+import 'package:test_app/empty_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,77 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
   /// لیست عکس‌های انتخاب شده
   final List<int> selectedImages = [];
 
-  Widget _buildEmptyHome() {
-
-    return Center(
-
-      child: Column(
-
-        mainAxisAlignment: MainAxisAlignment.center,
-
-        children: [
-
-          Image.asset(
-            'assets/images/Image post-cuate.png',
-              width:  240,
-              height: 240,
-          ),
-
-          const SizedBox(height: 20),
-
-          const Text(
-            "No photos yet",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          const Text(
-            "Upload your first photo.",
-            style: TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-
-        ],
-
-      ),
-
-    );
-
-  }
-
-  Widget _buildPhotoGrid() {
-
-    return GridView.builder(
-
-      itemCount: photos.length,
-
-      gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(
-
-        crossAxisCount: 2,
-        crossAxisSpacing: 2,
-        mainAxisSpacing: 2,
-        childAspectRatio: 0.9,
-
-      ),
-
-      itemBuilder: (context, index) {
-
-        return _buildImageCard(index);
-
-      },
-
-    );
-
-  }
-
   @override
   Widget build(BuildContext context) {
+    print(photos.length);
     return Scaffold(
       drawer: CustomDrawer(),
       appBar: isSelectionMode
@@ -143,107 +77,62 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: photos.isEmpty
-            ? _buildEmptyHome()
-            : _buildPhotoGrid(),
+            ? EmptyState(
+              imagePath: 'assets/images/Image post-cuate.png',
+              title: "No photos yet",
+              subtitle: "Upload your first photo",
+            )
+            : PhotoGrid(
+                photos: photos,
+                selectedImages: selectedImages,
+                isSelectionMode: isSelectionMode,
+
+                onTap: (index) {
+                  setState(() {
+
+                    if (isSelectionMode) {
+
+                      if (selectedImages.contains(index)) {
+                        selectedImages.remove(index);
+                      } else {
+                        selectedImages.add(index);
+                      }
+
+                      if (selectedImages.isEmpty) {
+                        isSelectionMode = false;
+                      }
+
+                    } else {
+
+                      // TODO:
+                      // Navigate to Image Detail
+
+                    }
+
+                  });
+                },
+
+                onLongPress: (index) {
+                  setState(() {
+
+                    isSelectionMode = true;
+
+                    if (!selectedImages.contains(index)) {
+                      selectedImages.add(index);
+                    }
+
+                  });
+                },
+              ),
       ),
 
       floatingActionButton: CustomFAB(
         onPressed: () {
+          // TODO:
           // Navigate to Upload Screen
         },
       ),
     );
   }
 
-  Widget _buildImageCard(int index) {
-
-    final isSelected = selectedImages.contains(index);
-
-    return GestureDetector(
-
-      onTap: () {
-
-        if (isSelectionMode) {
-
-          setState(() {
-
-            if (isSelected) {
-              selectedImages.remove(index);
-            } else {
-              selectedImages.add(index);
-            }
-
-            if (selectedImages.isEmpty) {
-              isSelectionMode = false;
-            }
-
-          });
-
-          return;
-        }
-
-        // TODO:
-        // Navigate to Image Detail Screen
-
-      },
-
-      onLongPress: () {
-
-        setState(() {
-
-          isSelectionMode = true;
-          selectedImages.add(index);
-
-        });
-
-      },
-
-      child: Stack(
-
-        children: [
-
-          Card(
-            elevation: 3,
-            clipBehavior: Clip.antiAlias,
-            child: Column(
-
-              children: [
-
-                Expanded(
-                  child: Container(
-                    color: Colors.grey.shade300,
-
-                    child: const Center(
-                      child: Icon(
-                        Icons.image,
-                        size: 60,
-                      ),
-                    ),
-                  ),
-                ),
-
-              ],
-            ),
-          ),
-
-          if (isSelectionMode)
-            Positioned(
-              top: 8,
-              right: 8,
-              child: CircleAvatar(
-                radius: 12,
-                backgroundColor:
-                    isSelected ? Colors.blue : Colors.white,
-                child: Icon(
-                  Icons.check,
-                  size: 16,
-                  color:
-                      isSelected ? Colors.white : Colors.grey,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 }
