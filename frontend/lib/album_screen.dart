@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:test_app/custom_appbar.dart';
 import 'package:test_app/custom_drawer.dart';
 import 'package:test_app/custom_fab.dart';
+import 'package:test_app/empty_screen.dart';
+import 'package:test_app/album_details_screen.dart';
 
 class AlbumScreen extends StatefulWidget {
   const AlbumScreen({super.key});
@@ -13,7 +15,7 @@ class AlbumScreen extends StatefulWidget {
 class _AlbumScreenState extends State<AlbumScreen> {
 
   /// لیست آلبوم‌ها
-  final List<String> albums = [];
+  final List<String> albums = ["1" , "2" , "3" , "4" , "5"];
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +29,12 @@ class _AlbumScreenState extends State<AlbumScreen> {
       ),
 
       body: albums.isEmpty
-          ? _buildEmptyAlbum()
-          : _buildAlbumList(),
+        ? const EmptyState(
+            imagePath: "assets/images/Image folder-rafiki (2).png",
+            title: "No albums yet",
+            subtitle: "Create your first album.",
+          )
+        : _buildAlbumList(),
 
       floatingActionButton: CustomFAB(
         onPressed: () {
@@ -61,12 +67,25 @@ class _AlbumScreenState extends State<AlbumScreen> {
 
           trailing: const Icon(Icons.arrow_forward_ios),
 
-          onTap: (){
+          onTap: () {
 
-            // TODO:
-            // Open Album
+          Navigator.push(
 
-          },
+            context,
+
+            MaterialPageRoute(
+
+              builder: (context) => AlbumDetailScreen(
+
+                albumName: albums[index],
+
+              ),
+
+            ),
+
+          );
+
+        },
 
         );
 
@@ -80,41 +99,6 @@ class _AlbumScreenState extends State<AlbumScreen> {
   // زمانی که هیچ آلبومی وجود ندارد
   //-------------------------------------
 
-  Widget _buildEmptyAlbum(){
 
-    return Center(
-
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            'assets/images/Image folder-rafiki (2).png',
-              width:  240,
-              height: 240,
-          ),
-          const SizedBox(height: 20),
-
-          const Text(
-            "No albums yet",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          const Text(
-            "Create your first album.",
-            style: TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-        ],
-      ),
-
-    );
-
-  }
 
 }
