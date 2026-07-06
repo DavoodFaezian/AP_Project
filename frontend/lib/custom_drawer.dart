@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/logout_confirmation_dialog.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -126,13 +127,19 @@ class CustomDrawer extends StatelessWidget {
                 ListTile(
                   leading: Icon(
                     Icons.logout,
-                    color: drawerIconColor,
+                    color: Colors.red,
                     ),
 
                   title: Text("Log out"),
 
-                  onTap:() {
-                    
+                  onTap: () {
+
+                    // بستن Drawer
+                    Navigator.pop(context);
+
+                    // نمایش دیالوگ خروج
+                    showLogoutDialog(context);
+
                   },
                 )
               ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/auth_header.dart';
 import 'package:test_app/input_decoration.dart';
+import 'package:test_app/navigator_screen.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -46,9 +47,26 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _signUp() {
+
     if (_formKey.currentState!.validate()) {
 
+      // TODO:
+      // Send data to Backend
+
+      Navigator.pushReplacement(
+
+        context,
+
+        MaterialPageRoute(
+
+          builder: (context) => const NavigatorPage(),
+
+        ),
+
+      );
+
     }
+
   }
 
   String? validateConfirmPassword(String? value){

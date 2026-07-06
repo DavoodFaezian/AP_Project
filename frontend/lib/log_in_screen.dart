@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/auth_header.dart';
 import 'package:test_app/input_decoration.dart';
-
+import 'package:test_app/navigator_screen.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -35,9 +35,26 @@ class _LogInPageState extends State<LogInPage> {
   }
 
   void _logIn() {
-      if (_formKey.currentState!.validate()) {
+
+    if (_formKey.currentState!.validate()) {
+
+      // TODO:
+      // Check username and password with Backend
+
+      Navigator.pushReplacement(
+
+        context,
+
+        MaterialPageRoute(
+
+          builder: (context) => const NavigatorPage(),
+
+        ),
+
+      );
 
     }
+
   }
 
   @override
