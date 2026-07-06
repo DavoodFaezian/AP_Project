@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/custom_drawer.dart';
 import 'custom_appbar.dart';
+import 'package:test_app/empty_screen.dart';
 
 class SearchScreen extends StatefulWidget {
 
@@ -21,61 +22,6 @@ class _SearchScreenState extends State<SearchScreen> {
   /// نتایج جستجو
   final List<int> searchResult = [];
 
-  Widget _buildInitialState() {
-      return  Center(
-       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-
-          Image.asset(
-              'assets/images/File searching-rafiki (1).png',
-              width:  220,
-              height: 220,
-          ),
-
-          const SizedBox(height: 20),
-
-          const Text(
-            "Search photos",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ), 
-          ),
-        ],
-       )
-      );
-    }
-
-    Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-
-          Image.asset(
-              'assets/images/File searching-rafiki (1).png',
-              width:  220,
-              height: 220,
-          ),
-
-          const SizedBox(height: 20),
-
-          const Text(
-            "No photos found",
-            style: TextStyle(fontSize: 18),
-          ),
-
-          const SizedBox(height: 8),
-
-          const Text(
-            "Try another keyword",
-            style: TextStyle(color: Colors.grey),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildResultGrid() {
     return GridView.builder(
@@ -166,11 +112,23 @@ class _SearchScreenState extends State<SearchScreen> {
 
           Expanded(
             child: !hasSearched
-                ? _buildInitialState()
+
+                ? const EmptyState(
+                    imagePath: "assets/images/File searching-rafiki (1).png",
+                    title: "Search photos",
+                    subtitle: "Search by file name, date or description.",
+                  )
+
                 : searchResult.isEmpty
-                    ? _buildEmptyState()
+
+                    ? const EmptyState(
+                        imagePath: "assets/images/File searching-rafiki (1).png",
+                        title: "No photos found",
+                        subtitle: "Try another keyword.",
+                      )
+
                     : _buildResultGrid(),
-          ),
+          ),        
         ],
       ),
     );
