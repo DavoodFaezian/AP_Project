@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/image_card.dart';
+import 'package:test_app/widgets/image_card.dart';
 
 class PhotoGrid extends StatelessWidget {
 

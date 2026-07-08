@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/delete_confirmation_dialog.dart';
+import 'package:test_app/dialogs/delete_confirmation_dialog.dart';
 
 class ImageActionsSheet extends StatelessWidget {
 
@@ -25,12 +25,8 @@ class ImageActionsSheet extends StatelessWidget {
           title: Text("Share")
           ),
           ListTile(
-            leading: Icon(Icons.remove),
-            title: Text("Remove from album")
-          ),
-          ListTile(
-            leading: Icon(Icons.move_down),
-            title: Text("move")
+            leading: Icon(Icons.add),
+            title: Text("Add to album"),
           ),
           ListTile(
             leading: Icon(Icons.delete),

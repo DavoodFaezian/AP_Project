@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/custom_appbar.dart';
-import 'package:test_app/custom_drawer.dart';
-import 'package:test_app/custom_fab.dart';
-import 'package:test_app/empty_screen.dart';
-import 'package:test_app/album_details_screen.dart';
+import 'package:test_app/widgets/custom_appbar.dart';
+import 'package:test_app/widgets/custom_drawer.dart';
+import 'package:test_app/widgets/custom_fab.dart';
+import 'package:test_app/widgets/empty_screen.dart';
+import 'package:test_app/screens/albums/album_details_screen.dart';
 
 class AlbumScreen extends StatefulWidget {
   const AlbumScreen({super.key});

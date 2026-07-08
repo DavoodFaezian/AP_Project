@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/log_in_screen.dart';
+import 'package:test_app/screens/auth/log_in_screen.dart';
 
 void showLogoutDialog(BuildContext context) {
 

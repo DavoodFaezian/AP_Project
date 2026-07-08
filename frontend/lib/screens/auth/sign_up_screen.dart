@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/auth_header.dart';
-import 'package:test_app/input_decoration.dart';
-import 'package:test_app/navigator_screen.dart';
+import 'package:test_app/widgets/auth_header.dart';
+import 'package:test_app/widgets/input_decoration.dart';
+import 'package:test_app/navigation/navigator_screen.dart';
 
-class LogInPage extends StatefulWidget {
-  const LogInPage({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  State<LogInPage> createState() => _LogInPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _LogInPageState extends State<LogInPage> {
+class _SignUpPageState extends State<SignUpPage> {
 
   final _formKey = GlobalKey<FormState>();
   final _userNameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final specialCharRegex = RegExp(r'[!@#$%^&*()]');
 
 
   bool _showPassword = false;
+
+  bool _showConfirmPassword = false;
 
   String? validateUserName(String? value){
     if(value == null || value.isEmpty){
@@ -27,19 +31,27 @@ class _LogInPageState extends State<LogInPage> {
   }
 
   String? validatePassword(String? value){
-    if (value == null || value.isEmpty) {
-      return "Password is required";
+    if (value == null || value.length < 8) {
+      return "Password must be at least 8 characters";
       }
+
+    if(value.contains(_userNameController.text) && _userNameController.text.isNotEmpty){
+        return "Password must not conatin username";
+       }
+
+    if (!specialCharRegex.hasMatch(value)) {
+        return 'Password must contain a special character';
+     }
                 
      return null;
   }
 
-  void _logIn() {
+  void _signUp() {
 
     if (_formKey.currentState!.validate()) {
 
       // TODO:
-      // Check username and password with Backend
+      // Send data to Backend
 
       Navigator.pushReplacement(
 
@@ -57,10 +69,19 @@ class _LogInPageState extends State<LogInPage> {
 
   }
 
+  String? validateConfirmPassword(String? value){
+    if (value != _passwordController.text || value == null || value.isEmpty) {
+      return "Passwords do not match";
+    }            
+    return null;
+  }
+
   @override
   void dispose() {
     _userNameController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
+
     super.dispose();
   }
 
@@ -74,7 +95,7 @@ class _LogInPageState extends State<LogInPage> {
         children: [
 
           AuthHeader(
-            title: "Log In...",
+            title: "Sign Up...",
           ),
       
           Padding(
@@ -134,6 +155,38 @@ class _LogInPageState extends State<LogInPage> {
                 
                       validator: validatePassword
                     ),
+                
+                    const SizedBox(height: 16),
+                
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                
+                      obscureText: !_showConfirmPassword,
+                
+                      decoration: buildInputDecoration(
+                          "Confirm Password",
+                
+                          suffixIcon: IconButton(
+                          icon: Icon(
+                            _showConfirmPassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                
+                          onPressed: () {
+                
+                            setState(() {
+                              _showConfirmPassword = !_showConfirmPassword;
+                            });
+                
+                          },
+                        ),
+                      ),
+                
+                
+                      validator: validateConfirmPassword
+                      
+                    ),
 
                     const SizedBox(height: 20),
                 
@@ -141,12 +194,12 @@ class _LogInPageState extends State<LogInPage> {
                       width: double.infinity,
                       height: 60,
                       child: ElevatedButton(
-                        onPressed: _logIn,
+                        onPressed: _signUp,
                         style: TextButton.styleFrom(
                           backgroundColor: Color(0xFF1257FA)
                         ),
                         child: Text(
-                        "Log In" ,
+                        "Sign Up" ,
                         style: TextStyle(color: Colors.white))
                       ),
                     ),

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:test_app/custom_appbar.dart';
-import 'package:test_app/custom_drawer.dart';
-import 'package:test_app/custom_fab.dart';
-import 'package:test_app/empty_screen.dart';
-import 'package:test_app/image_grid.dart';
-import 'package:test_app/album_actions_sheet.dart';
+import 'package:test_app/widgets/custom_appbar.dart';
+import 'package:test_app/widgets/custom_drawer.dart';
+import 'package:test_app/widgets/custom_fab.dart';
+import 'package:test_app/widgets/empty_screen.dart';
+import 'package:test_app/widgets/image_grid.dart';
+import 'package:test_app/widgets/album_actions_sheet.dart';
+import 'package:test_app/screens/home/image_detail_screen.dart';
 
 class AlbumDetailScreen extends StatefulWidget {
 
@@ -161,8 +162,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
 
                     } else {
 
-                      // TODO:
-                      // Open Image Detail
+
 
                     }
 

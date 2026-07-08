@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/logout_confirmation_dialog.dart';
+import 'package:test_app/setting_screen.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-    const Color drawerIconColor = Color(0xFF5B21B6);
     
     return Drawer(
 
@@ -85,7 +84,6 @@ class CustomDrawer extends StatelessWidget {
                 ListTile(
                   leading: Icon(
                     Icons.person,
-                    color: drawerIconColor,
                   ),
 
                   title: Text("Profile"),
@@ -98,20 +96,34 @@ class CustomDrawer extends StatelessWidget {
                 ListTile(
                   leading: Icon(
                     Icons.settings,
-                    color: drawerIconColor
                     ),
 
                   title: Text("Settings"),
 
                   onTap: () {
 
-                  }
+                    // بستن Drawer
+                    Navigator.pop(context);
+
+                    // رفتن به صفحه Settings
+                    Navigator.push(
+
+                      context,
+
+                      MaterialPageRoute(
+
+                        builder: (context) => const SettingsScreen(),
+
+                      ),
+
+                    );
+
+                  },
                 ),
 
                 ListTile(
                   leading: Icon(
                     Icons.info,
-                    color: drawerIconColor,
                     ),
 
                   title: Text("About"),

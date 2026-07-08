@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/custom_drawer.dart';
-import 'custom_appbar.dart';
-import 'package:test_app/empty_screen.dart';
+import 'package:test_app/widgets/custom_appbar.dart';
+import 'package:test_app/widgets/empty_screen.dart';
 
 class SearchScreen extends StatefulWidget {
 

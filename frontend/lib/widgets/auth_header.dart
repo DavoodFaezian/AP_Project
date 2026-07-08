@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/wave_clipper.dart';
+import 'package:test_app/widgets/wave_clipper.dart';
 
 class AuthHeader extends StatelessWidget {
 

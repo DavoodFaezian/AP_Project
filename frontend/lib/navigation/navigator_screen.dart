@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/home_screen.dart';
-import 'package:test_app/search_screen.dart';
-import 'package:test_app/album_screen.dart';
+import 'package:test_app/screens/home/home_screen.dart';
+import 'package:test_app/screens/search/search_screen.dart';
+import 'package:test_app/screens/albums/album_screen.dart';
 
 class NavigatorPage extends StatefulWidget {
   const NavigatorPage({super.key});
