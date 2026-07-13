@@ -14,6 +14,8 @@ public class User extends BaseClass<User>{
 
     private String password;
 
+    private String profilePhotoId;
+
     private Set<String> photoIds = new HashSet<>();
 
     private Set<String> albumIds = new HashSet<>();
@@ -64,9 +66,11 @@ public class User extends BaseClass<User>{
         this.password = password;
         this.theme = theme;
     }
+
     public void addPhotoToSharedPhotos(String photoId){
         sharedPhotoIds.add(photoId);
     }
+
     public void removePhotoFromSharedPhotos(String photoId){
         sharedPhotoIds.remove(photoId);
     }
@@ -74,6 +78,7 @@ public class User extends BaseClass<User>{
     public void addPhotoToPhotos(String photoId){
         photoIds.add(photoId);
     }
+
     public void removePhotoFromPhotos(String photoId){
         photoIds.remove(photoId);
     }
@@ -81,9 +86,11 @@ public class User extends BaseClass<User>{
     public void addAlbumToAlbums(String albumId){
         albumIds.add(albumId);
     }
+
     public void removeAlbumFromAlbums(String albumId){
         albumIds.remove(albumId);
     }
+
     public String getUserName(){
         return userName;
     }
@@ -92,6 +99,13 @@ public class User extends BaseClass<User>{
         return password;
     }
 
+    public void setProfilePhotoId(String profilePhotoId) {
+        this.profilePhotoId = profilePhotoId;
+    }
+
+    public String getProfilePhotoId() {
+        return profilePhotoId;
+    }
 
     public Theme getTheme(){
         return theme;

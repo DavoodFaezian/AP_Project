@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/logout_confirmation_dialog.dart';
-import 'package:test_app/setting_screen.dart';
+import 'package:test_app/screens/auth/log_in_screen.dart';
+import 'package:test_app/screens/settings/setting_screen.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
