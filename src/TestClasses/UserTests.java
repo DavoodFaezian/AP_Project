@@ -11,6 +11,6 @@ public class UserTests {
 
     @Test
     public void passwordTest(){
-        
+
     }
 }
