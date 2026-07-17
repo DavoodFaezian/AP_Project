@@ -1,5 +1,7 @@
 package Services;
 
+import DTO.AuthenticationDto;
+import DTO.ConfirmPasswordDto;
 import Exceptions.*;
 import MainClasses.User;
 import Repositories.UserRepository;
@@ -9,6 +11,15 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class UserService {
+
+    private static final UserService instance = new UserService();
+
+    private UserService() {
+    }
+
+    public static UserService getInstance() {
+        return instance;
+    }
 
     private static final int MIN_LENGTH = 8;
 
@@ -42,7 +53,7 @@ public class UserService {
         }
     }
 
-    public void userValidtor(String userName , String password , String actionName){
+    public void userValidator(String userName , String password , String actionName){
         List<User> users = UserRepository.getInstance().getAllUsers();
         boolean isUserNotValid = users.stream().anyMatch(s -> s.getUserName().equals(userName) || s.getUserName().equals(password));
         if (isUserNotValid) {
@@ -62,21 +73,29 @@ public class UserService {
         }
     }
 
-    public void signUp(String userName , String password) {
+    public void signUp(AuthenticationDto data) {
+        String userName = data.getUserName();
+        String password = data.getPassword();
         validateUserName(userName);
         validatePassword(password);
         validateLength(password);
         validateStrength(password);
         validateDoesNotContainUserName(userName , password);
-        userValidtor(userName , password , "sign up");
+        userValidator(userName , password , "sign up");
     }
 
-    public void logIn(String userName , String password) {
+    public void logIn(AuthenticationDto data) {
 
     }
 
     public void logOut(String userId) {
 
+    }
+
+    public void confirmPassword(ConfirmPasswordDto data) {
+        String currentPassword = data.getCurrentPassword();
+        String repeatedPassword = data.getRepeatedPassword();
+        validatePassword(currentPassword , repeatedPassword , "confirmPassword");
     }
 
     public void changePassword(String userId , String oldPassword , String newPassword) {
