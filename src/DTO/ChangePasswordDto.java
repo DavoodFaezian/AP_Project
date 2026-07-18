@@ -4,22 +4,27 @@ import com.google.gson.JsonObject;
 
 public class ChangePasswordDto {
 
-    private JsonObject json;
+    private String userId;
 
     private String oldPassword;
 
     private String newPassword;
 
-    public ChangePasswordDto(JsonObject json) {
-        this.json = json;
+    private String confirmNewPassword;
+
+    public ChangePasswordDto(String userId , String oldPassword , String newPassword , String confirmNewPassword) {
+        this.userId = userId;
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
+        this.confirmNewPassword = confirmNewPassword;
     }
 
-    public JsonObject getJson() {
-        return json;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setJson(JsonObject json) {
-        this.json = json;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getOldPassword() {
@@ -36,5 +41,13 @@ public class ChangePasswordDto {
 
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
+    }
+
+    public String getConfirmNewPassword() {
+        return confirmNewPassword;
+    }
+
+    public void setConfirmNewPassword(String confirmNewPassword) {
+        this.confirmNewPassword = confirmNewPassword;
     }
 }

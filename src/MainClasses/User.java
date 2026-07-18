@@ -18,7 +18,7 @@ public class User extends BaseClass<User>{
 
     private Theme theme = Theme.LIGHT;
 
-    private Set<Session> sessions = new HashSet<>();
+    private Set<String> sessionIds = new HashSet<>();
 
     public User(String userName, String password){
         this.userName = userName;
@@ -105,12 +105,12 @@ public class User extends BaseClass<User>{
         this.theme = theme;
     }
 
-    public Set<Session> getSessions() {
-        return sessions;
+    public Set<String> getSessions() {
+        return sessionIds;
     }
 
-    public void setSessions(Set<Session> sessions) {
-        this.sessions = sessions;
+    public void setSessions(Set<String> sessions) {
+        this.sessionIds = sessions;
     }
 
     @Override

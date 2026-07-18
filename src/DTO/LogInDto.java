@@ -4,8 +4,6 @@ import com.google.gson.JsonObject;
 
 public class LogInDto {
 
-    private JsonObject json;
-
     private String userId;
 
     private String userName;
@@ -14,16 +12,11 @@ public class LogInDto {
 
     private String repeatedPassword;
 
-    public LogInDto(JsonObject json) {
-        this.json = json;
-    }
-
-    public JsonObject getJson() {
-        return json;
-    }
-
-    public void setJson(JsonObject json) {
-        this.json = json;
+    public LogInDto(String userId , String userName , String password , String repeatedPassword) {
+        this.userId = userId;
+        this.userName = userName;
+        this.password = password;
+        this.repeatedPassword = repeatedPassword;
     }
 
     public String getUserId() {

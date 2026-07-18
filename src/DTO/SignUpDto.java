@@ -4,24 +4,16 @@ import com.google.gson.JsonObject;
 
 public class SignUpDto {
 
-    private JsonObject json;
-
     private String userName;
 
     private String password;
 
     private String repeatedPassword;
 
-    public SignUpDto(JsonObject json) {
-        this.json = json;
-    }
-
-    public JsonObject getJson() {
-        return json;
-    }
-
-    public void setJson(JsonObject json) {
-        this.json = json;
+    public SignUpDto(String userName , String password , String repeatedPassword) {
+        this.userName = userName;
+        this.password = password;
+        this.repeatedPassword = repeatedPassword;
     }
 
     public String getUserName() {
