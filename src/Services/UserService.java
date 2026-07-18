@@ -1,12 +1,14 @@
 package Services;
 
-import DTO.AuthenticationDto;
-import DTO.ConfirmPasswordDto;
+import DTO.LogInDto;
+import DTO.CheckPasswordDto;
+import DTO.SignUpDto;
 import Exceptions.*;
+import MainClasses.Session;
 import MainClasses.User;
+import Repositories.SessionRepository;
 import Repositories.UserRepository;
 
-import javax.swing.*;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -53,7 +55,7 @@ public class UserService {
         }
     }
 
-    public void userValidator(String userName , String password , String actionName){
+    public void validateUser(String userName , String password , String actionName){
         List<User> users = UserRepository.getInstance().getAllUsers();
         boolean isUserNotValid = users.stream().anyMatch(s -> s.getUserName().equals(userName) || s.getUserName().equals(password));
         if (isUserNotValid) {
@@ -61,41 +63,57 @@ public class UserService {
         }
     }
 
-    public void validateOldPassword (User user , String oldPassword , String actionName) {
+    public void validateOldPassword(User user , String oldPassword , String actionName) {
         if (!user.getPassword().equals(oldPassword)) {
             throw new ActionFailedException(actionName);
         }
     }
 
-    public void validatePassword (String oldPassword , String newPassword , String actionName) {
+    public void validatePassword(String oldPassword , String newPassword , String actionName) {
         if (!oldPassword.equals(newPassword)) {
             throw new ActionFailedException(actionName);
         }
     }
 
-    public void signUp(AuthenticationDto data) {
-        String userName = data.getUserName();
-        String password = data.getPassword();
+    public void validateSignUp(String userName , String password , String repeatedPassword) {
         validateUserName(userName);
         validatePassword(password);
         validateLength(password);
         validateStrength(password);
         validateDoesNotContainUserName(userName , password);
-        userValidator(userName , password , "sign up");
+        validatePassword(password , repeatedPassword , "confirmPassword");
+        validateUser(userName , password , "sign up");
     }
 
-    public void logIn(AuthenticationDto data) {
+    public void validateLogIn(User user , String userName , String password , String repeatedPassword) {
+        if(!user.getUserName().equals(userName) || user.getPassword().equals(password) || !password.equals(repeatedPassword)) {
+            throw new ActionFailedException("log in");
+        }
+    }
 
+    public void signUp(SignUpDto data) {
+        String userName = data.getUserName();
+        String password = data.getPassword();
+        String repeatedPassword = data.getRepeatedPassword();
+        validateSignUp(userName , password , repeatedPassword);
+        User user = UserRepository.getInstance().create(userName , password);
+        Session session = SessionRepository.getInstance().createSession(user.getId());
+        user.getSessions().add(session);
+    }
+
+    public void logIn(LogInDto data) {
+        String userId = data.getUserId();
+        String userName = data.getUserName();
+        String password = data.getPassword();
+        String repeatedPassword = data.getRepeatedPassword();
+        User user = UserRepository.getInstance().findUserById(userId);
+        validateLogIn(user , userName , password, repeatedPassword);
+        Session session = SessionRepository.getInstance().createSession(userId);
+        user.getSessions().add(session);
     }
 
     public void logOut(String userId) {
 
-    }
-
-    public void confirmPassword(ConfirmPasswordDto data) {
-        String currentPassword = data.getCurrentPassword();
-        String repeatedPassword = data.getRepeatedPassword();
-        validatePassword(currentPassword , repeatedPassword , "confirmPassword");
     }
 
     public void changePassword(String userId , String oldPassword , String newPassword) {

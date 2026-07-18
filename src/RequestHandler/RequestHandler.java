@@ -2,8 +2,9 @@ package RequestHandler;
 
 import APIServer.Request;
 import APIServer.Response;
-import DTO.AuthenticationDto;
-import DTO.ConfirmPasswordDto;
+import DTO.LogInDto;
+import DTO.CheckPasswordDto;
+import DTO.SignUpDto;
 import Services.UserService;
 
 public class RequestHandler {
@@ -35,21 +36,28 @@ public class RequestHandler {
     public void handle() {
         String Action = request.getActionName();
         switch (Action) {
-            case "sign up", "log in": authenticate(); break;
+            case "sign up":
+            case "log in": logIn(); break;
             case "confirm password": confirmPassword(); break;
             case "change password": changePassword(); break;
         }
 
     }
 
-    public void authenticate() {
-        AuthenticationDto data = new AuthenticationDto(request.getPayload());
+    public void signUp(){
+        SignUpDto data = new SignUpDto(request.getPayload());
         UserService service = UserService.getInstance();
         service.signUp(data);
     }
 
+    public void logIn() {
+        LogInDto data = new LogInDto(request.getPayload());
+        UserService service = UserService.getInstance();
+        service.logIn(data);
+    }
+
     public void confirmPassword() {
-        ConfirmPasswordDto data = new ConfirmPasswordDto(request.getPayload());
+        CheckPasswordDto data = new CheckPasswordDto(request.getPayload());
         UserService service = UserService.getInstance();
         service.confirmPassword(data);
     }

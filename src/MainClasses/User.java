@@ -1,12 +1,6 @@
 package MainClasses;
 
-import Exceptions.FieldIsEmptyException;
-import Exceptions.PasswordContainsUserNameException;
-import Exceptions.PasswordNotLongEnoughException;
-import Exceptions.PasswordNotStrongException;
-
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class User extends BaseClass<User>{
 
@@ -23,6 +17,8 @@ public class User extends BaseClass<User>{
     private Set<String> sharedPhotoIds = new HashSet<>();
 
     private Theme theme = Theme.LIGHT;
+
+    private Set<Session> sessions = new HashSet<>();
 
     public User(String userName, String password){
         this.userName = userName;
@@ -107,6 +103,14 @@ public class User extends BaseClass<User>{
 
     public void setTheme(Theme theme){
         this.theme = theme;
+    }
+
+    public Set<Session> getSessions() {
+        return sessions;
+    }
+
+    public void setSessions(Set<Session> sessions) {
+        this.sessions = sessions;
     }
 
     @Override

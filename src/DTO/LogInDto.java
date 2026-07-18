@@ -2,15 +2,19 @@ package DTO;
 
 import com.google.gson.JsonObject;
 
-public class AuthenticationDto {
+public class LogInDto {
 
     private JsonObject json;
+
+    private String userId;
 
     private String userName;
 
     private String password;
 
-    public AuthenticationDto(JsonObject json) {
+    private String repeatedPassword;
+
+    public LogInDto(JsonObject json) {
         this.json = json;
     }
 
@@ -20,6 +24,14 @@ public class AuthenticationDto {
 
     public void setJson(JsonObject json) {
         this.json = json;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getUserName() {
@@ -36,5 +48,13 @@ public class AuthenticationDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRepeatedPassword() {
+        return repeatedPassword;
+    }
+
+    public void setRepeatedPassword(String repeatedPassword) {
+        this.repeatedPassword = repeatedPassword;
     }
 }

@@ -48,6 +48,12 @@ public class UserRepository {
         return user.get();
     }
 
+    public User create(String userName , String password) {
+        User user = new User(userName , password);
+        addUser(user);
+        return user;
+    }
+
     public boolean isUserIdValid(String userId){
         return userFileManager.exists(u->u.getId().equals(userId));
     }
