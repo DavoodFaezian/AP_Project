@@ -14,6 +14,8 @@ public class User extends BaseClass<User>{
 
     private String password;
 
+    private String profilePhotoId;
+
     private Set<String> photoIds = new HashSet<>();
 
     private Set<String> albumIds = new HashSet<>();
@@ -22,51 +24,15 @@ public class User extends BaseClass<User>{
 
     private Theme theme = Theme.LIGHT;
 
-    private static final int MIN_LENGTH = 8;
-
-    private void validateUserName(String userName){
-        if(userName.isEmpty()){
-            throw new FieldIsEmptyException("User name must not be empty!!!" , this.userName);
-        }
-    }
-
-    private void validatePassword(String password){
-        if(password.isEmpty()){
-            throw new FieldIsEmptyException("Password must not be empty!!!" , this.password);
-        }
-    }
-
-    private void validateLength(String password){
-        if(password.length() < MIN_LENGTH){
-            throw new PasswordNotLongEnoughException("Password must have at least 8 characters!!!");
-        }
-    }
-
-    private void validateStrength(String password){
-        if(!Pattern.compile("[!@#$%^&*+=_?]").matcher(password).find()){
-            throw new PasswordNotStrongException("Password must contain at least one special character!!!");
-        }
-    }
-
-    private void validateDoesNotContainUserName(String password){
-        if(password.contains(userName)){
-            throw new PasswordContainsUserNameException("Password must not contain user name!!!");
-        }
-    }
-
-    public User(String userName, String password, Theme theme){
-        validateUserName(userName);
+    public User(String userName, String password){
         this.userName = userName;
-        validatePassword(password);
-        validateLength(password);
-        validateStrength(password);
-        validateDoesNotContainUserName(password);
         this.password = password;
-        this.theme = theme;
     }
+
     public void addPhotoToSharedPhotos(String photoId){
         sharedPhotoIds.add(photoId);
     }
+
     public void removePhotoFromSharedPhotos(String photoId){
         sharedPhotoIds.remove(photoId);
     }
@@ -74,6 +40,7 @@ public class User extends BaseClass<User>{
     public void addPhotoToPhotos(String photoId){
         photoIds.add(photoId);
     }
+
     public void removePhotoFromPhotos(String photoId){
         photoIds.remove(photoId);
     }
@@ -81,9 +48,11 @@ public class User extends BaseClass<User>{
     public void addAlbumToAlbums(String albumId){
         albumIds.add(albumId);
     }
+
     public void removeAlbumFromAlbums(String albumId){
         albumIds.remove(albumId);
     }
+
     public String getUserName(){
         return userName;
     }
@@ -92,21 +61,23 @@ public class User extends BaseClass<User>{
         return password;
     }
 
+    public void setProfilePhotoId(String profilePhotoId) {
+        this.profilePhotoId = profilePhotoId;
+    }
+
+    public String getProfilePhotoId() {
+        return profilePhotoId;
+    }
 
     public Theme getTheme(){
         return theme;
     }
 
     public void setUserName(String userName) {
-        validateUserName(userName);
         this.userName = userName;
     }
 
     public void setPassword(String password) {
-        validatePassword(password);
-        validateLength(password);
-        validateStrength(password);
-        validateDoesNotContainUserName(password);
         this.password = password;
     }
 
