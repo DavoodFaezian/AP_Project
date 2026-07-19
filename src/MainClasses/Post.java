@@ -1,5 +1,5 @@
 package MainClasses;
 
-public class Post {
+public class Post extends BaseClass<Post>{
 
 }
