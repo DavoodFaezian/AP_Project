@@ -9,6 +9,7 @@ public class Post extends BaseClass<Post>{
     private Set<String> photoIds;
     private Set<String> albumIds;
     private Set<String> sharedUserIds;
+    private Set<String> commentIds;
 
     public Post(String ownerId, Set<String> photoIds, Set<String> albumIds, Set<String> sharedUserIds) {
         this.ownerId = ownerId;
@@ -47,6 +48,14 @@ public class Post extends BaseClass<Post>{
 
     public void setSharedUserIds(Set<String> sharedUserIds) {
         this.sharedUserIds = sharedUserIds;
+    }
+
+    public Set<String> getCommentIds() {
+        return commentIds;
+    }
+
+    public void setCommentIds(Set<String> commentIds) {
+        this.commentIds = commentIds;
     }
 
     @Override

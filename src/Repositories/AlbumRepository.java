@@ -1,28 +1,17 @@
 package Repositories;
 
 import Exceptions.ItemNotFoundException;
-import FileManager.GenericFileManager;
 import MainClasses.Album;
-import MainClasses.Photo;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class AlbumRepository {
-    ConcurrentHashMap<String, ReentrantReadWriteLock> locks = new ConcurrentHashMap<>();
+public class AlbumRepository extends BaseRepository<Album> {
     private static AlbumRepository instance = new AlbumRepository();
-    private GenericFileManager<Album> getAlbumFileManager(String key){
-        var lock = locks.computeIfAbsent(key,(l)->new ReentrantReadWriteLock());
-        return new GenericFileManager<>("albums"
-                + File.separator
-                +key
-                +".txt",lock);
-    }
+
 
     private AlbumRepository() {
+        super("albums");
     }
 
     public static AlbumRepository getInstance() {
@@ -30,30 +19,27 @@ public class AlbumRepository {
     }
 
     public void addAlbum(Album album) {
-        var albumFileManager = getAlbumFileManager(album.getOwnerId());
+        var albumFileManager = getFileManager(album.getOwnerId());
         albumFileManager.addToList(album);
-        albumFileManager.save();
     }
 
     public void removeAlbum(Album album) {
-        var albumFileManager = getAlbumFileManager(album.getOwnerId());
+        var albumFileManager = getFileManager(album.getOwnerId());
         albumFileManager.removeFromList(album);
-        albumFileManager.save();
     }
 
     public void removeAlbum(String id, String ownerId) {
         Album remove = findAlbumById(id, ownerId);
         remove.validateRemoveAlbum();
-
         removeAlbum(remove);
     }
     public void editAlbum(Album album){
-        var albumFileManager = getAlbumFileManager(album.getOwnerId());
+        var albumFileManager = getFileManager(album.getOwnerId());
         albumFileManager.edit(album);
     }
 
     public Album findAlbumById(String id,String ownerId) {
-        var albumFileManager = getAlbumFileManager(ownerId);
+        var albumFileManager = getFileManager(ownerId);
         Optional<Album> album = albumFileManager.findItemById(id);
 
         if (album.isEmpty()) {
@@ -64,7 +50,7 @@ public class AlbumRepository {
     }
 
     public List<Album> getAlbumsByOwner(String ownerId) {
-        var albumFileManager = getAlbumFileManager(ownerId);
+        var albumFileManager = getFileManager(ownerId);
         return albumFileManager.filterItems(
                 album -> album.getOwnerId().equals(ownerId)
         );

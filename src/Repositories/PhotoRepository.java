@@ -1,27 +1,16 @@
 package Repositories;
 
 import Exceptions.ItemNotFoundException;
-import FileManager.GenericFileManager;
 import MainClasses.Photo;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class PhotoRepository {
-    private final ConcurrentHashMap<String, ReentrantReadWriteLock> locks = new ConcurrentHashMap<>();
+public class PhotoRepository extends BaseRepository<Photo>{
     private static PhotoRepository instance = new PhotoRepository();
-    private GenericFileManager<Photo> getPhotoFileManager(String key){
-        ReentrantReadWriteLock lock = locks.computeIfAbsent(key,(l)->new ReentrantReadWriteLock());
-       return new GenericFileManager<>("photos"+
-               File.separator
-               +key
-               +".txt",lock);
-    }
-    
+
     private PhotoRepository() {
+        super("photos");
     }
 
     public static PhotoRepository getInstance() {
@@ -29,12 +18,12 @@ public class PhotoRepository {
     }
 
     public void addPhoto(Photo photo) {
-        var photoFileManager = getPhotoFileManager(photo.getOwnerId());
+        var photoFileManager = getFileManager(photo.getOwnerId());
         photoFileManager.addToList(photo);
     }
 
     public void removePhoto(Photo photo) {
-        var photoFileManager = getPhotoFileManager(photo.getOwnerId());
+        var photoFileManager = getFileManager(photo.getOwnerId());
         photoFileManager.removeFromList(photo);
 
     }
@@ -44,18 +33,18 @@ public class PhotoRepository {
         removePhoto(remove);
     }
     public void editPhoto(Photo edit){
-        var photoFileManager = getPhotoFileManager(edit.getOwnerId());
+        var photoFileManager = getFileManager(edit.getOwnerId());
         photoFileManager.edit(edit);
     }
     public List<Photo> getPhotosByOwnerId(String ownerId){
-        var photoFileManager = getPhotoFileManager(ownerId);
+        var photoFileManager = getFileManager(ownerId);
         return photoFileManager.getAll();
     }
 
 
 
     public Photo findPhotoById(String id,String ownerId){
-        Optional<Photo> photo = getPhotoFileManager(ownerId).findItemById(id);
+        Optional<Photo> photo = getFileManager(ownerId).findItemById(id);
         if(photo.isEmpty()){
             throw new ItemNotFoundException("photo", id);
         }
@@ -64,6 +53,6 @@ public class PhotoRepository {
 
 
     public boolean isPhotoIdValid(String photoId,String ownerId){
-        return getPhotoFileManager(ownerId).exists(p->p.getId().equals(photoId));
+        return getFileManager(ownerId).exists(p->p.getId().equals(photoId));
     }
 }
