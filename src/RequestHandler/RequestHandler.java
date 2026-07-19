@@ -49,7 +49,8 @@ public class RequestHandler {
 
     private record ActionHandler(Object instance, Method method) {}
 
-    private static final Map<String, ActionHandler> actions = new HashMap<>();    static {
+    private static final Map<String, ActionHandler> actions = new HashMap<>();
+    static {
         File servicesPath = Paths.get(CURRENT_DIR.toString(),"Services").toFile();
         File[] serviceFiles = servicesPath.listFiles();
         assert serviceFiles != null;
