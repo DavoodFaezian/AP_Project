@@ -29,7 +29,7 @@ public class PhotoAlbumService{
         }
         else {
             Album album = AlbumRepository.getInstance().findAlbumById(albumId);
-            validateAccess(photo , album);
+            validateAccess(photo, album);
             photo.getPhotoAlbumIds().add(albumId);
             album.getPhotoIds().add(photoId);
             album.updateTime();

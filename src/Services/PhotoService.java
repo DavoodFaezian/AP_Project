@@ -1,6 +1,7 @@
 package Services;
 
 import Exceptions.AccessDeniedException;
+import FileManager.GenericFileManager;
 import MainClasses.Photo;
 import MainClasses.User;
 import Repositories.PhotoRepository;
@@ -16,7 +17,7 @@ public class PhotoService {
 
     public void matchPhotoWithUser(String userId , String photoId){
         User user = UserRepository.getInstance().findUserById(userId);
-        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
+        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId,userId);
         validateAccess(user , photo);
         user.getPhotoIds().add(photoId);
     }

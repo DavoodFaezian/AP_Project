@@ -58,8 +58,8 @@ public class PhotoTests{
 
     @BeforeEach
     public void before(){
-        user1 = new User("Ali" , "12345678!" , Theme.LIGHT);
-        user2 = new User("Davood" , "123456789*" , Theme.DARK);
+        user1 = new User("Ali" , "12345678!");
+        user2 = new User("Davood" , "123456789*");
 
         caption1 = "This is my photo1.";
         caption2 = "This is my photo2.";

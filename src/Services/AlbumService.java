@@ -16,7 +16,7 @@ public class AlbumService {
 
     public void matchUserWithAlbum(String userId , String albumId){
         User user = UserRepository.getInstance().findUserById(userId);
-        Album album = AlbumRepository.getInstance().findAlbumById(albumId);
+        Album album = AlbumRepository.getInstance().findAlbumById(albumId,userId);
         validateAccess(user , album);
         user.getAlbumIds().add(albumId);
     }
