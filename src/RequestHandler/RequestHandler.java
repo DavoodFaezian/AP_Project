@@ -108,25 +108,4 @@ public class RequestHandler {
 
     }
 
-    public void signUp(){
-        Gson gson = new Gson();
-        SignUpDto data = gson.fromJson(request.getPayload() , SignUpDto.class);
-        UserService service = UserService.getInstance();
-        service.signUp(data);
-    }
-
-    public void logIn() {
-        Gson gson = new Gson();
-        LogInDto data = gson.fromJson(request.getPayload() , LogInDto.class);
-        UserService service = UserService.getInstance();
-        service.logIn(data);
-    }
-
-    public void changePassword() {
-        Gson gson = new Gson();
-        ChangePasswordDto data = gson.fromJson(request.getPayload() , ChangePasswordDto.class);
-        UserService service = UserService.getInstance();
-        service.changePassword(data);
-    }
-
 }

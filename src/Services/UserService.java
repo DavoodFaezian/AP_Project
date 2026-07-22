@@ -1,8 +1,6 @@
 package Services;
 
-import DTO.ChangePasswordDto;
-import DTO.LogInDto;
-import DTO.SignUpDto;
+
 import Exceptions.*;
 import MainClasses.Session;
 import MainClasses.User;
@@ -98,36 +96,26 @@ public class UserService {
         }
     }
 
-    public void signUp(SignUpDto data) {
-        String userName = data.getUserName();
-        String password = data.getPassword();
-        String repeatedPassword = data.getRepeatedPassword();
+    public void signUp(String userName , String password , String repeatedPassword) {
         validateSignUp(userName , password , repeatedPassword);
         User user = UserRepository.getInstance().create(userName , password);
         Session session = SessionRepository.getInstance().createSession(user.getId());
-        user.getSessions().add(session.getId());
+        user.getSessionIds().add(session.getId());
     }
 
-    public void logIn(LogInDto data) {
-        String userId = data.getUserId();
-        String userName = data.getUserName();
-        String password = data.getPassword();
-        String repeatedPassword = data.getRepeatedPassword();
+    public void logIn(String userName , String password , String userId , String repeatedPassword) {
         User user = UserRepository.getInstance().findUserById(userId);
         validateLogIn(user , userName , password , repeatedPassword);
         Session session = SessionRepository.getInstance().createSession(userId);
-        user.getSessions().add(session.getId());
+        user.getSessionIds().add(session.getId());
     }
 
     public void logOut(String userId) {
-
+        User user = UserRepository.getInstance().findUserById(userId);
+        user.getSessionIds().clear();
     }
 
-    public void changePassword(ChangePasswordDto data) {
-        String userId = data.getUserId();
-        String oldPassword = data.getOldPassword();
-        String newPassword = data.getNewPassword();
-        String confirmNewPassword = data.getConfirmNewPassword();
+    public void changePassword(String userId , String oldPassword , String newPassword , String confirmNewPassword) {
         User user = UserRepository.getInstance().findUserById(userId);
         validateOldPassword(user , oldPassword);
         validatePassword(user.getUserName() , newPassword);

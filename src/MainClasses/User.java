@@ -20,6 +20,10 @@ public class User extends BaseClass<User>{
 
     private Set<String> sessionIds = new HashSet<>();
 
+    private Set<String> followersId = new HashSet<>();
+
+    private Set<String> followingsId = new HashSet<>();
+
     public User(String userName, String password){
         this.userName = userName;
         this.password = password;
@@ -105,12 +109,33 @@ public class User extends BaseClass<User>{
         this.theme = theme;
     }
 
-    public Set<String> getSessions() {
-        return sessionIds;
-    }
 
     public void setSessions(Set<String> sessions) {
         this.sessionIds = sessions;
+    }
+
+    public Set<String> getSessionIds() {
+        return sessionIds;
+    }
+
+    public void setSessionIds(Set<String> sessionIds) {
+        this.sessionIds = sessionIds;
+    }
+
+    public Set<String> getFollowersId() {
+        return followersId;
+    }
+
+    public void setFollowersId(Set<String> followersId) {
+        this.followersId = followersId;
+    }
+
+    public Set<String> getFollowingsId() {
+        return followingsId;
+    }
+
+    public void setFollowingsId(Set<String> followingsId) {
+        this.followingsId = followingsId;
     }
 
     @Override
