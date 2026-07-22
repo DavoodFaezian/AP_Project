@@ -7,7 +7,6 @@ import Repositories.PhotoRepository;
 import Repositories.UserRepository;
 import Services.PhotoAlbumService;
 
-import Services.UserSharedPhotoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
