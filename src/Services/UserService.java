@@ -122,4 +122,21 @@ public class UserService {
         validateNewPassword(newPassword , confirmNewPassword);
         user.setPassword(newPassword);
     }
+
+    public void addProfilePhoto(String userId , String profilePhotoId) {
+       User user = UserRepository.getInstance().findUserById(userId);
+       user.setProfilePhotoId(profilePhotoId);
+    }
+
+    public void removeProfilePhoto(String userId) {
+        User user = UserRepository.getInstance().findUserById(userId);
+        user.setProfilePhotoId(null);
+    }
+
+    public void follow(String followerId , String followingId) {
+        User follower = UserRepository.getInstance().findUserById(followerId);
+        User following = UserRepository.getInstance().findUserById(followingId);
+        following.getFollowersId().add(followerId);
+        follower.getFollowingsId().add(followingId);
+    }
 }
