@@ -1,16 +1,20 @@
 package Repositories;
 
+import Exceptions.ItemNotFoundException;
 import FileManager.GenericFileManager;
 import MainClasses.Session;
+import MainClasses.User;
+
+import java.util.Optional;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class SessionRepository {
 
-    private final GenericFileManager<Session> sessionFileManager;
-
     private static final SessionRepository instance = new SessionRepository();
 
+    private static final GenericFileManager<Session> sessionFileManager = new GenericFileManager<>("sessions" , new ReentrantReadWriteLock());
+
     private SessionRepository(){
-        this.sessionFileManager = new GenericFileManager<>("session.txt");
     }
 
     public static SessionRepository getInstance() {
@@ -33,7 +37,16 @@ public class SessionRepository {
         return session;
     }
 
-    public boolean isSessionIdValid(String sessionId) {
+    public User findUserBySessionId(String sessionId) {
+        Optional<Session> session = sessionFileManager.findItemById(sessionId);
+        if(session.isEmpty()){
+            throw new ItemNotFoundException("session" , sessionId);
+        }
+        String userId = session.get().getUserId();
+        return UserRepository.getInstance().findUserById(userId);
+    }
+
+    public boolean isSessionIdValid(String userId , String sessionId) {
         return sessionFileManager.exists(s -> s.getId().equals(sessionId));
     }
 }

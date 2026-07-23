@@ -1,6 +1,7 @@
 package Services;
 
 import Exceptions.AccessDeniedException;
+import Exceptions.ActionFailedException;
 import Exceptions.ItemDoesNotExistException;
 import Exceptions.ItemNotFoundException;
 import MainClasses.Album;
@@ -8,6 +9,7 @@ import MainClasses.Photo;
 import MainClasses.User;
 import Repositories.AlbumRepository;
 import Repositories.PhotoRepository;
+import Repositories.SessionRepository;
 import Repositories.UserRepository;
 
 import java.util.ArrayList;
@@ -22,13 +24,14 @@ public class PhotoAlbumService{
         }
     }
 
-    public void addPhotoToAlbum(String photoId , String albumId){
-        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
+    public void addPhotoToAlbum(String sessionId , String photoId , String albumId){
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
         if(albumId.isEmpty()){
             photo.getPhotoAlbumIds().add(albumId);
         }
         else {
-            Album album = AlbumRepository.getInstance().findAlbumById(albumId);
+            Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
             validateAccess(photo, album);
             photo.getPhotoAlbumIds().add(albumId);
             album.getPhotoIds().add(photoId);
@@ -36,13 +39,14 @@ public class PhotoAlbumService{
         }
     }
 
-    public void removePhotoFromAlbum(String userId , String photoId , String albumId){
-        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
+    public void removePhotoFromAlbum(String sessionId , String photoId , String albumId){
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
         if(albumId.isEmpty()){
             photo.getPhotoAlbumIds().remove(albumId);
         }
         else {
-            Album album = AlbumRepository.getInstance().findAlbumById(albumId);
+            Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
             validateAccess(photo , album);
             photo.getPhotoAlbumIds().remove(albumId);
             album.getPhotoIds().remove(photoId);
@@ -50,40 +54,40 @@ public class PhotoAlbumService{
         }
     }
 
-    public void validateToRemove(String photoId , String albumId){
-        Album album = AlbumRepository.getInstance().findAlbumById(albumId);
+    public void validateToRemove(String photoId , Album album){
         if(!album.getPhotoIds().contains(photoId)){
-            throw new ItemNotFoundException("photo" , photoId);
+            throw new ActionFailedException("Photo was not found!!!");
         }
     }
 
     private void validateToRemoveFromNull(Photo photo){
         if(!photo.getPhotoAlbumIds().contains("")){
-            throw new ItemNotFoundException("photo" , photo.getId());
+            throw new ActionFailedException("Photo was not sound");
         }
     }
 
-    public void transferPhoto(String photoId , String fromAlbumId , String toAlbumId){
-        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
+    public void transferPhoto(String sessionId , String photoId , String fromAlbumId , String toAlbumId){
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
         if(!fromAlbumId.isEmpty() && !toAlbumId.isEmpty()){
-            Album fromAlbum = AlbumRepository.getInstance().findAlbumById(fromAlbumId);
-            Album toAlbum = AlbumRepository.getInstance().findAlbumById(toAlbumId);
+            Album fromAlbum = AlbumRepository.getInstance().findAlbumById(fromAlbumId , user.getId());
+            Album toAlbum = AlbumRepository.getInstance().findAlbumById(toAlbumId , user.getId());
             validateAccess(photo , fromAlbum);
             validateAccess(photo , toAlbum);
-            validateToRemove(photoId , fromAlbumId);
+            validateToRemove(photoId , fromAlbum);
             fromAlbum.getPhotoIds().remove(photoId);
             fromAlbum.updateTime();
             toAlbum.getPhotoIds().add(photoId);
             toAlbum.updateTime();
         } else if (!fromAlbumId.isEmpty()){
-            Album fromAlbum = AlbumRepository.getInstance().findAlbumById(fromAlbumId);
+            Album fromAlbum = AlbumRepository.getInstance().findAlbumById(fromAlbumId , user.getId());
             validateAccess(photo , fromAlbum);
-            validateToRemove(photoId , fromAlbumId);
+            validateToRemove(photoId , fromAlbum);
             fromAlbum.getPhotoIds().remove(photoId);
             fromAlbum.updateTime();
         } else if (!toAlbumId.isEmpty()){
             validateToRemoveFromNull(photo);
-            Album toAlbum = AlbumRepository.getInstance().findAlbumById(toAlbumId);
+            Album toAlbum = AlbumRepository.getInstance().findAlbumById(toAlbumId , user.getId());
             validateAccess(photo , toAlbum);
             toAlbum.getPhotoIds().add(photoId);
             toAlbum.updateTime();
@@ -94,17 +98,14 @@ public class PhotoAlbumService{
         photo.getPhotoAlbumIds().add(toAlbumId);
     }
 
-    public ArrayList<Photo> getPhotosByAlbumId(String albumId){
-        Album album = AlbumRepository.getInstance().findAlbumById(albumId);
+    public ArrayList<Photo> getPhotosByAlbumId(String sessionId , String albumId){
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
         ArrayList<Photo> res = new ArrayList<>();
         for(var photoId : album.getPhotoIds()){
-            res.add(PhotoRepository.getInstance().findPhotoById(photoId));
+            res.add(PhotoRepository.getInstance().findPhotoById(photoId , user.getId()));
         }
         return res;
 
     }
-
-
-
-
 }

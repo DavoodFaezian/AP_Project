@@ -6,27 +6,26 @@ import MainClasses.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class UserRepository extends BaseRepository<User> {
+public class UserRepository {
 
     private static final UserRepository instance = new UserRepository();
 
-    private UserRepository() {
-        super("users");
-    }
+    private static final GenericFileManager<User> userFileManager = new GenericFileManager<>("users" , new ReentrantReadWriteLock());
+
+    private UserRepository() {}
 
     public static UserRepository getInstance() {
         return instance;
     }
 
     public void addUser(User user) {
-        var userFileManager = getFileManager("users");
          userFileManager.addToList(user);
          userFileManager.save();
     }
 
     public void removeUser(User user) {
-        var userFileManager = getFileManager("users");
         user.validateRemoveUser();
         userFileManager.removeFromList(user);
         userFileManager.save();
@@ -40,7 +39,6 @@ public class UserRepository extends BaseRepository<User> {
 
 
     public User findUserById(String id) {
-        var userFileManager = getFileManager("users");
         Optional<User> user = userFileManager.findItemById(id);
 
         if (user.isEmpty()) {
@@ -57,11 +55,9 @@ public class UserRepository extends BaseRepository<User> {
     }
 
     public boolean isUserIdValid(String userId){
-        var userFileManager = getFileManager("users");
         return userFileManager.exists(u->u.getId().equals(userId));
     }
     public List<User> getAllUsers() {
-        var userFileManager = getFileManager("users");
         return userFileManager.getAll();
     }
 }
