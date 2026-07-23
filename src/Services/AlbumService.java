@@ -8,6 +8,15 @@ import Repositories.UserRepository;
 
 public class AlbumService {
 
+    private static final AlbumService instance = new AlbumService();
+
+    private AlbumService(){
+    }
+
+    public static AlbumService getInstance() {
+        return instance;
+    }
+
     private void validateAccess(User user , Album album){
         if(!album.getOwnerId().equals(user.getId())){
             throw new AccessDeniedException("Access Denied!!!");

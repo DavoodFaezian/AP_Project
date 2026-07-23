@@ -48,11 +48,11 @@ public class RequestHandler {
 
     private static final Map<String, ActionHandler> actions = new HashMap<>();
     static {
-        File servicesPath = Paths.get(CURRENT_DIR.toString(),"Services").toFile();
+        File servicesPath = Paths.get(CURRENT_DIR.toString(),"src", "Services").toFile();
         File[] serviceFiles = servicesPath.listFiles();
         assert serviceFiles != null;
         for (var serviceFile : serviceFiles){
-            String serviceName = serviceFile.getName();
+            String serviceName = serviceFile.getName().split("\\.")[0];
             try {
                 Class<?> service = Class.forName("Services."+serviceName);
                 Object serviceInstance = service.getMethod("getInstance").invoke(null);

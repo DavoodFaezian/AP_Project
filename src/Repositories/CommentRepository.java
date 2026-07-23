@@ -44,14 +44,14 @@ public class CommentRepository {
         }
     }
 
-    public void addComment(Comment comment) {
-        comment.validate();
-        validateCommentForeignKeys(comment);
-
-        var commentFileManager = getCommentFileManager(comment.getPhotoId());
-        commentFileManager.addToList(comment);
-        commentFileManager.save();
-    }
+//    public void addComment(Comment comment) {
+//        comment.validate();
+//        validateCommentForeignKeys(comment);
+//
+//        var commentFileManager = getCommentFileManager(comment.getPhotoId());
+//        commentFileManager.addToList(comment);
+//        commentFileManager.save();
+//    }
 
     public void removeComment(Comment comment) {
         var commentFileManager = getCommentFileManager(comment.getPhotoId());

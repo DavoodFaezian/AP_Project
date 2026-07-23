@@ -5,8 +5,16 @@ import Repositories.CommentRepository;
 import ViewModels.Comment.CommentViewModel;
 
 public class CommentService {
+
+    private static final CommentService instance = new CommentService();
+
+    private CommentService(){}
+
+    public static CommentService getInstance() {
+        return instance;
+    }
+
     public static void editComment(CommentViewModel editedComment){
-        Comment comment = CommentRepository.getInstance().findCommentById(editedComment.getId());
-        comment.editComment(editedComment.getScript());
+
     }
 }

@@ -16,6 +16,14 @@ import java.util.ArrayList;
 
 public class PhotoAlbumService{
 
+    private static final PhotoAlbumService instance = new PhotoAlbumService();
+
+    private PhotoAlbumService(){}
+
+    public static PhotoAlbumService getInstance() {
+        return instance;
+    }
+
     private void validateAccess(Photo photo , Album album){
         User photoOwner = UserRepository.getInstance().findUserById(photo.getOwnerId());
         User albumOwner = UserRepository.getInstance().findUserById(album.getOwnerId());

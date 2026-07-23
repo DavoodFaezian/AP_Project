@@ -1,6 +1,7 @@
 package Services;
 
 
+import Dto.SignUpDto;
 import Exceptions.*;
 import MainClasses.Session;
 import MainClasses.User;
@@ -68,7 +69,6 @@ public class UserService {
         validatePassword(password);
         validateLength(password);
         validateStrength(password);
-        validateDoesNotContainUserName(userName , password);
     }
 
     public void validateSignUp(String userName , String password , String repeatedPassword) {
@@ -96,7 +96,10 @@ public class UserService {
         }
     }
 
-    public void signUp(String userName , String password , String repeatedPassword) {
+    public void signUp(SignUpDto data) {
+        String userName = data.getUserName();
+        String password = data.getPassword();
+        String repeatedPassword = data.getRepeatedPassword();
         validateSignUp(userName , password , repeatedPassword);
         User user = UserRepository.getInstance().create(userName , password);
         Session session = SessionRepository.getInstance().createSession(user.getId());
