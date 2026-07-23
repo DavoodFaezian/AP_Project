@@ -2,9 +2,6 @@ package RequestHandler;
 
 import APIServer.Request;
 import APIServer.Response;
-import DTO.ChangePasswordDto;
-import DTO.LogInDto;
-import DTO.SignUpDto;
 import Services.UserService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

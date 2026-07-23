@@ -36,7 +36,7 @@ public class PhotoAlbumService{
         }
     }
 
-    public void removePhotoFromAlbum(String photoId , String albumId){
+    public void removePhotoFromAlbum(String userId , String photoId , String albumId){
         Photo photo = PhotoRepository.getInstance().findPhotoById(photoId);
         if(albumId.isEmpty()){
             photo.getPhotoAlbumIds().remove(albumId);

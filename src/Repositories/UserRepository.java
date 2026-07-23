@@ -7,13 +7,12 @@ import MainClasses.User;
 import java.util.List;
 import java.util.Optional;
 
-public class UserRepository {
+public class UserRepository extends BaseRepository<User> {
 
-    private final GenericFileManager<User> userFileManager;
     private static final UserRepository instance = new UserRepository();
 
     private UserRepository() {
-        this.userFileManager = new GenericFileManager<>("user.txt");
+        super("users");
     }
 
     public static UserRepository getInstance() {
@@ -21,11 +20,13 @@ public class UserRepository {
     }
 
     public void addUser(User user) {
+        var userFileManager = getFileManager("users");
          userFileManager.addToList(user);
          userFileManager.save();
     }
 
     public void removeUser(User user) {
+        var userFileManager = getFileManager("users");
         user.validateRemoveUser();
         userFileManager.removeFromList(user);
         userFileManager.save();
@@ -39,6 +40,7 @@ public class UserRepository {
 
 
     public User findUserById(String id) {
+        var userFileManager = getFileManager("users");
         Optional<User> user = userFileManager.findItemById(id);
 
         if (user.isEmpty()) {
@@ -55,9 +57,11 @@ public class UserRepository {
     }
 
     public boolean isUserIdValid(String userId){
+        var userFileManager = getFileManager("users");
         return userFileManager.exists(u->u.getId().equals(userId));
     }
     public List<User> getAllUsers() {
+        var userFileManager = getFileManager("users");
         return userFileManager.getAll();
     }
 }

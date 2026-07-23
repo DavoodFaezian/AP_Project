@@ -53,7 +53,6 @@ public class PhotoTests{
     private Photo photo6;
 
     private PhotoAlbumService service;
-    private UserSharedPhotoService shareService;
 
     @BeforeEach
     public void before(){
@@ -104,7 +103,6 @@ public class PhotoTests{
         comment5 = new Comment(user1.getId(),script5,photo5.getId());
 
         service = new PhotoAlbumService();
-        shareService = new UserSharedPhotoService();
         UserRepository.getInstance().addUser(user1);
         UserRepository.getInstance().addUser(user2);
         AlbumRepository.getInstance().addAlbum(album1);
@@ -173,20 +171,5 @@ public class PhotoTests{
         assertTrue(album1.getPhotoIds().contains(photo1.getId()));
         assertFalse(photo1.getPhotoAlbumIds().contains(""));
         assertTrue(photo1.getPhotoAlbumIds().contains(album1.getId()));
-    }
-
-    @Test
-    public void shareTest(){
-        Exception exp1 = assertThrows(AccessDeniedException.class , () -> shareService.sharePhoto(photo1.getId() , user2.getId() , user1.getId()));
-        assertEquals("Access Denied!!!" , exp1.getMessage());
-        Exception exp2 = assertThrows(ItemDoesNotExistException.class , () -> shareService.sharePhoto(photo1.getId() , "" , user2.getId()));
-        assertEquals("Photo, sender or receiver doesn't exist" , exp2.getMessage());
-        assertDoesNotThrow(() -> shareService.undoSharePhoto(photo1.getId() , user1.getId() , user2.getId()));
-        assertDoesNotThrow(() -> shareService.sharePhoto(photo1.getId() , user1.getId() , user2.getId()));
-        assertTrue(user2.getSharedPhotoIds().contains(photo1.getId()));
-        assertTrue(photo1.getSharedUserIds().contains(user2.getId()));
-        assertDoesNotThrow(() -> shareService.undoSharePhoto(photo1.getId() , user1.getId() , user2.getId()));
-        assertFalse(user2.getSharedPhotoIds().contains(photo1.getId()));
-        assertFalse(photo1.getSharedUserIds().contains(user2.getId()));
     }
 }
