@@ -2,6 +2,7 @@ package RequestHandler;
 
 import APIServer.Request;
 import APIServer.Response;
+import Exceptions.ActionFailedException;
 import Services.UserService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -96,10 +97,13 @@ public class RequestHandler {
                 }
             }
             action.method.invoke(action.instance, args);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            Throwable exp = e.getCause();
+            if (exp instanceof ActionFailedException) {
+                throw new ActionFailedException(exp.getMessage());
+            }
         }
 
 

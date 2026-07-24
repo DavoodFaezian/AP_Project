@@ -23,45 +23,45 @@ public class UserService {
 
     private void validateUserName(String userName){
         if(userName.isEmpty()){
-            throw new ActionFailedException("User name must not be empty!!");
+            throw new ActionFailedException("User name must not be empty.");
         }
     }
 
     private void validatePassword(String password){
         if(password.isEmpty()){
-            throw new ActionFailedException("Password must not be empty!!!");
+            throw new ActionFailedException("Password must not be empty.");
         }
     }
 
     private void validateLength(String password){
         if(password.length() < MIN_LENGTH){
-            throw new ActionFailedException("Password must have at least 8 characters!!!");
+            throw new ActionFailedException("Password must have at least 8 characters.");
         }
     }
 
     private void validateStrength(String password){
         if(!Pattern.compile("[!@#$%^&*+=_?]").matcher(password).find()){
-            throw new ActionFailedException("Password must contain at least one special character!!!");
+            throw new ActionFailedException("Password must contain at least one special character.");
         }
     }
 
     private void validateDoesNotContainUserName(String userName , String password){
         if(password.contains(userName)){
-            throw new ActionFailedException("Password must not contain user name!!!");
+            throw new ActionFailedException("Password must not contain user name.");
         }
     }
 
     public void validateUser(String userName , String password){
         List<User> users = UserRepository.getInstance().getAllUsers();
-        boolean isUserNotValid = users.stream().anyMatch(s -> s.getUserName().equals(userName) || s.getUserName().equals(password));
+        boolean isUserNotValid = users.stream().anyMatch(s -> s.getUserName().equals(userName) || s.getPassword().equals(password));
         if (isUserNotValid) {
             throw new ActionFailedException("userName or password already exists.");
         }
     }
 
-    public void validateConfirmPassword(String password , String repeatedPassword) {
-        if (!password.equals(repeatedPassword)) {
-            throw new ActionFailedException("confirm password does not match password");
+    public void validateConfirmPassword(String password , String confirmPassword) {
+        if (!password.equals(confirmPassword)) {
+            throw new ActionFailedException("Confirm password does not match password.");
         }
     }
 
@@ -69,30 +69,31 @@ public class UserService {
         validatePassword(password);
         validateLength(password);
         validateStrength(password);
+        validateDoesNotContainUserName(userName , password);
     }
 
     public void validateSignUp(String userName , String password , String repeatedPassword) {
         validateUserName(userName);
         validatePassword(userName , password);
-        validatePassword(password , repeatedPassword);
         validateUser(userName , password);
+        validateConfirmPassword(password , repeatedPassword);
     }
 
-    public void validateLogIn(User user , String userName , String password , String repeatedPassword) {
-        if(!user.getUserName().equals(userName) || user.getPassword().equals(password) || !password.equals(repeatedPassword)) {
-            throw new ActionFailedException("log in");
+    public void validateLogIn(User user , String userName , String password , String confirmPassword) {
+        if(!user.getUserName().equals(userName) || user.getPassword().equals(password) || !password.equals(confirmPassword)) {
+            throw new ActionFailedException("log in failed.");
         }
     }
 
     public void validateOldPassword(User user , String oldPassword) {
         if (!user.getPassword().equals(oldPassword)) {
-            throw new ActionFailedException("Old password is not correct");
+            throw new ActionFailedException("Old password is incorrect.");
         }
     }
 
     public void validateNewPassword(String password , String newPassword) {
         if(!password.equals(newPassword)) {
-            throw new ActionFailedException("Verify password failed");
+            throw new ActionFailedException("Verify password failed.");
         }
     }
 
