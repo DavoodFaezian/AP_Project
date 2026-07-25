@@ -1,4 +1,5 @@
 import APIServer.Request;
+import Dto.ChangePasswordDto;
 import Dto.LogInDto;
 import Dto.LogOutDto;
 import Dto.SignUpDto;
@@ -121,7 +122,35 @@ public class UserTests {
         assertDoesNotThrow(handler::handle);
         assertEquals(0 , user.getSessionIds().size());
 
+        LogInDto data = new LogInDto("Ali" , "12345678@");
 
+        obj = gson.fromJson(gson.toJson(data) , JsonObject.class);
+        Request request = new Request("User/logIn" , obj);
+        handler = new RequestHandler(request);
 
+        assertDoesNotThrow(handler::handle);
+
+        ChangePasswordDto data12 = new ChangePasswordDto(user.getSessionIds().stream().findFirst().get() , "12345678@" , "11111111@" , "11111111@");
+
+        obj = gson.fromJson(gson.toJson(data12) , JsonObject.class);
+        Request request12 = new Request("User/changePassword" , obj);
+        handler = new RequestHandler(request12);
+
+        assertDoesNotThrow(handler::handle);
+        assertEquals("11111111@" , user.getPassword());
+
+        ChangePasswordDto data13 = new ChangePasswordDto(user.getSessionIds().stream().findFirst().get() , "11111111@" , "99999999@" ,"99999999@");
+
+        obj = gson.fromJson(gson.toJson(data13) , JsonObject.class);
+        Request request13 = new Request("User/changePassword" , obj);
+        handler = new RequestHandler(request13);
+        assertDoesNotThrow(handler::handle);
+
+        ChangePasswordDto data14 = new ChangePasswordDto(user.getSessionIds().stream().findFirst().get() , "12345678@" , "@12345678" , "@12345678");
+
+        obj = gson.fromJson(gson.toJson(data14) , JsonObject.class);
+        Request request14 = new Request("User/changePassword" , obj);
+        handler = new RequestHandler(request14);
+        assertThrows(ActionFailedException.class , handler::handle);
     }
 }

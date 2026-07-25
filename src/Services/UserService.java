@@ -1,6 +1,7 @@
 package Services;
 
 
+import Dto.ChangePasswordDto;
 import Dto.LogInDto;
 import Dto.LogOutDto;
 import Dto.SignUpDto;
@@ -30,7 +31,7 @@ public class UserService {
         }
     }
 
-    private void validatePassword(String password){
+    private void validateNotEmpty(String password){
         if(password.isEmpty()){
             throw new ActionFailedException("Password must not be empty.");
         }
@@ -61,7 +62,7 @@ public class UserService {
     }
 
     public void validatePassword(String userName , String password) {
-        validatePassword(password);
+        validateNotEmpty(password);
         validateLength(password);
         validateStrength(password);
         validateDoesNotContainUserName(userName , password);
@@ -114,8 +115,12 @@ public class UserService {
         user.getSessionIds().clear();
     }
 
-    public void changePassword(String userId , String oldPassword , String newPassword , String confirmNewPassword) {
-        User user = UserRepository.getInstance().findUserById(userId);
+    public void changePassword(ChangePasswordDto data) {
+        String sessionId = data.getSessionId();
+        String oldPassword = data.getOldPassword();
+        String newPassword = data.getNewPassword();
+        String confirmNewPassword = data.getConfirmNewPassword();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         validateOldPassword(user , oldPassword);
         validatePassword(user.getUserName() , newPassword);
         validateNewPassword(newPassword , confirmNewPassword);
