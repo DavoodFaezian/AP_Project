@@ -1,5 +1,6 @@
 package Repositories;
 
+import Exceptions.ActionFailedException;
 import Exceptions.ItemNotFoundException;
 import FileManager.GenericFileManager;
 import MainClasses.User;
@@ -7,6 +8,7 @@ import MainClasses.User;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Predicate;
 
 public class UserRepository {
 
@@ -46,6 +48,24 @@ public class UserRepository {
         }
 
         return user.get();
+    }
+
+    public void checkUserNameAndPassword(String userName , String password) {
+        Predicate<User> condition = s -> s.getUserName().equals(userName) || s.getPassword().equals(password);
+        List<User> users = userFileManager.filterItems(condition);
+        if(!users.isEmpty()) {
+            throw new ActionFailedException("userName or password already exists.");
+        }
+    }
+
+    public User findUserByUserNameAndPassword(String userName , String password) {
+        Predicate<User> condition = s -> s.getUserName().equals(userName) && s.getPassword().equals(password);
+        List<User> users = userFileManager.filterItems(condition);
+        if(users.isEmpty()) {
+            throw new ActionFailedException("User wasn't found.");
+        }
+
+        return users.getFirst();
     }
 
     public User create(String userName , String password) {

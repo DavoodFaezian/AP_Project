@@ -1,4 +1,5 @@
 import APIServer.Request;
+import Dto.LogInDto;
 import Dto.SignUpDto;
 import Exceptions.ActionFailedException;
 import RequestHandler.RequestHandler;
@@ -89,6 +90,26 @@ public class UserTests {
         handler = new RequestHandler(request8);
         Exception exp7 = assertThrows(ActionFailedException.class , handler::handle);
         assertEquals("Confirm password does not match password." , exp7.getMessage());
+
+        LogInDto data9 = new LogInDto("Ali" , "12345678@");
+
+        obj = gson.fromJson(gson.toJson(data9) , JsonObject.class);
+
+        Request request9 = new Request("User/logIn" , obj);
+        handler = new RequestHandler(request9);
+        assertDoesNotThrow(handler::handle);
+
+        LogInDto data10 = new LogInDto("Mosh" , "12345678@");
+
+        obj = gson.fromJson(gson.toJson(data10) , JsonObject.class);
+
+        Request request10 = new Request("User/logIn" , obj);
+        handler = new RequestHandler(request10);
+        Exception exp8 = assertThrows(ActionFailedException.class , handler::handle);
+        assertEquals("User wasn't found." , exp8.getMessage());
+
+
+
 
     }
 }
