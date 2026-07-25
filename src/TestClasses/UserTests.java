@@ -1,8 +1,11 @@
 import APIServer.Request;
 import Dto.LogInDto;
+import Dto.LogOutDto;
 import Dto.SignUpDto;
 import Exceptions.ActionFailedException;
+import MainClasses.User;
 import RequestHandler.RequestHandler;
+import Services.UserService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -108,6 +111,15 @@ public class UserTests {
         Exception exp8 = assertThrows(ActionFailedException.class , handler::handle);
         assertEquals("User wasn't found." , exp8.getMessage());
 
+        User user = UserService.getInstance().getUser("Ali" , "12345678@");
+        assertEquals(1 , user.getSessionIds().size());
+        LogOutDto data11 = new LogOutDto(user.getSessionIds().stream().findFirst().get());
+
+        obj = gson.fromJson(gson.toJson(data11) , JsonObject.class);
+        Request request11 = new Request("User/logOut" , obj);
+        handler = new RequestHandler(request11);
+        assertDoesNotThrow(handler::handle);
+        assertEquals(0 , user.getSessionIds().size());
 
 
 

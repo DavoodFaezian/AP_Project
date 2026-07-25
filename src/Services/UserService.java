@@ -2,6 +2,7 @@ package Services;
 
 
 import Dto.LogInDto;
+import Dto.LogOutDto;
 import Dto.SignUpDto;
 import Exceptions.*;
 import MainClasses.Session;
@@ -107,8 +108,9 @@ public class UserService {
         user.getSessionIds().add(session.getId());
     }
 
-    public void logOut(String userId) {
-        User user = UserRepository.getInstance().findUserById(userId);
+    public void logOut(LogOutDto data) {
+        String sessionId = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         user.getSessionIds().clear();
     }
 
@@ -135,5 +137,9 @@ public class UserService {
         User following = UserRepository.getInstance().findUserById(followingId);
         following.getFollowersId().add(followerId);
         follower.getFollowingsId().add(followingId);
+    }
+
+    public User getUser(String userName , String password) {
+        return UserRepository.getInstance().findUserByUserNameAndPassword(userName , password);
     }
 }
