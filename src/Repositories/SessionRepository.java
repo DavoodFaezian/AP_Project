@@ -37,6 +37,11 @@ public class SessionRepository {
         return session;
     }
 
+    public void removeSessions(User user) {
+        user.getSessionIds().clear();
+        sessionFileManager.save();
+    }
+
     public User findUserBySessionId(String sessionId) {
         Optional<Session> session = sessionFileManager.findItemById(sessionId);
         if(session.isEmpty()){

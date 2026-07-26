@@ -96,7 +96,7 @@ public class UserTests {
 
         Request request9 = new Request("User/logIn" , obj);
         handler = new RequestHandler(request9);
-        assertDoesNotThrow(handler::handle);
+        assertThrows(ActionFailedException.class , handler::handle);
 
         LogInDto data10 = new LogInDto("Mosh" , "12345678@");
 
@@ -107,7 +107,7 @@ public class UserTests {
         Exception exp8 = assertThrows(ActionFailedException.class , handler::handle);
         assertEquals("User wasn't found." , exp8.getMessage());
 
-        User user = UserService.getInstance().getUser("Ali" , "12345678@");
+        User user = UserService.getInstance().getUser("Ali" , "99999999@");
         assertEquals(1 , user.getSessionIds().size());
         LogOutAndRemoveProfilePhotoDto data11 = new LogOutAndRemoveProfilePhotoDto(user.getSessionIds().stream().findFirst().get());
 
@@ -117,7 +117,7 @@ public class UserTests {
         assertDoesNotThrow(handler::handle);
         assertEquals(0 , user.getSessionIds().size());
 
-        LogInDto data = new LogInDto("Ali" , "12345678@");
+        LogInDto data = new LogInDto("Ali" , "99999999@");
 
         obj = gson.fromJson(gson.toJson(data) , JsonObject.class);
         Request request = new Request("User/logIn" , obj);
@@ -125,7 +125,7 @@ public class UserTests {
 
         assertDoesNotThrow(handler::handle);
 
-        ChangePasswordDto data12 = new ChangePasswordDto(user.getSessionIds().stream().findFirst().get() , "12345678@" , "11111111@" , "11111111@");
+        ChangePasswordDto data12 = new ChangePasswordDto(user.getSessionIds().stream().findFirst().get() , "99999999@" , "11111111@" , "11111111@");
 
         obj = gson.fromJson(gson.toJson(data12) , JsonObject.class);
         Request request12 = new Request("User/changePassword" , obj);
@@ -165,5 +165,15 @@ public class UserTests {
         assertDoesNotThrow(handler::handle);
 
         assertNull(user.getProfilePhotoId());
+
+        SignUpDto data17 = new SignUpDto("John" , "@87654321@" , "@87654321@");
+
+        obj = gson.fromJson(gson.toJson(data17) , JsonObject.class);
+        Request request17 = new Request("User/signUp" , obj);
+        handler = new RequestHandler(request17);
+        assertDoesNotThrow(handler::handle);
+
+        User user2 = UserService.getInstance().getUser("John" , "@87654321@");
+
     }
 }

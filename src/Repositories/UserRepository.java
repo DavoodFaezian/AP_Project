@@ -37,6 +37,12 @@ public class UserRepository {
     public void removeUser(String id) {
         User remove = findUserById(id);
         removeUser(remove);
+        userFileManager.save();
+    }
+
+    public void changePassword(User user , String newPassword) {
+        user.setPassword(newPassword);
+        userFileManager.save();
     }
 
 

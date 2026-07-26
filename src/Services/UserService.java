@@ -107,7 +107,7 @@ public class UserService {
     public void logOut(LogOutAndRemoveProfilePhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        user.getSessionIds().clear();
+        SessionRepository.getInstance().removeSessions(user);
     }
 
     public void changePassword(ChangePasswordDto data) {
@@ -119,7 +119,7 @@ public class UserService {
         validateOldPassword(user , oldPassword);
         validatePassword(user.getUserName() , newPassword);
         validateNewPassword(newPassword , confirmNewPassword);
-        user.setPassword(newPassword);
+        UserRepository.getInstance().changePassword(user , newPassword);
     }
 
     public void addProfilePhoto(AddProfilePhotoDto data) {
@@ -135,15 +135,17 @@ public class UserService {
         user.setProfilePhotoId(null);
     }
 
-    public void follow(String followerId , String followingId) {
-        User follower = UserRepository.getInstance().findUserById(followerId);
-        User following = UserRepository.getInstance().findUserById(followingId);
-        following.getFollowersId().add(followerId);
-        follower.getFollowingsId().add(followingId);
+    public void follow(FollowAndUnfollowDto data) {
+        String followerSessionId = data.getFollowerSessionId();
+        String followingUserId = data.getFollowingUserId();
+        User follower = SessionRepository.getInstance().findUserBySessionId(followerSessionId);
+        User following = UserRepository.getInstance().findUserById(followingUserId);
+        following.getFollowersId().add(follower.getId());
+        follower.getFollowingsId().add(following.getId());
     }
 
     public void unfollow() {
-        
+
     }
 
     public User getUser(String userName , String password) {
