@@ -1,10 +1,10 @@
 package Dto;
 
-public class LogOutDto {
+public class LogOutAndRemoveProfilePhotoDto {
 
     private String sessionId;
 
-    public LogOutDto(String sessionId) {
+    public LogOutAndRemoveProfilePhotoDto(String sessionId) {
         this.sessionId = sessionId;
     }
 

@@ -1,18 +1,13 @@
 package Services;
 
 
-import Dto.ChangePasswordDto;
-import Dto.LogInDto;
-import Dto.LogOutDto;
-import Dto.SignUpDto;
+import Dto.*;
 import Exceptions.*;
 import MainClasses.Session;
 import MainClasses.User;
 import Repositories.SessionRepository;
 import Repositories.UserRepository;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class UserService {
@@ -109,7 +104,7 @@ public class UserService {
         user.getSessionIds().add(session.getId());
     }
 
-    public void logOut(LogOutDto data) {
+    public void logOut(LogOutAndRemoveProfilePhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         user.getSessionIds().clear();
@@ -127,13 +122,16 @@ public class UserService {
         user.setPassword(newPassword);
     }
 
-    public void addProfilePhoto(String userId , String profilePhotoId) {
-       User user = UserRepository.getInstance().findUserById(userId);
+    public void addProfilePhoto(AddProfilePhotoDto data) {
+        String sessionId = data.getSessionId();
+        String profilePhotoId = data.getProfilePhotoId();
+       User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
        user.setProfilePhotoId(profilePhotoId);
     }
 
-    public void removeProfilePhoto(String userId) {
-        User user = UserRepository.getInstance().findUserById(userId);
+    public void removeProfilePhoto(LogOutAndRemoveProfilePhotoDto data) {
+        String sessionId = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         user.setProfilePhotoId(null);
     }
 
@@ -142,6 +140,10 @@ public class UserService {
         User following = UserRepository.getInstance().findUserById(followingId);
         following.getFollowersId().add(followerId);
         follower.getFollowingsId().add(followingId);
+    }
+
+    public void unfollow() {
+        
     }
 
     public User getUser(String userName , String password) {

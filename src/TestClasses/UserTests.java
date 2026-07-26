@@ -1,8 +1,5 @@
 import APIServer.Request;
-import Dto.ChangePasswordDto;
-import Dto.LogInDto;
-import Dto.LogOutDto;
-import Dto.SignUpDto;
+import Dto.*;
 import Exceptions.ActionFailedException;
 import MainClasses.User;
 import RequestHandler.RequestHandler;
@@ -10,8 +7,6 @@ import Services.UserService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.InvocationTargetException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -114,7 +109,7 @@ public class UserTests {
 
         User user = UserService.getInstance().getUser("Ali" , "12345678@");
         assertEquals(1 , user.getSessionIds().size());
-        LogOutDto data11 = new LogOutDto(user.getSessionIds().stream().findFirst().get());
+        LogOutAndRemoveProfilePhotoDto data11 = new LogOutAndRemoveProfilePhotoDto(user.getSessionIds().stream().findFirst().get());
 
         obj = gson.fromJson(gson.toJson(data11) , JsonObject.class);
         Request request11 = new Request("User/logOut" , obj);
@@ -152,5 +147,23 @@ public class UserTests {
         Request request14 = new Request("User/changePassword" , obj);
         handler = new RequestHandler(request14);
         assertThrows(ActionFailedException.class , handler::handle);
+
+        AddProfilePhotoDto data15 = new AddProfilePhotoDto(user.getSessionIds().stream().findFirst().get() , "1234");
+
+        obj = gson.fromJson(gson.toJson(data15) , JsonObject.class);
+        Request request15 = new Request("User/addProfilePhoto" , obj);
+        handler = new RequestHandler(request15);
+        assertDoesNotThrow(handler::handle);
+
+        assertEquals("1234" , user.getProfilePhotoId());
+
+        LogOutAndRemoveProfilePhotoDto data16 = new LogOutAndRemoveProfilePhotoDto(user.getSessionIds().stream().findFirst().get());
+
+        obj = gson.fromJson(gson.toJson(data16) , JsonObject.class);
+        Request request16 = new Request("User/removeProfilePhoto" , obj);
+        handler = new RequestHandler(request16);
+        assertDoesNotThrow(handler::handle);
+
+        assertNull(user.getProfilePhotoId());
     }
 }
