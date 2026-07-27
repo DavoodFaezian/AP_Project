@@ -171,9 +171,10 @@ public class UserTests {
         obj = gson.fromJson(gson.toJson(data17) , JsonObject.class);
         Request request17 = new Request("User/signUp" , obj);
         handler = new RequestHandler(request17);
-        assertDoesNotThrow(handler::handle);
+        assertThrows(ActionFailedException.class , handler::handle);
 
         User user2 = UserService.getInstance().getUser("John" , "@87654321@");
 
+        
     }
 }

@@ -40,8 +40,7 @@ public class UserRepository {
         userFileManager.save();
     }
 
-    public void changePassword(User user , String newPassword) {
-        user.setPassword(newPassword);
+    public void update() {
         userFileManager.save();
     }
 

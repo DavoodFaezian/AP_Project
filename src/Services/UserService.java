@@ -119,7 +119,8 @@ public class UserService {
         validateOldPassword(user , oldPassword);
         validatePassword(user.getUserName() , newPassword);
         validateNewPassword(newPassword , confirmNewPassword);
-        UserRepository.getInstance().changePassword(user , newPassword);
+        user.setPassword(newPassword);
+        UserRepository.getInstance().update();
     }
 
     public void addProfilePhoto(AddProfilePhotoDto data) {
@@ -127,12 +128,14 @@ public class UserService {
         String profilePhotoId = data.getProfilePhotoId();
        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
        user.setProfilePhotoId(profilePhotoId);
+       UserRepository.getInstance().update();
     }
 
     public void removeProfilePhoto(LogOutAndRemoveProfilePhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         user.setProfilePhotoId(null);
+        UserRepository.getInstance().update();
     }
 
     public void follow(FollowAndUnfollowDto data) {
@@ -142,6 +145,7 @@ public class UserService {
         User following = UserRepository.getInstance().findUserById(followingUserId);
         following.getFollowersId().add(follower.getId());
         follower.getFollowingsId().add(following.getId());
+        UserRepository.getInstance().update();
     }
 
     public void unfollow() {
