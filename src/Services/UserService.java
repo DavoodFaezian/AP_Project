@@ -148,8 +148,14 @@ public class UserService {
         UserRepository.getInstance().update();
     }
 
-    public void unfollow() {
-
+    public void unfollow(FollowAndUnfollowDto data) {
+        String followerSessionId = data.getFollowerSessionId();
+        String followingUserId = data.getFollowingUserId();
+        User follower = SessionRepository.getInstance().findUserBySessionId(followerSessionId);
+        User following = UserRepository.getInstance().findUserById(followingUserId);
+        following.getFollowersId().remove(follower.getId());
+        follower.getFollowingsId().remove(following.getId());
+        UserRepository.getInstance().update();
     }
 
     public User getUser(String userName , String password) {
