@@ -3,9 +3,11 @@ package Services;
 import MainClasses.Album;
 import MainClasses.Photo;
 import MainClasses.Post;
+import MainClasses.User;
 import Repositories.AlbumRepository;
 import Repositories.PhotoRepository;
 import Repositories.PostRepository;
+import Repositories.SessionRepository;
 
 import java.util.Collections;
 import java.util.Set;
@@ -22,9 +24,11 @@ public class AlbumService {
     public static AlbumService getInstance() {
         return instance;
     }
-
-    public void addAlbum(Album album) {
-        albumRepository.addAlbum(album);
+    public void addAlbum(AddAlbumDto data) {
+        String sessionId = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        String albumName = data.getName();
+        AlbumRepository.getInstance().createAlbum(user.getId() , albumName);
     }
 
     public void editAlbum(Album album) {
