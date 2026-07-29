@@ -5,6 +5,7 @@ import MainClasses.Photo;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class PhotoRepository extends BaseRepository<Photo>{
     private static PhotoRepository instance = new PhotoRepository();
@@ -20,12 +21,19 @@ public class PhotoRepository extends BaseRepository<Photo>{
     public void addPhoto(Photo photo) {
         var photoFileManager = getFileManager(photo.getOwnerId());
         photoFileManager.addToList(photo);
+        photoFileManager.save();
     }
 
     public void removePhoto(Photo photo) {
         var photoFileManager = getFileManager(photo.getOwnerId());
         photoFileManager.removeFromList(photo);
+        photoFileManager.save();
 
+    }
+
+    public void update(Photo photo) {
+        var photoFileManager = getFileManager(photo.getOwnerId());
+        photoFileManager.save();
     }
 
     public void removePhoto(String id,String ownerId) {
@@ -49,6 +57,12 @@ public class PhotoRepository extends BaseRepository<Photo>{
             throw new ItemNotFoundException("photo", id);
         }
         return photo.get();
+    }
+
+    public Photo createPhoto(String ownerId, String photoName, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment) {
+        Photo photo = new Photo(ownerId , photoName , tags , caption , isFavorable , permissionForLeavingComment);
+        addPhoto(photo);
+        return photo;
     }
 
 

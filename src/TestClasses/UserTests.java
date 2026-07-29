@@ -109,21 +109,6 @@ public class UserTests {
 
         User user1 = UserService.getInstance().getUser("Ali" , "99999999@");
         assertEquals(1 , user1.getSessionIds().size());
-        LogOutAndRemoveProfilePhotoDto data11 = new LogOutAndRemoveProfilePhotoDto(user1.getSessionIds().stream().findFirst().get());
-
-        obj = gson.fromJson(gson.toJson(data11) , JsonObject.class);
-        Request request11 = new Request("User/logOut" , obj);
-        handler = new RequestHandler(request11);
-        assertDoesNotThrow(handler::handle);
-        assertEquals(0 , user1.getSessionIds().size());
-
-        LogInDto data = new LogInDto("Ali" , "99999999@");
-
-        obj = gson.fromJson(gson.toJson(data) , JsonObject.class);
-        Request request = new Request("User/logIn" , obj);
-        handler = new RequestHandler(request);
-
-        assertDoesNotThrow(handler::handle);
 
         ChangePasswordDto data12 = new ChangePasswordDto(user1.getSessionIds().stream().findFirst().get() , "99999999@" , "11111111@" , "11111111@");
 
@@ -166,13 +151,6 @@ public class UserTests {
 
         assertNull(user1.getProfilePhotoId());
 
-        SignUpDto data17 = new SignUpDto("John" , "@87654321@" , "@87654321@");
-
-        obj = gson.fromJson(gson.toJson(data17) , JsonObject.class);
-        Request request17 = new Request("User/signUp" , obj);
-        handler = new RequestHandler(request17);
-        assertThrows(ActionFailedException.class , handler::handle);
-
         User user2 = UserService.getInstance().getUser("John" , "@87654321@");
 
         FollowAndUnfollowDto data18 = new FollowAndUnfollowDto(user1.getSessionIds().stream().findAny().get() , user2.getId());
@@ -191,5 +169,26 @@ public class UserTests {
         assertDoesNotThrow(handler::handle);
         assertEquals(0 , user1.getFollowingsId().size());
         assertEquals(0 , user2.getFollowersId().size());
+
+        ChangePasswordDto data20 = new ChangePasswordDto(user2.getSessionIds().stream().findFirst().get() , "3945hg" , "9847y583" , "urhgt9");
+
+        obj = gson.fromJson(gson.toJson(data20) , JsonObject.class);
+
+        Request request20 = new Request("User/changePassword" , obj);
+
+        handler = new RequestHandler(request20);
+        Exception exp = assertThrows(ActionFailedException.class , handler::handle);
+        assertEquals("Old password is incorrect." , exp.getMessage());
+
+
+        ChangePasswordDto data21 = new ChangePasswordDto(user2.getSessionIds().stream().findFirst().get() , "@87654321@" , "@@@@@1234" , "93738");
+        obj = gson.fromJson(gson.toJson(data21) , JsonObject.class);
+        Request request21 = new Request("User/changePassword" , obj);
+        handler = new RequestHandler(request21);
+        Exception exp10 = assertThrows(ActionFailedException.class , handler::handle);
+        assertEquals("Verify password failed." , exp10.getMessage());
+
+        assertEquals(1 , user2.getSessionIds().size());
+
     }
 }

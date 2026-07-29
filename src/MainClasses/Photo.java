@@ -53,7 +53,6 @@ public class Photo extends BaseClass<Photo>{
         this.isFavorable = isFavorable;
         this.permissionForLeavingComment = permissionForLeavingComment;
         createdAt = LocalDateTime.now();
-
     }
 
     public void addComment(String commentId){

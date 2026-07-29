@@ -1,11 +1,17 @@
 package Services;
 
+import Dto.AddPhotoDto;
+import Dto.DeletePhotoDto;
 import Exceptions.AccessDeniedException;
 import FileManager.GenericFileManager;
 import MainClasses.Photo;
+import MainClasses.Session;
 import MainClasses.User;
 import Repositories.PhotoRepository;
+import Repositories.SessionRepository;
 import Repositories.UserRepository;
+
+import java.util.Set;
 
 public class PhotoService {
 
@@ -17,16 +23,26 @@ public class PhotoService {
         return instance;
     }
 
-    private void validateAccess(User user , Photo photo){
-        if(!photo.getOwnerId().equals(user.getId())){
-            throw new AccessDeniedException("Access Denied!!!");
-        }
+    public void addPhoto(AddPhotoDto data) {
+        String sessionId = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        String photoName = data.getName();
+        Set<String> tags = data.getTags();
+        String caption = data.getCaption();
+        Boolean isFavorable = data.getFavorable();
+        Boolean permissionForLeavingComment = data.getPermissionForLeavingComment();
+        Photo photo = PhotoRepository.getInstance().createPhoto(user.getId() , photoName , tags , caption , isFavorable , permissionForLeavingComment);
+        user.getPhotoIds().add(photo.getId());
     }
 
-    public void matchPhotoWithUser(String userId , String photoId){
-        User user = UserRepository.getInstance().findUserById(userId);
-        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId,userId);
-        validateAccess(user , photo);
-        user.getPhotoIds().add(photoId);
+    public void deletePhoto(DeletePhotoDto data) {
+        String sessionId = data.getSessionId();
+        String photoId = data.getPhotoId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
+        user.getPhotoIds().remove(photoId);
+        PhotoRepository.getInstance().removePhoto(photo);
+        UserRepository.getInstance().update();
     }
+
 }
