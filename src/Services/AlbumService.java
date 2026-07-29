@@ -1,9 +1,11 @@
 package Services;
 
+import Dto.AddAlbumDto;
 import Exceptions.AccessDeniedException;
 import MainClasses.Album;
 import MainClasses.User;
 import Repositories.AlbumRepository;
+import Repositories.SessionRepository;
 import Repositories.UserRepository;
 
 public class AlbumService {
@@ -17,16 +19,10 @@ public class AlbumService {
         return instance;
     }
 
-    private void validateAccess(User user , Album album){
-        if(!album.getOwnerId().equals(user.getId())){
-            throw new AccessDeniedException("Access Denied!!!");
-        }
-    }
-
-    public void matchUserWithAlbum(String userId , String albumId){
-        User user = UserRepository.getInstance().findUserById(userId);
-        Album album = AlbumRepository.getInstance().findAlbumById(albumId,userId);
-        validateAccess(user , album);
-        user.getAlbumIds().add(albumId);
+    public void addAlbum(AddAlbumDto data) {
+        String sessionId = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        String albumName = data.getName();
+        AlbumRepository.getInstance().createAlbum(user.getId() , albumName);
     }
 }

@@ -56,4 +56,10 @@ public class AlbumRepository extends BaseRepository<Album> {
         );
     }
 
+    public Album createAlbum(String ownerId , String albumName) {
+        Album album = new Album(ownerId , albumName);
+        addAlbum(album);
+        return album;
+    }
+
 }

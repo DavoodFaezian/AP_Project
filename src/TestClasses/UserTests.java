@@ -177,7 +177,18 @@ public class UserTests {
         Request request20 = new Request("User/changePassword" , obj);
 
         handler = new RequestHandler(request20);
-        assertThrows(ActionFailedException.class , handler::handle);
+        Exception exp = assertThrows(ActionFailedException.class , handler::handle);
+        assertEquals("Old password is incorrect." , exp.getMessage());
+
+
+        ChangePasswordDto data21 = new ChangePasswordDto(user2.getSessionIds().stream().findFirst().get() , "@87654321@" , "@@@@@1234" , "93738");
+        obj = gson.fromJson(gson.toJson(data21) , JsonObject.class);
+        Request request21 = new Request("User/changePassword" , obj);
+        handler = new RequestHandler(request21);
+        Exception exp10 = assertThrows(ActionFailedException.class , handler::handle);
+        assertEquals("Verify password failed." , exp10.getMessage());
+
         assertEquals(1 , user2.getSessionIds().size());
+
     }
 }
