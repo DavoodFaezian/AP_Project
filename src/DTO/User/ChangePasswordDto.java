@@ -1,4 +1,4 @@
-package DTO;
+package DTO.User;
 
 public class ChangePasswordDto {
 

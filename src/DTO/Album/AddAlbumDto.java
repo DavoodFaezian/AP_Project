@@ -1,4 +1,4 @@
-package Dto;
+package DTO.Album;
 
 public class AddAlbumDto {
 

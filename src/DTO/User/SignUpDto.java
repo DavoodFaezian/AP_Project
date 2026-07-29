@@ -1,14 +1,17 @@
-package DTO;
+package DTO.User;
 
-public class LogInDto {
+public class SignUpDto {
 
     private String userName;
 
     private String password;
 
-    public LogInDto(String userName, String password) {
+    private String repeatedPassword;
+
+    public SignUpDto(String userName, String password , String repeatedPassword) {
         this.userName = userName;
         this.password = password;
+        this.repeatedPassword = repeatedPassword;
     }
 
     public String getUserName() {
@@ -23,7 +26,16 @@ public class LogInDto {
         return password;
     }
 
+    public String getRepeatedPassword() {
+        return repeatedPassword;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public void setRepeatedPassword(String repeatedPassword) {
+        this.repeatedPassword = repeatedPassword;
+    }
+
 }

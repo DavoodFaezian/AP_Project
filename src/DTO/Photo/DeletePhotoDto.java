@@ -1,17 +1,14 @@
-package Dto;
+package DTO.Photo;
 
-public class AddPhotoToAndRemovePhotoFromAlbum {
+public class DeletePhotoDto {
 
     private String sessionId;
 
     private String photoId;
 
-    private String albumId;
-
-    public AddPhotoToAndRemovePhotoFromAlbum(String sessionId, String photoId, String albumId) {
+    public DeletePhotoDto(String sessionId, String photoId) {
         this.sessionId = sessionId;
         this.photoId = photoId;
-        this.albumId = albumId;
     }
 
     public String getSessionId() {
@@ -28,13 +25,5 @@ public class AddPhotoToAndRemovePhotoFromAlbum {
 
     public void setPhotoId(String photoId) {
         this.photoId = photoId;
-    }
-
-    public String getAlbumId() {
-        return albumId;
-    }
-
-    public void setAlbumId(String albumId) {
-        this.albumId = albumId;
     }
 }

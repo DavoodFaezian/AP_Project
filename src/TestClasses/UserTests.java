@@ -1,5 +1,5 @@
 import APIServer.Request;
-import DTO.*;
+import DTO.User.*;
 import Exceptions.ActionFailedException;
 import MainClasses.User;
 import RequestHandler.RequestHandler;

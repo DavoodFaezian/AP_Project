@@ -1,5 +1,6 @@
 package Services;
 
+import DTO.Album.AddAlbumDto;
 import MainClasses.Album;
 import MainClasses.Photo;
 import MainClasses.Post;
