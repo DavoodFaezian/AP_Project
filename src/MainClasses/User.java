@@ -21,6 +21,7 @@ public class User extends BaseClass<User>{
     private Set<String> followersId = new HashSet<>();
 
     private Set<String> followingsId = new HashSet<>();
+    private Set<String> receivedPostIds = new HashSet<>();
 
     public User(String userName, String password){
         this.userName = userName;
@@ -120,6 +121,13 @@ public class User extends BaseClass<User>{
         this.followingsId = followingsId;
     }
 
+    public void setReceivedPostIds(Set<String> receivedPostIds) {
+        this.receivedPostIds = receivedPostIds;
+    }
+
+    public Set<String> getReceivedPostIds() {
+        return receivedPostIds;
+    }
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -135,4 +143,5 @@ public class User extends BaseClass<User>{
 
     public void validateRemoveUser() {
     }
+
 }

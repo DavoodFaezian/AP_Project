@@ -3,6 +3,7 @@ package DTO.Post;
 import java.util.Set;
 
 public record EditPostDto(
+        String id,
         String ownerId,
         Set<String> photoIds,
         Set<String> albumIds,

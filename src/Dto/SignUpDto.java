@@ -1,4 +1,4 @@
-package Dto;
+package DTO;
 
 public class SignUpDto {
 
