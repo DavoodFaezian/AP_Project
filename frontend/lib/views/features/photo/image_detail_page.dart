@@ -29,11 +29,11 @@ class _ImageDetailPageState extends State<ImageDetailPage> {
 
   Future<void> _navigateToComments(
       BuildContext context,
-      Set<String> commentIds,
+      String photoId,
       ) async {
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => CommentsScreen(commentIds: commentIds),
+        builder: (context) => CommentsScreen(photoId: photoId),
       ),
     );
   }
@@ -109,7 +109,7 @@ class _ImageDetailPageState extends State<ImageDetailPage> {
                     child: ElevatedButton(
                       onPressed: () => _navigateToComments(
                         context,
-                        photo.commentIds,
+                        photo.id,
                       ),
                       child: const Text('View Comments'),
                     ),

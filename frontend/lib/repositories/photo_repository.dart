@@ -14,6 +14,10 @@ abstract class PhotoRepository {
 }
 
 class InMemoryPhotoRepository implements PhotoRepository {
+  InMemoryPhotoRepository._internal();
+  static final InMemoryPhotoRepository _instance = InMemoryPhotoRepository._internal();
+  factory InMemoryPhotoRepository() => _instance;
+
   final List<Photo> _photos = [];
 
   @override
