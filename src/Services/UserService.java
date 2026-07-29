@@ -94,6 +94,7 @@ public class UserService {
         User user = UserRepository.getInstance().create(userName , password);
         Session session = SessionRepository.getInstance().createSession(user.getId());
         user.getSessionIds().add(session.getId());
+        UserRepository.getInstance().update();
     }
 
     public void logIn(LogInDto data) {
@@ -102,12 +103,14 @@ public class UserService {
         User user = validateLogIn(userName , password);
         Session session = SessionRepository.getInstance().createSession(user.getId());
         user.getSessionIds().add(session.getId());
+        UserRepository.getInstance().update();
     }
 
     public void logOut(LogOutAndRemoveProfilePhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         SessionRepository.getInstance().removeSessions(user);
+        UserRepository.getInstance().update();
     }
 
     public void changePassword(ChangePasswordDto data) {
