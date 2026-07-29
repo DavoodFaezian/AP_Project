@@ -9,6 +9,14 @@ import Repositories.UserRepository;
 
 public class PhotoService {
 
+    private final static PhotoService instance = new PhotoService();
+
+    private PhotoService(){}
+
+    public static PhotoService getInstance() {
+        return instance;
+    }
+
     private void validateAccess(User user , Photo photo){
         if(!photo.getOwnerId().equals(user.getId())){
             throw new AccessDeniedException("Access Denied!!!");

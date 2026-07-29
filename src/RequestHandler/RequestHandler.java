@@ -2,9 +2,7 @@ package RequestHandler;
 
 import APIServer.Request;
 import APIServer.Response;
-import DTO.ChangePasswordDto;
-import DTO.LogInDto;
-import DTO.SignUpDto;
+import Exceptions.ActionFailedException;
 import Services.UserService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -51,11 +49,11 @@ public class RequestHandler {
 
     private static final Map<String, ActionHandler> actions = new HashMap<>();
     static {
-        File servicesPath = Paths.get(CURRENT_DIR.toString(),"Services").toFile();
+        File servicesPath = Paths.get(CURRENT_DIR.toString(),"src", "Services").toFile();
         File[] serviceFiles = servicesPath.listFiles();
         assert serviceFiles != null;
         for (var serviceFile : serviceFiles){
-            String serviceName = serviceFile.getName();
+            String serviceName = serviceFile.getName().split("\\.")[0];
             try {
                 Class<?> service = Class.forName("Services."+serviceName);
                 Object serviceInstance = service.getMethod("getInstance").invoke(null);
@@ -99,34 +97,16 @@ public class RequestHandler {
                 }
             }
             action.method.invoke(action.instance, args);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            Throwable exp = e.getCause();
+            if (exp instanceof ActionFailedException) {
+                throw new ActionFailedException(exp.getMessage());
+            }
         }
 
 
-    }
-
-    public void signUp(){
-        Gson gson = new Gson();
-        SignUpDto data = gson.fromJson(request.getPayload() , SignUpDto.class);
-        UserService service = UserService.getInstance();
-        service.signUp(data);
-    }
-
-    public void logIn() {
-        Gson gson = new Gson();
-        LogInDto data = gson.fromJson(request.getPayload() , LogInDto.class);
-        UserService service = UserService.getInstance();
-        service.logIn(data);
-    }
-
-    public void changePassword() {
-        Gson gson = new Gson();
-        ChangePasswordDto data = gson.fromJson(request.getPayload() , ChangePasswordDto.class);
-        UserService service = UserService.getInstance();
-        service.changePassword(data);
     }
 
 }

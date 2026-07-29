@@ -1,6 +1,4 @@
-package DTO;
-
-import com.google.gson.JsonObject;
+package Dto;
 
 public class SignUpDto {
 
@@ -10,7 +8,7 @@ public class SignUpDto {
 
     private String repeatedPassword;
 
-    public SignUpDto(String userName , String password , String repeatedPassword) {
+    public SignUpDto(String userName, String password , String repeatedPassword) {
         this.userName = userName;
         this.password = password;
         this.repeatedPassword = repeatedPassword;
@@ -28,15 +26,16 @@ public class SignUpDto {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getRepeatedPassword() {
         return repeatedPassword;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setRepeatedPassword(String repeatedPassword) {
         this.repeatedPassword = repeatedPassword;
     }
+
 }

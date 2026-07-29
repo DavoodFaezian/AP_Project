@@ -22,4 +22,5 @@ public class BaseRepository<T extends BaseClass> {
         String path = folderName + File.separator + key + ".txt";
         return new GenericFileManager<>(path, lock);
     }
+
 }

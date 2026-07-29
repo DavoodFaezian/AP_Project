@@ -1,10 +1,8 @@
-package DTO;
-
-import com.google.gson.JsonObject;
+package Dto;
 
 public class ChangePasswordDto {
 
-    private String userId;
+    private String sessionId;
 
     private String oldPassword;
 
@@ -12,19 +10,19 @@ public class ChangePasswordDto {
 
     private String confirmNewPassword;
 
-    public ChangePasswordDto(String userId , String oldPassword , String newPassword , String confirmNewPassword) {
-        this.userId = userId;
+    public ChangePasswordDto(String sessionId, String oldPassword, String newPassword, String confirmNewPassword) {
+        this.sessionId = sessionId;
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
         this.confirmNewPassword = confirmNewPassword;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getSessionId() {
+        return sessionId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public String getOldPassword() {
