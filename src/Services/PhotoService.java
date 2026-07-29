@@ -1,6 +1,7 @@
 package Services;
 
 import Dto.AddPhotoDto;
+import Dto.DeletePhotoDto;
 import Exceptions.AccessDeniedException;
 import FileManager.GenericFileManager;
 import MainClasses.Photo;
@@ -30,6 +31,18 @@ public class PhotoService {
         String caption = data.getCaption();
         Boolean isFavorable = data.getFavorable();
         Boolean permissionForLeavingComment = data.getPermissionForLeavingComment();
-        PhotoRepository.getInstance().createPhoto(user.getId() , photoName , tags , caption , isFavorable , permissionForLeavingComment);
+        Photo photo = PhotoRepository.getInstance().createPhoto(user.getId() , photoName , tags , caption , isFavorable , permissionForLeavingComment);
+        user.getPhotoIds().add(photo.getId());
     }
+
+    public void deletePhoto(DeletePhotoDto data) {
+        String sessionId = data.getSessionId();
+        String photoId = data.getPhotoId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
+        user.getPhotoIds().remove(photoId);
+        PhotoRepository.getInstance().removePhoto(photo);
+        UserRepository.getInstance().update();
+    }
+
 }
