@@ -21,12 +21,19 @@ public class PhotoRepository extends BaseRepository<Photo>{
     public void addPhoto(Photo photo) {
         var photoFileManager = getFileManager(photo.getOwnerId());
         photoFileManager.addToList(photo);
+        photoFileManager.save();
     }
 
     public void removePhoto(Photo photo) {
         var photoFileManager = getFileManager(photo.getOwnerId());
         photoFileManager.removeFromList(photo);
+        photoFileManager.save();
 
+    }
+
+    public void update(Photo photo) {
+        var photoFileManager = getFileManager(photo.getOwnerId());
+        photoFileManager.save();
     }
 
     public void removePhoto(String id,String ownerId) {

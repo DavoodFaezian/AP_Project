@@ -21,11 +21,13 @@ public class AlbumRepository extends BaseRepository<Album> {
     public void addAlbum(Album album) {
         var albumFileManager = getFileManager(album.getOwnerId());
         albumFileManager.addToList(album);
+        albumFileManager.save();
     }
 
     public void removeAlbum(Album album) {
         var albumFileManager = getFileManager(album.getOwnerId());
         albumFileManager.removeFromList(album);
+        albumFileManager.save();
     }
 
     public void removeAlbum(String id, String ownerId) {
@@ -36,6 +38,7 @@ public class AlbumRepository extends BaseRepository<Album> {
     public void editAlbum(Album album){
         var albumFileManager = getFileManager(album.getOwnerId());
         albumFileManager.edit(album);
+        albumFileManager.save();
     }
 
     public Album findAlbumById(String id,String ownerId) {
@@ -60,6 +63,11 @@ public class AlbumRepository extends BaseRepository<Album> {
         Album album = new Album(ownerId , albumName);
         addAlbum(album);
         return album;
+    }
+
+    public void update(Album album) {
+        var albumFileManager = getFileManager(album.getOwnerId());
+        albumFileManager.save();
     }
 
 }
