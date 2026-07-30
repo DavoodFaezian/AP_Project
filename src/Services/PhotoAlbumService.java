@@ -30,11 +30,11 @@ public class PhotoAlbumService{
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
         if(albumId.isEmpty()){
-            photo.getPhotoAlbumIds().add(albumId);
+            photo.getAlbumIds().add(albumId);
         }
         else {
             Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
-            photo.getPhotoAlbumIds().add(albumId);
+            photo.getAlbumIds().add(albumId);
             album.getPhotoIds().add(photoId);
             album.updateTime();
             AlbumRepository.getInstance().update(album);
@@ -49,11 +49,11 @@ public class PhotoAlbumService{
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
         if(albumId.isEmpty()){
-            photo.getPhotoAlbumIds().remove(albumId);
+            photo.getAlbumIds().remove(albumId);
         }
         else {
             Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
-            photo.getPhotoAlbumIds().remove(albumId);
+            photo.getAlbumIds().remove(albumId);
             album.getPhotoIds().remove(photoId);
             album.updateTime();
             AlbumRepository.getInstance().update(album);
@@ -68,7 +68,7 @@ public class PhotoAlbumService{
     }
 
     private void validateToRemoveFromNull(Photo photo){
-        if(!photo.getPhotoAlbumIds().contains("")){
+        if(!photo.getAlbumIds().contains("")){
             throw new ActionFailedException("Photo was not found.");
         }
     }
@@ -89,6 +89,7 @@ public class PhotoAlbumService{
             toAlbum.getPhotoIds().add(photoId);
             toAlbum.updateTime();
             AlbumRepository.getInstance().update(fromAlbum);
+            AlbumRepository.getInstance().update(toAlbum);
         } else if (!fromAlbumId.isEmpty()){
             Album fromAlbum = AlbumRepository.getInstance().findAlbumById(fromAlbumId , user.getId());
             validateToRemove(photoId , fromAlbum);
@@ -104,8 +105,8 @@ public class PhotoAlbumService{
         } else {
             validateToRemoveFromNull(photo);
         }
-        photo.getPhotoAlbumIds().remove(fromAlbumId);
-        photo.getPhotoAlbumIds().add(toAlbumId);
+        photo.getAlbumIds().remove(fromAlbumId);
+        photo.getAlbumIds().add(toAlbumId);
         PhotoRepository.getInstance().update(photo);
     }
 

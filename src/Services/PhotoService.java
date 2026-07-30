@@ -2,11 +2,10 @@ package Services;
 
 import Dto.AddPhotoDto;
 import Dto.DeletePhotoDto;
-import Exceptions.AccessDeniedException;
-import FileManager.GenericFileManager;
+import MainClasses.Album;
 import MainClasses.Photo;
-import MainClasses.Session;
 import MainClasses.User;
+import Repositories.AlbumRepository;
 import Repositories.PhotoRepository;
 import Repositories.SessionRepository;
 import Repositories.UserRepository;
@@ -33,6 +32,7 @@ public class PhotoService {
         Boolean permissionForLeavingComment = data.getPermissionForLeavingComment();
         Photo photo = PhotoRepository.getInstance().createPhoto(user.getId() , photoName , tags , caption , isFavorable , permissionForLeavingComment);
         user.getPhotoIds().add(photo.getId());
+        UserRepository.getInstance().update();
     }
 
     public void deletePhoto(DeletePhotoDto data) {
@@ -40,6 +40,13 @@ public class PhotoService {
         String photoId = data.getPhotoId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
+        for(String i : photo.getAlbumIds()) {
+            if(i != null) {
+                Album album = AlbumRepository.getInstance().findAlbumById(i , user.getId());
+                album.getPhotoIds().remove(photo.getId());
+                AlbumRepository.getInstance().update(album);
+            }
+        }
         user.getPhotoIds().remove(photoId);
         PhotoRepository.getInstance().removePhoto(photo);
         UserRepository.getInstance().update();

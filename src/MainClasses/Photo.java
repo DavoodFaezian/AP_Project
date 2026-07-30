@@ -1,14 +1,7 @@
 package MainClasses;
 
-import Exceptions.*;
-import Repositories.AlbumRepository;
-import Repositories.CommentRepository;
-import Repositories.UserRepository;
-import Services.PhotoAlbumService;
-
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Photo extends BaseClass<Photo>{
 
@@ -22,10 +15,7 @@ public class Photo extends BaseClass<Photo>{
 
     private Boolean isFavorable;
 
-
     private Boolean permissionForLeavingComment;
-
-    private LocalDateTime dateOfShare;
 
     private LocalDateTime lastModified;
 
@@ -33,16 +23,10 @@ public class Photo extends BaseClass<Photo>{
 
     private Set<String> albumIds = new HashSet<>();
 
-    private Set<String> sharedUserIds = new HashSet<>();
-
     private final LocalDateTime createdAt;
 
     void updateTime(){
         lastModified = LocalDateTime.now();
-    }
-
-    public void updateDateOfShare(){
-        dateOfShare = LocalDateTime.now();
     }
 
     public Photo(String ownerId, String photoName, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment) {
@@ -66,12 +50,6 @@ public class Photo extends BaseClass<Photo>{
     }
     public void removeAlbum(String albumId){
         albumIds.remove(albumId);
-    }
-    public void addSharedUser(String userId){
-        sharedUserIds.add(userId);
-    }
-    public void removeSharedUser(String userId){
-        sharedUserIds.remove(userId);
     }
 
 
@@ -136,33 +114,14 @@ public class Photo extends BaseClass<Photo>{
         updateTime();
     }
 
-    public Set<String> getPhotoAlbumIds() {
+    public Set<String> getAlbumIds() {
         return albumIds;
     }
 
-    public void setPhotoAlbumIds(Set<String> photoAlbumIds) {
+    public void setAlbumIds(Set<String> photoAlbumIds) {
         this.albumIds = photoAlbumIds;
         updateTime();
     }
-
-    public Set<String> getSharedUserIds() {
-        return sharedUserIds;
-    }
-
-    public void setSharedUserIds(Set<String> sharedUserIds) {
-        this.sharedUserIds = sharedUserIds;
-        updateTime();
-    }
-
-    public void validate(){
-        if(photoName.isEmpty()){
-            throw new FieldIsEmptyException("Photo name cannot be empty.", "photoName");
-        }
-        if(caption.isEmpty()){
-            throw new FieldIsEmptyException("Caption cannot be empty.", "caption");
-        }
-    }
-
 
     @Override
     public boolean equals(Object o) {
