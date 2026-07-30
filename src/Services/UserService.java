@@ -1,7 +1,7 @@
 package Services;
 
 
-import Dto.*;
+import DTO.User.*;
 import Exceptions.*;
 import MainClasses.Session;
 import MainClasses.User;

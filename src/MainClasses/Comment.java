@@ -1,6 +1,5 @@
 package MainClasses;
 
-import Exceptions.CommentNotAllowedException;
 import Exceptions.FieldIsEmptyException;
 
 public class Comment extends BaseClass<Comment> {
@@ -9,13 +8,13 @@ public class Comment extends BaseClass<Comment> {
 
     private String script;
 
-    private String photoId;
+    private String postId;
 
 
     public Comment(String ownerId, String script, String photoId) {
         this.ownerId = ownerId;
         this.script = script;
-        this.photoId = photoId;
+        this.postId = photoId;
     }
 
     public String getOwnerId() {
@@ -34,12 +33,12 @@ public class Comment extends BaseClass<Comment> {
         this.script = script;
     }
 
-    public String getPhotoId() {
-        return photoId;
+    public String getPostId() {
+        return postId;
     }
 
-    public void setPhotoId(String photoId) {
-        this.photoId = photoId;
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
 

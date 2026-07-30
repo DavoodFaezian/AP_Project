@@ -22,6 +22,7 @@ public class Photo extends BaseClass<Photo>{
     private Set<String> commentIds = new HashSet<>();
 
     private Set<String> albumIds = new HashSet<>();
+    private Set<String> postIds = new HashSet<>();
 
     private final LocalDateTime createdAt;
 
@@ -121,6 +122,22 @@ public class Photo extends BaseClass<Photo>{
     public void setAlbumIds(Set<String> photoAlbumIds) {
         this.albumIds = photoAlbumIds;
         updateTime();
+    }
+
+    public Set<String> getPostIds() {
+        return postIds;
+    }
+    public void setPostIds(Set<String> postIds) {
+        this.postIds = postIds;
+    }
+
+    public void validate(){
+        if(photoName.isEmpty()){
+            throw new FieldIsEmptyException("Photo name cannot be empty.", "photoName");
+        }
+        if(caption.isEmpty()){
+            throw new FieldIsEmptyException("Caption cannot be empty.", "caption");
+        }
     }
 
     @Override

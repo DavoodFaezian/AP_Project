@@ -14,6 +14,10 @@ abstract class AlbumRepository {
 }
 
 class InMemoryAlbumRepository implements AlbumRepository {
+  InMemoryAlbumRepository._internal();
+  static final InMemoryAlbumRepository _instance = InMemoryAlbumRepository._internal();
+  factory InMemoryAlbumRepository() => _instance;
+
   final List<Album> _albums = [
     Album(
       id: 'a1',

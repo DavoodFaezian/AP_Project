@@ -85,4 +85,8 @@ public class UserRepository {
     public List<User> getAllUsers() {
         return userFileManager.getAll();
     }
+
+    public void editUser(User user) {
+        userFileManager.edit(user);
+    }
 }

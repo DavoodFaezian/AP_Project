@@ -76,8 +76,12 @@ class Photo {
       isFavorable: json['isFavorable'] as bool? ?? false,
       permissionForLeavingComment:
       json['permissionForLeavingComment'] as bool? ?? true,
-      dateOfShare: DateTime.parse(json['dateOfShare'] as String),
-      lastModified: DateTime.parse(json['lastModified'] as String),
+      dateOfShare: json['dateOfShare'] != null
+          ? DateTime.parse(json['dateOfShare'] as String)
+          : null,
+      lastModified: json['lastModified'] != null
+          ? DateTime.parse(json['lastModified'] as String)
+          : null,
       commentIds: Set<String>.from(json['commentIds'] ?? const []),
       albumIds: Set<String>.from(json['albumIds'] ?? const []),
       sharedUserIds: Set<String>.from(json['sharedUserIds'] ?? const []),

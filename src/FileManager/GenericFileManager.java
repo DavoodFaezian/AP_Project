@@ -21,8 +21,8 @@ public class GenericFileManager<T extends BaseClass> {
     private final Lock writeLock;
 
     public GenericFileManager(String fileName,ReentrantReadWriteLock lock) {
-        readLock = lock.readLock();
-        writeLock = lock.writeLock();
+        writeLock = lock.readLock();
+        readLock = lock.writeLock();
         Path path = Paths.get(CURRENT_DIR.toString(), "files");
 
         try {
@@ -62,7 +62,6 @@ public class GenericFileManager<T extends BaseClass> {
         }
 
     }
-
     public void save() {
         writeLock.lock();
         try {

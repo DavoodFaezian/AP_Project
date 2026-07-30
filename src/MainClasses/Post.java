@@ -10,12 +10,15 @@ public class Post extends BaseClass<Post>{
     private Set<String> albumIds;
     private Set<String> sharedUserIds;
     private Set<String> commentIds;
+    private Boolean commentsAllowed;
 
-    public Post(String ownerId, Set<String> photoIds, Set<String> albumIds, Set<String> sharedUserIds) {
+    public Post(String ownerId, Set<String> photoIds, Set<String> albumIds, Set<String> sharedUserIds, Set<String> commentIds, Boolean commentsAllowed) {
         this.ownerId = ownerId;
         this.photoIds = photoIds;
         this.albumIds = albumIds;
         this.sharedUserIds = sharedUserIds;
+        this.commentIds = commentIds;
+        this.commentsAllowed = commentsAllowed;
     }
 
     public String getOwnerId() {
@@ -58,15 +61,11 @@ public class Post extends BaseClass<Post>{
         this.commentIds = commentIds;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Post post = (Post) o;
-        return Objects.equals(ownerId, post.ownerId) && Objects.equals(photoIds, post.photoIds) && Objects.equals(albumIds, post.albumIds) && Objects.equals(sharedUserIds, post.sharedUserIds);
+    public Boolean getCommentsAllowed() {
+        return commentsAllowed;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(ownerId, photoIds, albumIds, sharedUserIds);
+    public void setAreCommentsAllowed(Boolean commentsAllowed) {
+        this.commentsAllowed = commentsAllowed;
     }
 }

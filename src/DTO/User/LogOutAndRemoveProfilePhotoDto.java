@@ -1,4 +1,4 @@
-package Dto;
+package DTO.User;
 
 public class LogOutAndRemoveProfilePhotoDto {
 

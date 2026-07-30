@@ -8,93 +8,89 @@ class CommentViewModel extends ChangeNotifier {
 
   final CommentRepository _repository;
 
-  final ValueNotifier<List<Comment>> commentsNotifier =
-  ValueNotifier<List<Comment>>(<Comment>[]);
+  List<Comment> _comments = [];
+  bool _isLoading = false;
+  String? _error;
 
-  final ValueNotifier<bool> isLoadingNotifier = ValueNotifier<bool>(false);
-
-  final ValueNotifier<String?> errorNotifier = ValueNotifier<String?>(null);
+  List<Comment> get comments => List.unmodifiable(_comments);
+  bool get isLoading => _isLoading;
+  String? get error => _error;
 
   Future<void> loadComments() async {
-    isLoadingNotifier.value = true;
-    errorNotifier.value = null;
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
 
     try {
-      final comments = await _repository.getAllComments();
-      commentsNotifier.value = comments;
+      _comments = await _repository.getAllComments();
     } catch (e) {
-      errorNotifier.value = e.toString();
+      _error = e.toString();
     } finally {
-      isLoadingNotifier.value = false;
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
   Future<void> loadCommentsForPhoto(String photoId) async {
-    isLoadingNotifier.value = true;
-    errorNotifier.value = null;
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
 
     try {
-      final comments = await _repository.getCommentsForPhoto(photoId);
-      commentsNotifier.value = comments;
+      _comments = await _repository.getCommentsForPhoto(photoId);
     } catch (e) {
-      errorNotifier.value = e.toString();
+      _error = e.toString();
     } finally {
-      isLoadingNotifier.value = false;
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
   Future<void> addComment(Comment comment) async {
-    errorNotifier.value = null;
+    _error = null;
 
     try {
       final newComment = await _repository.addComment(comment);
-      commentsNotifier.value = [
-        ...commentsNotifier.value,
-        newComment,
-      ];
+      _comments = [..._comments, newComment];
+      notifyListeners();
     } catch (e) {
-      errorNotifier.value = e.toString();
+      _error = e.toString();
+      notifyListeners();
     }
   }
 
   Future<void> updateComment(Comment comment) async {
-    errorNotifier.value = null;
+    _error = null;
 
     try {
       final updatedComment = await _repository.updateComment(comment);
-
-      final updatedList = commentsNotifier.value
+      _comments = _comments
           .map((c) => c.id == updatedComment.id ? updatedComment : c)
           .toList();
-
-      commentsNotifier.value = updatedList;
+      notifyListeners();
     } catch (e) {
-      errorNotifier.value = e.toString();
+      _error = e.toString();
+      notifyListeners();
     }
   }
 
   Future<void> deleteComment(String commentId) async {
-    errorNotifier.value = null;
+    _error = null;
 
     try {
       await _repository.deleteComment(commentId);
-      commentsNotifier.value = commentsNotifier.value
+      _comments = _comments
           .where((comment) => comment.id != commentId)
           .toList();
+      notifyListeners();
     } catch (e) {
-      errorNotifier.value = e.toString();
+      _error = e.toString();
+      notifyListeners();
     }
   }
 
   void clearError() {
-    errorNotifier.value = null;
-  }
-
-  @override
-  void dispose() {
-    commentsNotifier.dispose();
-    isLoadingNotifier.dispose();
-    errorNotifier.dispose();
-    super.dispose();
+    _error = null;
+    notifyListeners();
   }
 }

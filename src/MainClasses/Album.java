@@ -10,6 +10,7 @@ public class Album extends BaseClass<Album> {
     private String albumName;
 
     private Set<String> photoIds = new HashSet<>();
+    private Set<String> postIds = new HashSet<>();
 
     private LocalDateTime lastModified;
 
@@ -51,6 +52,14 @@ public class Album extends BaseClass<Album> {
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
         updateTime();
+    }
+
+    public Set<String> getPostIds() {
+        return postIds;
+    }
+
+    public void setPostIds(Set<String> postIds) {
+        this.postIds = postIds;
     }
 
     @Override
