@@ -1,5 +1,5 @@
 import APIServer.Request;
-import Dto.AddPhotoDto;
+import DTO.Photo.AddPhotoDto;
 import MainClasses.Photo;
 import MainClasses.User;
 import Repositories.PhotoRepository;
@@ -19,7 +19,7 @@ public class PhotoTests {
     @Test
     public void photoTest() {
 
-        User user1 = UserService.getInstance().getUser("Ali" , "99999999@");
+        User user1 = UserService.getInstance().getUser("Ali" , "12345678@");
 
         AddPhotoDto data1 = new AddPhotoDto(user1.getSessionIds().stream().findAny().get() , user1.getId() , "photo1" , null , null , true , true);
 

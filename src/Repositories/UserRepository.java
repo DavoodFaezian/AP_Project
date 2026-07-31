@@ -14,7 +14,7 @@ public class UserRepository {
 
     private static final UserRepository instance = new UserRepository();
 
-    private static final GenericFileManager<User> userFileManager = new GenericFileManager<>("users" , new ReentrantReadWriteLock());
+    private static final GenericFileManager<User> userFileManager = new GenericFileManager<>("users.txt" , new ReentrantReadWriteLock());
 
     private UserRepository() {}
 

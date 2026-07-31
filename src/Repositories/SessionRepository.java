@@ -12,7 +12,7 @@ public class SessionRepository {
 
     private static final SessionRepository instance = new SessionRepository();
 
-    private static final GenericFileManager<Session> sessionFileManager = new GenericFileManager<>("sessions" , new ReentrantReadWriteLock());
+    private static final GenericFileManager<Session> sessionFileManager = new GenericFileManager<>("sessions.txt" , new ReentrantReadWriteLock());
 
     private SessionRepository(){
     }

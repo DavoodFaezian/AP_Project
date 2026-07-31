@@ -6,6 +6,7 @@ public class AddPhotoDto {
 
 
     private String sessionId;
+    private String ownerId;
 
     private String name;
 
@@ -17,7 +18,7 @@ public class AddPhotoDto {
 
     private Boolean permissionForLeavingComment;
 
-    public AddPhotoDto(String sessionId, String name, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment) {
+    public AddPhotoDto(String sessionId,String ownerId, String name, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment) {
         this.sessionId = sessionId;
         this.name = name;
         this.tags = tags;

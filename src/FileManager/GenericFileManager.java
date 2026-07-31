@@ -15,7 +15,7 @@ public class GenericFileManager<T extends BaseClass> {
     // Get the path where the server will run.
     private static final Path CURRENT_DIR = Paths.get(System.getProperty("user.dir"));
     private final Map<String,T> map = new HashMap<>();
-    private final File filePath;
+    private final Path filePath;
 
     private final Lock readLock;
     private final Lock writeLock;
@@ -32,11 +32,18 @@ public class GenericFileManager<T extends BaseClass> {
         }
 
 
-        this.filePath = Paths.get(CURRENT_DIR.toString(),"files",fileName).toFile();
-        if(!filePath.exists() || filePath.length() == 0){
+        this.filePath = Paths.get(CURRENT_DIR.toString(),"files",fileName);
+        File file = filePath.toFile();
+        if(!file.exists() || file.length() == 0){
             try {
-                if (!filePath.exists()) {
-                    Files.createFile(filePath.toPath());
+                Path parentDir = filePath.getParent();
+
+                if (parentDir != null) {
+                    // This method requires a Path, which parentDir is.
+                    Files.createDirectories(parentDir);
+                }
+                if (!file.exists()) {
+                    Files.createFile(file.toPath());
                 }
                 save();
             } catch (IOException e) {
@@ -46,7 +53,7 @@ public class GenericFileManager<T extends BaseClass> {
         }
         try(ObjectInputStream in = new ObjectInputStream(
                 new BufferedInputStream(
-                        new FileInputStream(filePath)))){
+                        new FileInputStream(file)))){
             int itemsCount = in.readInt();
             for (int i = 0; i < itemsCount; i++) {
                 T item = (T) in.readObject();
@@ -209,7 +216,7 @@ public class GenericFileManager<T extends BaseClass> {
     private void saveInternal() {
         try(ObjectOutputStream out = new ObjectOutputStream(
                 new BufferedOutputStream(
-                        new FileOutputStream(filePath)))) {
+                        new FileOutputStream(filePath.toFile())))) {
             out.writeInt(map.size());
             for (T item : map.values()) {
                 out.writeObject(item);
@@ -217,7 +224,7 @@ public class GenericFileManager<T extends BaseClass> {
 
             out.flush();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to save data to disk: " + filePath.getName(), e);
+            throw new RuntimeException("Failed to save data to disk: " + filePath.toFile().getName(), e);
         }
     }
 }

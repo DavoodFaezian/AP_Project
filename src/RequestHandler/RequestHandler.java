@@ -56,7 +56,7 @@ public class RequestHandler {
             try {
                 Class<?> service = Class.forName("Services."+serviceName);
                 Object serviceInstance = service.getMethod("getInstance").invoke(null);
-                for(var method : service.getMethods()){
+                for(var method : service.getDeclaredMethods()){
                     String actionName = serviceName.split("Service")[0]
                             +'/'
                             +method.getName();

@@ -1,22 +1,13 @@
 package Services;
 import DTO.Album.AddAlbumDto;
+import DTO.Album.AlbumDto;
 import DTO.Album.DeleteAlbumDto;
-import Exceptions.AccessDeniedException;
 import MainClasses.Album;
 import MainClasses.Photo;
 import MainClasses.User;
-import Repositories.AlbumRepository;
-import Repositories.PhotoRepository;
+import Repositories.*;
 
-import DTO.Album.AddAlbumDto;
-import MainClasses.Album;
-import MainClasses.Photo;
 import MainClasses.Post;
-import MainClasses.User;
-import Repositories.AlbumRepository;
-import Repositories.PhotoRepository;
-import Repositories.PostRepository;
-import Repositories.SessionRepository;
 
 import java.util.Collections;
 import java.util.Set;
@@ -58,7 +49,7 @@ public class AlbumService {
         AlbumRepository.getInstance().removeAlbum(album);
         UserRepository.getInstance().update();
     }
-}
+
 
     public void editAlbum(Album album) {
         album.updateTime();
@@ -71,7 +62,7 @@ public class AlbumService {
         if (album.getPhotoIds() != null) {
             for (String photoId : album.getPhotoIds()) {
                  Photo photo = photoRepository.findPhotoById(photoId, ownerId);
-                 photo.getPhotoAlbumIds().remove(id);
+                 photo.getAlbumIds().remove(id);
                  photoRepository.editPhoto(photo);
             }
         }
@@ -120,3 +111,4 @@ public class AlbumService {
         return dtos;
     }
 }
+
