@@ -1,11 +1,14 @@
 package Services;
+import DTO.Album.AddAlbumDto;
+import DTO.Album.DeleteAlbumDto;
+import Exceptions.AccessDeniedException;
+import MainClasses.Album;
+import MainClasses.Photo;
+import MainClasses.User;
+import Repositories.AlbumRepository;
+import Repositories.PhotoRepository;
 
 import DTO.Album.AddAlbumDto;
-import DTO.Album.AlbumDto;
-import DTO.Album.DeleteAlbumDto;
-import DTO.Album.EditAlbumDto;
-import DTO.Album.GetAlbumItemsDto;
-import DTO.Album.GetAlbumsByOwnerDto;
 import MainClasses.Album;
 import MainClasses.Photo;
 import MainClasses.Post;
@@ -16,124 +19,83 @@ import Repositories.PostRepository;
 import Repositories.SessionRepository;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.List;
 
 public class AlbumService {
     private static final AlbumService instance = new AlbumService();
     private final AlbumRepository albumRepository = AlbumRepository.getInstance();
-    private final PhotoRepository photoRepository = PhotoRepository.getInstance();
-    private final PostRepository postRepository = PostRepository.getInstance();
+     private final PhotoRepository photoRepository = PhotoRepository.getInstance();
+     private final PostRepository postRepository = PostRepository.getInstance();
 
     private AlbumService() {}
 
     public static AlbumService getInstance() {
         return instance;
     }
-
     public void addAlbum(AddAlbumDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         String albumName = data.getName();
-        albumRepository.createAlbum(user.getId(), albumName);
+        AlbumRepository.getInstance().createAlbum(user.getId() , albumName);
     }
 
-    public void editAlbum(EditAlbumDto data) {
-
+    public void deleteAlbum(DeleteAlbumDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-
-        if (user == null) {
-            throw new IllegalStateException("User is not logged in.");
+        String albumId = data.getAlbumId();
+        Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
+        for(String i : album.getPhotoIds()) {
+            Photo photo = PhotoRepository.getInstance().findPhotoById(i , user.getId());
+            photo.getAlbumIds().remove(album.getId());
+            if (photo.getAlbumIds().isEmpty()) {
+                PhotoRepository.getInstance().removePhoto(photo);
+            } else {
+                PhotoRepository.getInstance().update(photo);
+            }
         }
+        user.getAlbumIds().remove(album.getId());
+        AlbumRepository.getInstance().removeAlbum(album);
+        UserRepository.getInstance().update();
+    }
+}
 
-        String ownerId = user.getId();
-
-        Album album = albumRepository.findAlbumById(data.getAlbumId(), ownerId);
-        album.setAlbumName(data.getAlbumName());
+    public void editAlbum(Album album) {
         album.updateTime();
-
         albumRepository.editAlbum(album);
     }
 
-
-    public void deleteAlbum(DeleteAlbumDto data) {
-
-        String sessionId = data.getSessionId();
-        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-
-        if (user == null) {
-            throw new IllegalStateException("User is not logged in.");
-        }
-
-        String ownerId = user.getId();
-
-        Album album = albumRepository.findAlbumById(data.getAlbumId(), ownerId);
+    public void deleteAlbum(String id, String ownerId) {
+        Album album = albumRepository.findAlbumById(id, ownerId);
 
         if (album.getPhotoIds() != null) {
             for (String photoId : album.getPhotoIds()) {
-
-                Photo photo = photoRepository.findPhotoById(photoId, ownerId);
-
-                if (photo.getPhotoAlbumIds() != null) {
-                    photo.getPhotoAlbumIds().remove(album.getId());
-                }
-
-                photoRepository.editPhoto(photo);
+                 Photo photo = photoRepository.findPhotoById(photoId, ownerId);
+                 photo.getPhotoAlbumIds().remove(id);
+                 photoRepository.editPhoto(photo);
             }
         }
 
         if (album.getPostIds() != null) {
             for (String postId : album.getPostIds()) {
-
-                Post post = postRepository.findPostById(postId, ownerId);
-
-                if (post.getAlbumIds() != null) {
-                    post.getAlbumIds().remove(album.getId());
-                }
-
-                postRepository.editPost(post);
+                 Post post = postRepository.findPostById(postId, ownerId);
+                 post.getAlbumIds().remove(id);
+                 postRepository.editPost(post);
             }
         }
 
         albumRepository.removeAlbum(album);
     }
 
-
-    public Set<String> getPhotoIdsOfAlbum(GetAlbumItemsDto data) {
-
-        String sessionId = data.getSessionId();
-        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-
-        if (user == null) {
-            throw new IllegalStateException("User is not logged in.");
-        }
-
-        Album album = albumRepository.findAlbumById(data.getAlbumId(), user.getId());
-
-        return album.getPhotoIds() != null
-                ? album.getPhotoIds()
-                : Collections.emptySet();
+    public Set<String> getPhotoIdsOfAlbum(String albumId, String ownerId) {
+        Album album = albumRepository.findAlbumById(albumId, ownerId);
+        return album.getPhotoIds() != null ? album.getPhotoIds() : Collections.emptySet();
     }
 
-    public Set<String> getPostIdsOfAlbum(GetAlbumItemsDto data) {
-
-        String sessionId = data.getSessionId();
-        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-
-        if (user == null) {
-            throw new IllegalStateException("User is not logged in.");
-        }
-
-        Album album = albumRepository.findAlbumById(data.getAlbumId(), user.getId());
-
-        return album.getPostIds() != null
-                ? album.getPostIds()
-                : Collections.emptySet();
+    public Set<String> getPostIdsOfAlbum(String albumId, String ownerId) {
+        Album album = albumRepository.findAlbumById(albumId, ownerId);
+        return album.getPostIds() != null ? album.getPostIds() : Collections.emptySet();
     }
-
-
     private AlbumDto mapAlbumToDto(Album album) {
         if (album == null) {
             return null;
@@ -144,28 +106,17 @@ public class AlbumService {
                 album.getPhotoIds(),
                 album.getPostIds()
         );
-    }public List<AlbumDto> getAllAlbumsByOwnerId(GetAlbumsByOwnerDto data) {
+    }
 
-        String sessionId = data.getSessionId();
-        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-
-        if (user == null) {
-            throw new IllegalStateException("User is not logged in.");
-        }
-
-        List<Album> albums = albumRepository.getAlbumsByOwner(user.getId());
-
+    public List<AlbumDto> getAllAlbumsByOwnerId(String ownerId) {
+        List<Album> albums = albumRepository.getAlbumsByOwner(ownerId);
         if (albums == null) {
             return Collections.emptyList();
         }
-
         List<AlbumDto> dtos = new java.util.ArrayList<>();
-
         for (Album album : albums) {
             dtos.add(mapAlbumToDto(album));
         }
-
         return dtos;
     }
-
 }
