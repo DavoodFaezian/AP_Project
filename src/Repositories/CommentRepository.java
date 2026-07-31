@@ -24,77 +24,58 @@ public class CommentRepository {
         return instance;
     }
 
-    private GenericFileManager<Comment> getCommentFileManager(String photoId) {
-        var lock = locks.computeIfAbsent(photoId, k -> new ReentrantReadWriteLock());
+    private GenericFileManager<Comment> getCommentFileManager(String postId) {
+        var lock = locks.computeIfAbsent(postId, k -> new ReentrantReadWriteLock());
         return new GenericFileManager<>(
-                "comments" + File.separator + photoId + ".txt",
+                "comments" + File.separator + postId + ".txt",
                 lock
         );
     }
 
-    public void validateCommentForeignKeys(Comment comment, String photoOwnerId) {
+    public void validateCommentForeignKeys(Comment comment, String postId) {
         if (!UserRepository.getInstance().isUserIdValid(comment.getOwnerId())) {
             throw new ItemNotFoundException("user", comment.getOwnerId());
         }
 
-        if (!PhotoRepository.getInstance()
-                .findPhotoById(comment.getPhotoId(),photoOwnerId)
-                .isPermissionForLeavingComment()) {
-            throw new CommentNotAllowedException("You cannot comment on this photo");
+        if (!PostRepository.getInstance()
+                .findPostById(comment.getPostId(),postId)
+                .getCommentsAllowed()) {
+            throw new CommentNotAllowedException("You cannot comment on this post");
         }
     }
 
-    public void addComment(Comment comment) {
+    public void addComment(Comment comment, String postId) {
         comment.validate();
-        validateCommentForeignKeys(comment);
+        validateCommentForeignKeys(comment,postId);
 
-        var commentFileManager = getCommentFileManager(comment.getPhotoId());
+        var commentFileManager = getCommentFileManager(postId);
         commentFileManager.addToList(comment);
         commentFileManager.save();
     }
 
-    public void removeComment(Comment comment) {
-        var commentFileManager = getCommentFileManager(comment.getPhotoId());
+    public void removeComment(Comment comment, String postId) {
+        var commentFileManager = getCommentFileManager(postId);
         commentFileManager.removeFromList(comment);
         commentFileManager.save();
     }
 
-    public void removeComment(String id, String photoId) {
-        Comment remove = findCommentById(id, photoId);
-        removeComment(remove);
+    public void removeComment(String id, String postId) {
+        Comment remove = findCommentById(id, postId);
+        removeComment(remove,postId);
     }
 
-    public Comment findCommentById(String id, String photoId) {
-        Optional<Comment> comment = getCommentFileManager(photoId).findItemById(id);
+    public Comment findCommentById(String id, String postId) {
+        Optional<Comment> comment = getCommentFileManager(postId).findItemById(id);
         if (comment.isEmpty()) {
             throw new ItemNotFoundException("comment", id);
         }
         return comment.get();
     }
 
-    public List<Comment> getCommentsByPhotoId(String photoId) {
-        return getCommentFileManager(photoId).getAll();
-    }
 
-    public List<Comment> getCommentsByOwner(String ownerId, List<String> photoIds) {
-        List<Comment> result = new ArrayList<>();
+    public List<Comment> getAllCommentsByPostId(String postId) {
 
-        for (String photoId : photoIds) {
-            List<Comment> comments = getCommentFileManager(photoId)
-                    .filterItems(comment -> comment.getOwnerId().equals(ownerId));
-            result.addAll(comments);
-        }
 
-        return result;
-    }
-
-    public List<Comment> getAllComments(List<String> photoIds) {
-        List<Comment> result = new ArrayList<>();
-
-        for (String photoId : photoIds) {
-            result.addAll(getCommentFileManager(photoId).getAll());
-        }
-
-        return result;
+        return new ArrayList<>(getCommentFileManager(postId).getAll());
     }
 }

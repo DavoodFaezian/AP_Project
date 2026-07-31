@@ -1,4 +1,8 @@
 package DTO.Comment;
 
-public class CommentDto {
-}
+public record CommentDto(
+        String id,
+        String ownerId,
+        String script,
+        String postId
+) {}

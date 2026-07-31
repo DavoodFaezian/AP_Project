@@ -1,4 +1,3 @@
-package TestClasses;
 import Services.*;
 import DTO.Album.AddAlbumDto;
 import DTO.Photo.AddPhotoDto;

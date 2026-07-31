@@ -1,7 +1,7 @@
 package Services;
 
-import Dto.AddPhotoToAndRemovePhotoFromAlbum;
-import Dto.MovePhotoDto;
+import DTO.Photo.AddPhotoToAndRemovePhotoFromAlbum;
+import DTO.Photo.MovePhotoDto;
 import Exceptions.ActionFailedException;
 import MainClasses.Album;
 import MainClasses.Photo;

@@ -12,12 +12,10 @@ public class Post extends BaseClass<Post>{
     private Set<String> commentIds;
     private Boolean commentsAllowed;
 
-    public Post(String ownerId, Set<String> photoIds, Set<String> albumIds, Set<String> sharedUserIds, Set<String> commentIds, Boolean commentsAllowed) {
+    public Post(String ownerId, Set<String> photoIds, Set<String> albumIds, Boolean commentsAllowed) {
         this.ownerId = ownerId;
         this.photoIds = photoIds;
         this.albumIds = albumIds;
-        this.sharedUserIds = sharedUserIds;
-        this.commentIds = commentIds;
         this.commentsAllowed = commentsAllowed;
     }
 

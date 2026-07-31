@@ -4,9 +4,8 @@ import java.util.Set;
 
 public class AddPhotoDto {
 
-    private String sessionId;
 
-    private String ownerId;
+    private String sessionId;
 
     private String name;
 
@@ -18,30 +17,13 @@ public class AddPhotoDto {
 
     private Boolean permissionForLeavingComment;
 
-    public AddPhotoDto(String sessionId, String ownerId, String name, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment) {
+    public AddPhotoDto(String sessionId, String name, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment) {
         this.sessionId = sessionId;
-        this.ownerId = ownerId;
         this.name = name;
         this.tags = tags;
         this.caption = caption;
         this.isFavorable = isFavorable;
         this.permissionForLeavingComment = permissionForLeavingComment;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
     }
 
     public String getName() {
@@ -82,5 +64,13 @@ public class AddPhotoDto {
 
     public void setPermissionForLeavingComment(Boolean permissionForLeavingComment) {
         this.permissionForLeavingComment = permissionForLeavingComment;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }

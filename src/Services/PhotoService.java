@@ -1,7 +1,7 @@
 package Services;
 
-import Dto.AddPhotoDto;
-import Dto.DeletePhotoDto;
+import DTO.Photo.AddPhotoDto;
+import DTO.Photo.DeletePhotoDto;
 import Exceptions.AccessDeniedException;
 import FileManager.GenericFileManager;
 import MainClasses.Photo;
