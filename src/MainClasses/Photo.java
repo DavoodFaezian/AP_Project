@@ -1,7 +1,5 @@
 package MainClasses;
 
-import Exceptions.FieldIsEmptyException;
-
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -131,15 +129,6 @@ public class Photo extends BaseClass<Photo>{
     }
     public void setPostIds(Set<String> postIds) {
         this.postIds = postIds;
-    }
-
-    public void validate(){
-        if(photoName.isEmpty()){
-            throw new FieldIsEmptyException("Photo name cannot be empty.", "photoName");
-        }
-        if(caption.isEmpty()){
-            throw new FieldIsEmptyException("Caption cannot be empty.", "caption");
-        }
     }
 
     @Override

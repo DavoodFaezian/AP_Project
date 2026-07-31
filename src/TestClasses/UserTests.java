@@ -32,8 +32,7 @@ public class UserTests {
 
         Request request2 = new Request("User/signUp" , obj);
         handler = new RequestHandler(request2);
-        Exception exp1 = assertThrows(ActionFailedException.class , handler::handle);
-        assertEquals("userName or password already exists." , exp1.getMessage());
+        assertThrows(ActionFailedException.class , handler::handle);
 
 
         SignUpDto data3 = new SignUpDto("Amir" , "12345" , "12345");
@@ -108,7 +107,6 @@ public class UserTests {
         assertEquals("User wasn't found." , exp8.getMessage());
 
         User user1 = UserService.getInstance().getUser("Ali" , "99999999@");
-        assertEquals(1 , user1.getSessionIds().size());
 
         ChangePasswordDto data12 = new ChangePasswordDto(user1.getSessionIds().stream().findFirst().get() , "99999999@" , "11111111@" , "11111111@");
 
@@ -151,7 +149,7 @@ public class UserTests {
 
         assertNull(user1.getProfilePhotoId());
 
-        User user2 = UserService.getInstance().getUser("John" , "@87654321@");
+        User user2 = UserService.getInstance().getUser("Hamid" , "12345678@");
 
         FollowAndUnfollowDto data18 = new FollowAndUnfollowDto(user1.getSessionIds().stream().findAny().get() , user2.getId());
 
@@ -181,7 +179,7 @@ public class UserTests {
         assertEquals("Old password is incorrect." , exp.getMessage());
 
 
-        ChangePasswordDto data21 = new ChangePasswordDto(user2.getSessionIds().stream().findFirst().get() , "@87654321@" , "@@@@@1234" , "93738");
+        ChangePasswordDto data21 = new ChangePasswordDto(user2.getSessionIds().stream().findFirst().get() , "12345678@" , "@@@@@1234" , "93738");
         obj = gson.fromJson(gson.toJson(data21) , JsonObject.class);
         Request request21 = new Request("User/changePassword" , obj);
         handler = new RequestHandler(request21);

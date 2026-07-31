@@ -2,6 +2,7 @@ package Services;
 import DTO.Album.AddAlbumDto;
 import DTO.Album.AlbumDto;
 import DTO.Album.DeleteAlbumDto;
+import Exceptions.ActionFailedException;
 import MainClasses.Album;
 import MainClasses.Photo;
 import MainClasses.User;
@@ -24,11 +25,19 @@ public class AlbumService {
     public static AlbumService getInstance() {
         return instance;
     }
+
+    public void validateAlbumName(String albumName) {
+        if (albumName.isEmpty()) {
+           throw new ActionFailedException("Album name must not be empty.");
+        }
+    }
     public void addAlbum(AddAlbumDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         String albumName = data.getName();
-        AlbumRepository.getInstance().createAlbum(user.getId() , albumName);
+        Album album = AlbumRepository.getInstance().createAlbum(user.getId() , albumName);
+        user.getAlbumIds().add(album.getId());
+        UserRepository.getInstance().update();
     }
 
     public void deleteAlbum(DeleteAlbumDto data) {
@@ -45,7 +54,7 @@ public class AlbumService {
                 PhotoRepository.getInstance().update(photo);
             }
         }
-        user.getAlbumIds().remove(album.getId());
+        user.getAlbumIds().remove(albumId);
         AlbumRepository.getInstance().removeAlbum(album);
         UserRepository.getInstance().update();
     }
@@ -56,59 +65,59 @@ public class AlbumService {
         albumRepository.editAlbum(album);
     }
 
-    public void deleteAlbum(String id, String ownerId) {
-        Album album = albumRepository.findAlbumById(id, ownerId);
+//    public void deleteAlbum(String id, String ownerId) {
+//        Album album = albumRepository.findAlbumById(id, ownerId);
+//
+//        if (album.getPhotoIds() != null) {
+//            for (String photoId : album.getPhotoIds()) {
+//                 Photo photo = photoRepository.findPhotoById(photoId, ownerId);
+//                 photo.getAlbumIds().remove(id);
+//                 photoRepository.editPhoto(photo);
+//            }
+//        }
 
-        if (album.getPhotoIds() != null) {
-            for (String photoId : album.getPhotoIds()) {
-                 Photo photo = photoRepository.findPhotoById(photoId, ownerId);
-                 photo.getAlbumIds().remove(id);
-                 photoRepository.editPhoto(photo);
-            }
-        }
-
-        if (album.getPostIds() != null) {
-            for (String postId : album.getPostIds()) {
-                 Post post = postRepository.findPostById(postId, ownerId);
-                 post.getAlbumIds().remove(id);
-                 postRepository.editPost(post);
-            }
-        }
-
-        albumRepository.removeAlbum(album);
-    }
-
-    public Set<String> getPhotoIdsOfAlbum(String albumId, String ownerId) {
-        Album album = albumRepository.findAlbumById(albumId, ownerId);
-        return album.getPhotoIds() != null ? album.getPhotoIds() : Collections.emptySet();
-    }
-
-    public Set<String> getPostIdsOfAlbum(String albumId, String ownerId) {
-        Album album = albumRepository.findAlbumById(albumId, ownerId);
-        return album.getPostIds() != null ? album.getPostIds() : Collections.emptySet();
-    }
-    private AlbumDto mapAlbumToDto(Album album) {
-        if (album == null) {
-            return null;
-        }
-        return new AlbumDto(
-                album.getOwnerId(),
-                album.getAlbumName(),
-                album.getPhotoIds(),
-                album.getPostIds()
-        );
-    }
-
-    public List<AlbumDto> getAllAlbumsByOwnerId(String ownerId) {
-        List<Album> albums = albumRepository.getAlbumsByOwner(ownerId);
-        if (albums == null) {
-            return Collections.emptyList();
-        }
-        List<AlbumDto> dtos = new java.util.ArrayList<>();
-        for (Album album : albums) {
-            dtos.add(mapAlbumToDto(album));
-        }
-        return dtos;
-    }
+//        if (album.getPostIds() != null) {
+//            for (String postId : album.getPostIds()) {
+//                 Post post = postRepository.findPostById(postId, ownerId);
+//                 post.getAlbumIds().remove(id);
+//                 postRepository.editPost(post);
+//            }
+//        }
+//
+//        albumRepository.removeAlbum(album);
+//    }
+//
+//    public Set<String> getPhotoIdsOfAlbum(String albumId, String ownerId) {
+//        Album album = albumRepository.findAlbumById(albumId, ownerId);
+//        return album.getPhotoIds() != null ? album.getPhotoIds() : Collections.emptySet();
+//    }
+//
+//    public Set<String> getPostIdsOfAlbum(String albumId, String ownerId) {
+//        Album album = albumRepository.findAlbumById(albumId, ownerId);
+//        return album.getPostIds() != null ? album.getPostIds() : Collections.emptySet();
+//    }
+//    private AlbumDto mapAlbumToDto(Album album) {
+//        if (album == null) {
+//            return null;
+//        }
+//        return new AlbumDto(
+//                album.getOwnerId(),
+//                album.getAlbumName(),
+//                album.getPhotoIds(),
+//                album.getPostIds()
+//        );
+//    }
+//
+//    public List<AlbumDto> getAllAlbumsByOwnerId(String ownerId) {
+//        List<Album> albums = albumRepository.getAlbumsByOwner(ownerId);
+//        if (albums == null) {
+//            return Collections.emptyList();
+//        }
+//        List<AlbumDto> dtos = new java.util.ArrayList<>();
+//        for (Album album : albums) {
+//            dtos.add(mapAlbumToDto(album));
+//        }
+//        return dtos;
+//    }
 }
 

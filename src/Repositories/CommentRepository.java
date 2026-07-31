@@ -1,6 +1,6 @@
 package Repositories;
 
-import Exceptions.CommentNotAllowedException;
+import Exceptions.ActionFailedException;
 import Exceptions.ItemNotFoundException;
 import FileManager.GenericFileManager;
 import MainClasses.Comment;
@@ -40,7 +40,7 @@ public class CommentRepository {
         if (!PostRepository.getInstance()
                 .findPostById(comment.getPostId(),postId)
                 .getCommentsAllowed()) {
-            throw new CommentNotAllowedException("You cannot comment on this post");
+            throw new ActionFailedException("You cannot comment on this post");
         }
     }
 

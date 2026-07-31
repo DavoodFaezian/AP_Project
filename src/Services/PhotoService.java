@@ -1,10 +1,8 @@
 package Services;
 import DTO.Photo.AddPhotoDto;
 import DTO.Photo.DeletePhotoDto;
-import Exceptions.AccessDeniedException;
-import FileManager.GenericFileManager;
+import Exceptions.ActionFailedException;
 import MainClasses.Photo;
-import MainClasses.Session;
 import MainClasses.User;
 import Repositories.PhotoRepository;
 import Repositories.SessionRepository;
@@ -22,6 +20,12 @@ public class PhotoService {
         return instance;
     }
 
+    public void validatePhotoName(String photoName) {
+        if (photoName.isEmpty()) {
+           throw new ActionFailedException("Photo name must not be empty.");
+        }
+    }
+
     public void addPhoto(AddPhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -30,8 +34,10 @@ public class PhotoService {
         String caption = data.getCaption();
         Boolean isFavorable = data.getFavorable();
         Boolean permissionForLeavingComment = data.getPermissionForLeavingComment();
+        validatePhotoName(photoName);
         Photo photo = PhotoRepository.getInstance().createPhoto(user.getId() , photoName , tags , caption , isFavorable , permissionForLeavingComment);
         user.getPhotoIds().add(photo.getId());
+        UserRepository.getInstance().update();
     }
 
     public void deletePhoto(DeletePhotoDto data) {

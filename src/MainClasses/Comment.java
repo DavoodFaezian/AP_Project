@@ -1,6 +1,6 @@
 package MainClasses;
 
-import Exceptions.FieldIsEmptyException;
+import Exceptions.ActionFailedException;
 
 public class Comment extends BaseClass<Comment> {
 
@@ -47,12 +47,12 @@ public class Comment extends BaseClass<Comment> {
             throw new NullPointerException("script is required.");
         }
         if(script.isEmpty()){
-            throw new FieldIsEmptyException("script cannot be empty!","script");
+            throw new ActionFailedException("script cannot be empty!");
         }
     }
     public void editComment(String script){
         if(script.isEmpty()){
-            throw new FieldIsEmptyException("script cannot be empty!","script");
+            throw new ActionFailedException("script cannot be empty!");
         }
         this.script = script;
     }
