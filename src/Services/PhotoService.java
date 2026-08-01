@@ -1,6 +1,7 @@
 package Services;
 import DTO.Photo.AddPhotoDto;
 import DTO.Photo.DeletePhotoDto;
+import DTO.Photo.EditPhotoDto;
 import Exceptions.ActionFailedException;
 import MainClasses.Album;
 import MainClasses.Photo;
@@ -8,6 +9,7 @@ import MainClasses.User;
 import Repositories.AlbumRepository;
 import Repositories.PhotoRepository;
 import Repositories.SessionRepository;
+import Repositories.UserRepository;
 
 import java.util.Set;
 
@@ -60,6 +62,13 @@ public class PhotoService {
         }
         PhotoRepository.getInstance().removePhoto(photo);
 
+    }
+
+    public void editPhoto(EditPhotoDto data) {
+        String sessionId = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        Photo photo = data.getPhoto();
+        PhotoRepository.getInstance().editPhoto(photo);
     }
 
 }
