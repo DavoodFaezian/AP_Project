@@ -15,8 +15,6 @@ public class Photo extends BaseClass<Photo>{
 
     private Boolean isFavorable;
 
-    private Boolean permissionForLeavingComment;
-
     private LocalDateTime lastModified;
 
     private Set<String> commentIds = new HashSet<>();
@@ -30,13 +28,13 @@ public class Photo extends BaseClass<Photo>{
         lastModified = LocalDateTime.now();
     }
 
-    public Photo(String ownerId, String photoName, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment) {
+    public Photo(String ownerId, String photoName, String albumId , Set<String> tags, String caption, Boolean isFavorable) {
         this.ownerId = ownerId;
         this.photoName = photoName;
         this.tags = tags;
         this.caption = caption;
         this.isFavorable = isFavorable;
-        this.permissionForLeavingComment = permissionForLeavingComment;
+        albumIds.add(albumId);
         createdAt = LocalDateTime.now();
     }
 
@@ -96,14 +94,6 @@ public class Photo extends BaseClass<Photo>{
 
     public void setFavorable(Boolean favorable) {
         isFavorable = favorable;
-    }
-
-    public Boolean isPermissionForLeavingComment() {
-        return permissionForLeavingComment;
-    }
-
-    public void setPermissionForLeavingComment(Boolean permissionForLeavingComment) {
-        this.permissionForLeavingComment = permissionForLeavingComment;
     }
 
     public Set<String> getCommentIds() {

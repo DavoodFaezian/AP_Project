@@ -1,50 +1,10 @@
 {
   "className": "MainClasses.Session",
   "items": {
-    "3e0ea280-b5fc-4de2-b715-442853e1eb2f": {
-      "userId": "2203874d-6adb-493b-b958-86049cbec70a",
-      "token": "97f2a962-a01d-43c6-9b7d-70dcb93ae7c3",
-      "id": "3e0ea280-b5fc-4de2-b715-442853e1eb2f"
-    },
-    "6ca81f73-3ff9-435e-bda7-c97a103f42d4": {
-      "userId": "2203874d-6adb-493b-b958-86049cbec70a",
-      "token": "457cf799-2af2-492f-a3fe-b8e8d5fb8be2",
-      "id": "6ca81f73-3ff9-435e-bda7-c97a103f42d4"
-    },
-    "666e47be-7a9a-4a65-98c6-b02de43cefde": {
-      "userId": "2203874d-6adb-493b-b958-86049cbec70a",
-      "token": "389f0efe-8bf1-42c9-b40d-eae668511477",
-      "id": "666e47be-7a9a-4a65-98c6-b02de43cefde"
-    },
-    "827eb6b7-0482-4f73-9b0a-f1589f7f4f46": {
-      "userId": "2203874d-6adb-493b-b958-86049cbec70a",
-      "token": "2ddea4e6-a5e2-4864-96be-a0c4d87054d6",
-      "id": "827eb6b7-0482-4f73-9b0a-f1589f7f4f46"
-    },
-    "4bc0bd03-9e93-4dce-8939-362f1bf83dd0": {
-      "userId": "2203874d-6adb-493b-b958-86049cbec70a",
-      "token": "98ad303f-090c-4bf5-97a9-90a3f5918de2",
-      "id": "4bc0bd03-9e93-4dce-8939-362f1bf83dd0"
-    },
-    "88083285-78bb-402e-a829-1ebac0a2f160": {
-      "userId": "2203874d-6adb-493b-b958-86049cbec70a",
-      "token": "3c511735-6d0e-44b5-a5b5-bf739cf4f217",
-      "id": "88083285-78bb-402e-a829-1ebac0a2f160"
-    },
-    "28a304b2-33e7-42c8-ba71-4356223e40d3": {
-      "userId": "2203874d-6adb-493b-b958-86049cbec70a",
-      "token": "0ab6f3f7-e579-4ee2-82aa-2dafc3f4b42b",
-      "id": "28a304b2-33e7-42c8-ba71-4356223e40d3"
-    },
-    "6f2c5b05-02c8-4220-909e-56598470a8cd": {
-      "userId": "2203874d-6adb-493b-b958-86049cbec70a",
-      "token": "5e96a6c9-c3b3-4a4a-8ab5-f5c4937f1360",
-      "id": "6f2c5b05-02c8-4220-909e-56598470a8cd"
-    },
-    "c2905551-25ac-4951-8872-373f39ea137b": {
-      "userId": "2203874d-6adb-493b-b958-86049cbec70a",
-      "token": "c93356ee-e284-4e74-aed0-f908131e231d",
-      "id": "c2905551-25ac-4951-8872-373f39ea137b"
+    "41b4fa08-dafb-4485-840f-823209799e87": {
+      "userId": "b0081c13-2c8e-446a-9bcd-c97b5374530d",
+      "token": "0171f32e-7a15-498a-b4c2-fa0ca804e9c3",
+      "id": "41b4fa08-dafb-4485-840f-823209799e87"
     }
   }
 }

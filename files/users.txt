@@ -1,27 +1,19 @@
 {
   "className": "MainClasses.User",
   "items": {
-    "2203874d-6adb-493b-b958-86049cbec70a": {
+    "b0081c13-2c8e-446a-9bcd-c97b5374530d": {
       "userName": "Ali",
       "password": "12345678@",
       "photoIds": [],
       "albumIds": [],
       "theme": "LIGHT",
       "sessionIds": [
-        "4bc0bd03-9e93-4dce-8939-362f1bf83dd0",
-        "c2905551-25ac-4951-8872-373f39ea137b",
-        "88083285-78bb-402e-a829-1ebac0a2f160",
-        "666e47be-7a9a-4a65-98c6-b02de43cefde",
-        "827eb6b7-0482-4f73-9b0a-f1589f7f4f46",
-        "28a304b2-33e7-42c8-ba71-4356223e40d3",
-        "3e0ea280-b5fc-4de2-b715-442853e1eb2f",
-        "6f2c5b05-02c8-4220-909e-56598470a8cd",
-        "6ca81f73-3ff9-435e-bda7-c97a103f42d4"
+        "41b4fa08-dafb-4485-840f-823209799e87"
       ],
       "followersId": [],
       "followingsId": [],
       "receivedPostIds": [],
-      "id": "2203874d-6adb-493b-b958-86049cbec70a"
+      "id": "b0081c13-2c8e-446a-9bcd-c97b5374530d"
     }
   }
 }

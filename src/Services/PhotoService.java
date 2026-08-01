@@ -2,8 +2,10 @@ package Services;
 import DTO.Photo.AddPhotoDto;
 import DTO.Photo.DeletePhotoDto;
 import Exceptions.ActionFailedException;
+import MainClasses.Album;
 import MainClasses.Photo;
 import MainClasses.User;
+import Repositories.AlbumRepository;
 import Repositories.PhotoRepository;
 import Repositories.SessionRepository;
 import Repositories.UserRepository;
@@ -30,12 +32,17 @@ public class PhotoService {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         String photoName = data.getName();
+        String albumId = data.getAlbumId();
         Set<String> tags = data.getTags();
         String caption = data.getCaption();
         Boolean isFavorable = data.getFavorable();
-        Boolean permissionForLeavingComment = data.getPermissionForLeavingComment();
         validatePhotoName(photoName);
-        Photo photo = PhotoRepository.getInstance().createPhoto(user.getId() , photoName , tags , caption , isFavorable , permissionForLeavingComment);
+        Photo photo = PhotoRepository.getInstance().createPhoto(user.getId() , photoName , albumId , tags , caption , isFavorable);
+        if (!albumId.isEmpty()) {
+            Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
+            album.getPhotoIds().add(photo.getId());
+            AlbumRepository.getInstance().update(album);
+        }
         user.getPhotoIds().add(photo.getId());
         UserRepository.getInstance().update();
     }

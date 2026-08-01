@@ -9,21 +9,21 @@ public class AddPhotoDto {
 
     private String name;
 
+    private String albumId;
+
     private Set<String> tags;
 
     private String caption;
 
     private Boolean isFavorable;
 
-    private Boolean permissionForLeavingComment;
-
-    public AddPhotoDto(String sessionId, String name, Set<String> tags, String caption, Boolean isFavorable, Boolean permissionForLeavingComment) {
+    public AddPhotoDto(String sessionId, String name, String albumId , Set<String> tags, String caption, Boolean isFavorable) {
         this.sessionId = sessionId;
         this.name = name;
+        this.albumId = albumId;
         this.tags = tags;
         this.caption = caption;
         this.isFavorable = isFavorable;
-        this.permissionForLeavingComment = permissionForLeavingComment;
     }
 
     public String getName() {
@@ -32,6 +32,14 @@ public class AddPhotoDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(String albumId) {
+        this.albumId = albumId;
     }
 
     public Set<String> getTags() {
@@ -56,14 +64,6 @@ public class AddPhotoDto {
 
     public void setFavorable(Boolean favorable) {
         isFavorable = favorable;
-    }
-
-    public Boolean getPermissionForLeavingComment() {
-        return permissionForLeavingComment;
-    }
-
-    public void setPermissionForLeavingComment(Boolean permissionForLeavingComment) {
-        this.permissionForLeavingComment = permissionForLeavingComment;
     }
 
     public String getSessionId() {
