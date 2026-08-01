@@ -53,6 +53,14 @@ public class PhotoService {
         String photoId = data.getPhotoId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
+        for (String i : photo.getAlbumIds()) {
+            if (!i.isEmpty()) {
+                Album album = AlbumRepository.getInstance().findAlbumById(i , user.getId());
+                album.getPhotoIds().remove(photoId);
+                album.updateTime();
+                AlbumRepository.getInstance().update(album);
+            }
+        }
         user.getPhotoIds().remove(photoId);
         PhotoRepository.getInstance().removePhoto(photo);
         UserRepository.getInstance().update();

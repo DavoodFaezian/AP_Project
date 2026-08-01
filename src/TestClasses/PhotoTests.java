@@ -4,6 +4,7 @@ import DTO.Album.DeleteAlbumDto;
 import DTO.Photo.AddPhotoDto;
 import DTO.Photo.AddPhotoToAndRemovePhotoFromAlbum;
 import DTO.Photo.DeletePhotoDto;
+import DTO.Photo.MovePhotoDto;
 import DTO.User.LogInDto;
 import DTO.User.SignUpDto;
 import Exceptions.ActionFailedException;
@@ -47,5 +48,117 @@ public class PhotoTests {
 
         ));
 
+        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user1.getId());
+
+        assertEquals(2 , photo.getAlbumIds().size());
+
+        Album album2 = AlbumRepository.getInstance().findAlbumById(albumId2, user1.getId());
+
+        assertEquals(1 , album2.getPhotoIds().size());
+
+        Album album1 = AlbumRepository.getInstance().findAlbumById(albumId1 , user1.getId());
+
+        assertEquals(1 , album1.getPhotoIds().size());
+
+
+       photoAlbumService.removePhotoFromAlbum(new AddPhotoToAndRemovePhotoFromAlbum(
+               sessionId , photoId , albumId1
+       ));
+
+       photo = PhotoRepository.getInstance().findPhotoById(photoId , user1.getId());
+
+       album1 = AlbumRepository.getInstance().findAlbumById(albumId1 , user1.getId());
+
+       assertEquals(1 , photo.getAlbumIds().size());
+       assertEquals(0 , album1.getPhotoIds().size());
+
+       photoAlbumService.movePhoto(new MovePhotoDto(
+               sessionId , photoId , albumId2 , albumId1
+       ));
+
+       photo = PhotoRepository.getInstance().findPhotoById(photoId , user1.getId());
+
+       album1 = AlbumRepository.getInstance().findAlbumById(albumId1 , user1.getId());
+
+       album2 = AlbumRepository.getInstance().findAlbumById(albumId2 , user1.getId());
+
+       assertEquals(1 , photo.getAlbumIds().size());
+
+       assertEquals(0 , album2.getPhotoIds().size());
+
+       assertEquals(1 , album1.getPhotoIds().size());
+
+       assertThrows(ActionFailedException.class , () -> {
+           photoAlbumService.movePhoto(
+                   new MovePhotoDto(
+                           sessionId , photoId , albumId2 , albumId1
+
+                   )
+           );
+       });
+
+        assertThrows(ActionFailedException.class , () -> {
+            photoAlbumService.movePhoto(
+                    new MovePhotoDto(
+                            sessionId , photoId , "" , albumId1
+
+                    )
+            );
+        });
+
+       String photoId2 = photoService.addPhoto(new AddPhotoDto(
+          sessionId , "photo2" , "" , new HashSet<>() ,
+          "caption" , false
+       ));
+
+       Photo photo2 = PhotoRepository.getInstance().findPhotoById(photoId2 , user1.getId());
+
+       assertEquals(1 , photo2.getAlbumIds().size());
+
+       photoAlbumService.addPhotoToAlbum(new AddPhotoToAndRemovePhotoFromAlbum(
+               sessionId , photoId , ""
+       ));
+
+       photo = PhotoRepository.getInstance().findPhotoById(photoId , user1.getId());
+
+       assertEquals(2 , photo.getAlbumIds().size());
+
+       photoAlbumService.movePhoto(new MovePhotoDto(
+               sessionId , photoId , "" , albumId2
+       ));
+
+       photo = PhotoRepository.getInstance().findPhotoById(photoId , user1.getId());
+
+       album2 = AlbumRepository.getInstance().findAlbumById(albumId2 , user1.getId());
+
+       assertEquals(1 , album2.getPhotoIds().size());
+
+       albumService.deleteAlbum(new DeleteAlbumDto(
+               albumId2 , sessionId
+       ));
+
+       photo = PhotoRepository.getInstance().findPhotoById(photoId , user1.getId());
+
+       assertEquals(1 , photo.getAlbumIds().size());
+
+       photoAlbumService.addPhotoToAlbum(new AddPhotoToAndRemovePhotoFromAlbum(
+               sessionId , photoId2 , albumId1
+       ));
+
+       photo2 = PhotoRepository.getInstance().findPhotoById(photoId2 , user1.getId());
+
+       album1 = AlbumRepository.getInstance().findAlbumById(albumId1 , user1.getId());
+
+       assertEquals(2 , album1.getPhotoIds().size());
+
+       assertEquals(2 , photo2.getAlbumIds().size());
+
+       photoService.deletePhoto(new DeletePhotoDto(
+               sessionId , photoId2
+       ));
+
+       album1 = AlbumRepository.getInstance().findAlbumById(albumId1 , user1.getId());
+
+       assertEquals(1 , album1.getPhotoIds().size());
     }
 }
