@@ -97,13 +97,14 @@ public class UserService {
         UserRepository.getInstance().update();
     }
 
-    public void logIn(LogInDto data) {
+    public String logIn(LogInDto data) {
         String userName = data.getUserName();
         String password = data.getPassword();
         User user = validateLogIn(userName , password);
         Session session = SessionRepository.getInstance().createSession(user.getId());
         user.getSessionIds().add(session.getId());
         UserRepository.getInstance().update();
+        return session.getId();
     }
 
     public void logOut(LogOutAndRemoveProfilePhotoDto data) {

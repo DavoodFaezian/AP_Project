@@ -31,13 +31,14 @@ public class AlbumService {
            throw new ActionFailedException("Album name must not be empty.");
         }
     }
-    public void addAlbum(AddAlbumDto data) {
+    public String addAlbum(AddAlbumDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         String albumName = data.getName();
         Album album = AlbumRepository.getInstance().createAlbum(user.getId() , albumName);
         user.getAlbumIds().add(album.getId());
         UserRepository.getInstance().update();
+        return album.getId();
     }
 
     public void deleteAlbum(DeleteAlbumDto data) {

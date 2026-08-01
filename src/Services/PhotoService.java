@@ -28,7 +28,7 @@ public class PhotoService {
         }
     }
 
-    public void addPhoto(AddPhotoDto data) {
+    public String addPhoto(AddPhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         String photoName = data.getName();
@@ -45,6 +45,7 @@ public class PhotoService {
         }
         user.getPhotoIds().add(photo.getId());
         UserRepository.getInstance().update();
+        return photo.getId();
     }
 
     public void deletePhoto(DeletePhotoDto data) {

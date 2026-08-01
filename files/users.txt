@@ -1,19 +1,25 @@
 {
   "className": "MainClasses.User",
   "items": {
-    "b0081c13-2c8e-446a-9bcd-c97b5374530d": {
-      "userName": "Ali",
-      "password": "12345678@",
-      "photoIds": [],
-      "albumIds": [],
+    "212dfc88-380c-4b91-8e3f-96051cf0aca1": {
+      "userName": "UniqueName",
+      "password": "Unique@1234",
+      "photoIds": [
+        "60c7be4d-0937-4b1f-9548-f44014298d3f"
+      ],
+      "albumIds": [
+        "07a3d237-d7d0-41f1-a293-4d821f227fff",
+        "50c5c308-f22b-4d90-b091-883ebb67d440"
+      ],
       "theme": "LIGHT",
       "sessionIds": [
-        "41b4fa08-dafb-4485-840f-823209799e87"
+        "08e615f3-8f93-4392-aaad-5d9ba8485d8f",
+        "5f278a40-5803-4a61-99ed-7e31a2a093d1"
       ],
       "followersId": [],
       "followingsId": [],
       "receivedPostIds": [],
-      "id": "b0081c13-2c8e-446a-9bcd-c97b5374530d"
+      "id": "212dfc88-380c-4b91-8e3f-96051cf0aca1"
     }
   }
 }

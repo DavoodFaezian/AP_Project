@@ -33,7 +33,7 @@ public class PhotoRepository extends BaseRepository<Photo>{
 
     public void update(Photo photo) {
         var photoFileManager = getFileManager(photo.getOwnerId());
-        photoFileManager.save();
+        photoFileManager.edit(photo);
     }
 
     public void removePhoto(String id,String ownerId) {
