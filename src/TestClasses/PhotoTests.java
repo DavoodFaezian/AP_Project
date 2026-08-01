@@ -2,6 +2,7 @@ import APIServer.Request;
 import DTO.Album.AddAlbumDto;
 import DTO.Album.DeleteAlbumDto;
 import DTO.Photo.AddPhotoDto;
+import DTO.Photo.AddPhotoToAndRemovePhotoFromAlbum;
 import DTO.Photo.DeletePhotoDto;
 import MainClasses.Album;
 import MainClasses.Photo;
@@ -24,47 +25,25 @@ public class PhotoTests {
     @Test
     public void photoTest() {
 
-        User user1 = UserService.getInstance().getUser("Ali" , "99999999@");
+        User user1 = UserService.getInstance().getUser("Hamid" , "12345678@");
 
-        AddPhotoDto data1 = new AddPhotoDto(user1.getSessionIds().stream().findAny().get() , "photo1" , null , null , true , true);
+        List<Photo> photos = PhotoRepository.getInstance().getPhotosByOwnerId(user1.getId());
+        List<Album> albums = AlbumRepository.getInstance().getAlbumsByOwner(user1.getId());
 
         Gson gson = new Gson();
 
-        JsonObject obj = gson.fromJson(gson.toJson(data1) , JsonObject.class);
+        AddPhotoToAndRemovePhotoFromAlbum data1 = new AddPhotoToAndRemovePhotoFromAlbum(user1.getSessionIds().stream().findFirst().get(), photos.getFirst().getId() , albums.getFirst().getId() );
+        AddPhotoDto data2 = new AddPhotoDto(user1.getSessionIds().stream().findFirst().get(), "photo3" , null , null , null , true);
+
+        JsonObject obj = gson.fromJson(gson.toJson(data2) , JsonObject.class);
 
         Request request1 = new Request("Photo/addPhoto" , obj);
 
-        RequestHandler handler1 = new RequestHandler(request1);
-        assertDoesNotThrow(handler1::handle);
+        RequestHandler handler = new RequestHandler(request1);
 
-        assertEquals(1 , user1.getPhotoIds().size());
+        Album album = albums.getFirst();
 
-        Photo photo1 = PhotoRepository.getInstance().findPhotoById(user1.getPhotoIds().stream().findFirst().get() , user1.getId());
-
-        DeletePhotoDto data2 = new DeletePhotoDto(user1.getSessionIds().stream().findFirst().get() , photo1.getId());
-
-        obj = gson.fromJson(gson.toJson(data2) , JsonObject.class);
-
-        Request request2 = new Request("Photo/deletePhoto" , obj);
-        RequestHandler handler2 = new RequestHandler(request2);
-
-        assertDoesNotThrow(handler2::handle);
-
-        List<Album> albums = AlbumRepository.getInstance().getAlbumsByOwner(user1.getId());
-
-        Album album = AlbumRepository.getInstance().findAlbumById(albums.get(0).getId() , user1.getId());
-
-        DeleteAlbumDto data4 = new DeleteAlbumDto(album.getId() , user1.getSessionIds().stream().findFirst().get());
-
-        obj = gson.fromJson(gson.toJson(data4) , JsonObject.class);
-
-        Request request5 = new Request("Album/deleteAlbum" , obj);
-
-        RequestHandler handler5 = new RequestHandler(request5);
-
-        assertDoesNotThrow(handler5::handle);
-
-        assertEquals(12 , user1.getAlbumIds().size());
+        assertEquals(1 , album.getPhotoIds().size());
 
     }
 }

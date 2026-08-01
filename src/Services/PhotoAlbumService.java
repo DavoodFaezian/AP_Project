@@ -23,11 +23,18 @@ public class PhotoAlbumService{
         return instance;
     }
 
+    public void validatePhoto(String photoId) {
+        if (photoId == null) {
+            throw new ActionFailedException("Photo must not be null");
+        }
+    }
+
     public void addPhotoToAlbum(AddPhotoToAndRemovePhotoFromAlbum data) {
         String sessionId = data.getSessionId();
         String photoId = data.getPhotoId();
         String albumId = data.getAlbumId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        validatePhoto(photoId);
         Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
         if(albumId.isEmpty()){
             photo.getAlbumIds().add(albumId);
