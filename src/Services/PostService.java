@@ -240,9 +240,9 @@ public class PostService {
 
                 User sharedUser = userRepository.findUserById(sharedUserId);
 
-                if (sharedUser.getReceivedPostIds() != null) {
-                    sharedUser.getReceivedPostIds().remove(post.getId());
-                }
+//                if (sharedUser.getReceivedPostIds() != null) {
+//                    sharedUser.getReceivedPostIds().remove(post.getId());
+//                }
 
                 userRepository.editUser(sharedUser);
             }

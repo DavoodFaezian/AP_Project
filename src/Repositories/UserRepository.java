@@ -28,7 +28,6 @@ public class UserRepository {
     }
 
     public void removeUser(User user) {
-        user.validateRemoveUser();
         userFileManager.removeFromList(user);
         userFileManager.save();
 

@@ -8,7 +8,6 @@ import MainClasses.User;
 import Repositories.AlbumRepository;
 import Repositories.PhotoRepository;
 import Repositories.SessionRepository;
-import Repositories.UserRepository;
 
 import java.util.Set;
 
@@ -43,8 +42,6 @@ public class PhotoService {
             album.getPhotoIds().add(photo.getId());
             AlbumRepository.getInstance().update(album);
         }
-        user.getPhotoIds().add(photo.getId());
-        UserRepository.getInstance().update();
         return photo.getId();
     }
 
@@ -61,9 +58,8 @@ public class PhotoService {
                 AlbumRepository.getInstance().update(album);
             }
         }
-        user.getPhotoIds().remove(photoId);
         PhotoRepository.getInstance().removePhoto(photo);
-        UserRepository.getInstance().update();
+
     }
 
 }

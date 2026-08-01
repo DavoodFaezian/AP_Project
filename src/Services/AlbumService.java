@@ -36,8 +36,6 @@ public class AlbumService {
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         String albumName = data.getName();
         Album album = AlbumRepository.getInstance().createAlbum(user.getId() , albumName);
-        user.getAlbumIds().add(album.getId());
-        UserRepository.getInstance().update();
         return album.getId();
     }
 
@@ -55,9 +53,7 @@ public class AlbumService {
                 PhotoRepository.getInstance().update(photo);
             }
         }
-        user.getAlbumIds().remove(albumId);
         AlbumRepository.getInstance().removeAlbum(album);
-        UserRepository.getInstance().update();
     }
 
 
