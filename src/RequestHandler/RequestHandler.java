@@ -101,17 +101,17 @@ public class RequestHandler {
                     throw new RuntimeException("Method requires multiple arguments, but JSON is not an array.");
                 }
             }
+
             Object result = action.method.invoke(action.instance, args);
 
             response = new Response();
 
+            response.setStatus(SECCEED);
             if (result != null) {
-                response.setStatus(SECCEED);
                 JsonObject payload = new JsonObject();
                 payload.addProperty("id" , result.toString());
                 response.setPayLoad(payload);
             } else {
-                response.setStatus(SECCEED);
                 response.setMessage("Request handled successfully.");
                 response.setPayLoad(new JsonObject());
             }
