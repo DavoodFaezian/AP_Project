@@ -1,21 +1,28 @@
 package FileManager;
 
 import MainClasses.BaseClass;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Predicate;
 
 public class GenericFileManager<T extends BaseClass> {
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
     // Get the path where the server will run.
     private static final Path CURRENT_DIR = Paths.get(System.getProperty("user.dir"));
     private final Map<String,T> map = new HashMap<>();
     private final Path filePath;
+    boolean testMode = true;
 
     private final Lock readLock;
     private final Lock writeLock;
@@ -51,21 +58,26 @@ public class GenericFileManager<T extends BaseClass> {
             }
             return;
         }
-        try(ObjectInputStream in = new ObjectInputStream(
-                new BufferedInputStream(
-                        new FileInputStream(file)))){
-            int itemsCount = in.readInt();
-            for (int i = 0; i < itemsCount; i++) {
-                T item = (T) in.readObject();
-                map.put(item.getId(),item);
-            }
+        if(!testMode) {
+            try (ObjectInputStream in = new ObjectInputStream(
+                    new BufferedInputStream(
+                            new FileInputStream(file)))) {
+                int itemsCount = in.readInt();
+                for (int i = 0; i < itemsCount; i++) {
+                    T item = (T) in.readObject();
+                    map.put(item.getId(), item);
+                }
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("An error was caught trying to read the file.");
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("An error was caught trying to read the file.");
+            }
+        }
+        else {
+            load();
         }
 
     }
@@ -213,7 +225,70 @@ public class GenericFileManager<T extends BaseClass> {
         }
     }
 
+    private void load() {
+        File file = filePath.toFile();
+        // If file doesn't exist or is empty ($0$ bytes)
+        if (!file.exists() || file.length() == 0) {
+            file.getParentFile().mkdirs();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException("Could not create file: " + file.getName(), e);
+            }
+            return;
+        }
+
+        try (Reader reader = new BufferedReader(new FileReader(file))) {
+            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            JsonElement classNameElement = root.get("className");
+            JsonElement itemsElement = root.get("items");
+
+            if (classNameElement != null && !classNameElement.isJsonNull() && itemsElement != null) {
+                String className = classNameElement.getAsString();
+                Class<?> clazz = Class.forName(className);
+
+                // Reconstruct the exact type for GSON: HashMap<String, T>
+                Type mapType = TypeToken.getParameterized(HashMap.class, String.class, clazz).getType();
+                HashMap<String, T> loadedMap = gson.fromJson(itemsElement, mapType);
+
+                if (loadedMap != null) {
+                    map.putAll(loadedMap);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load data from JSON: " + file.getName(), e);
+        }
+    }
+
+    private void saveTest() {
+        Path tempFilePath = Paths.get(filePath.toString() + ".tmp");
+
+        try (Writer writer = new BufferedWriter(new FileWriter(tempFilePath.toFile()))) {
+            JsonObject root = new JsonObject();
+
+            // Save the class name so we know how to deserialize it later.
+            // If the map is empty, we save null and handle it safely on load.
+            String className = map.isEmpty() ? null : map.values().iterator().next().getClass().getName();
+            root.addProperty("className", className);
+            root.add("items", gson.toJsonTree(map));
+
+            gson.toJson(root, writer);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save data to disk: " + tempFilePath.toFile().getName(), e);
+        }
+
+        // Safely swap the temp file with the actual file
+        try {
+            Files.move(tempFilePath, filePath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to atomically replace the data file.", e);
+        }
+    }
     private void saveInternal() {
+        if(testMode){
+            saveTest();
+            return;
+        }
         try(ObjectOutputStream out = new ObjectOutputStream(
                 new BufferedOutputStream(
                         new FileOutputStream(filePath.toFile())))) {
