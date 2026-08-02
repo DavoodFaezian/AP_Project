@@ -1,15 +1,20 @@
 {
   "className": "MainClasses.User",
   "items": {
-    "d7ff4758-eb5e-45bd-9d0c-85139cd28406": {
-      "userName": "UniqueName",
-      "password": "Unique_1234@",
-      "id": "d7ff4758-eb5e-45bd-9d0c-85139cd28406"
+    "7a01cd10-cf33-4eb2-92e3-365517849f5b": {
+      "userName": "UniName",
+      "password": "newPass@123",
+      "id": "7a01cd10-cf33-4eb2-92e3-365517849f5b"
     },
-    "d3ed3ceb-390c-4734-a74f-d900e8e980c7": {
-      "userName": "Unique_Name",
-      "password": "Unique@1234",
-      "id": "d3ed3ceb-390c-4734-a74f-d900e8e980c7"
+    "5784bbe3-be06-47c3-8f85-6326b9ebffcc": {
+      "userName": "Uni2Name",
+      "password": "newPass2@123",
+      "id": "5784bbe3-be06-47c3-8f85-6326b9ebffcc"
+    },
+    "016d2c04-7091-458a-aa29-f18aa86f475a": {
+      "userName": "Uni3Name",
+      "password": "newPass3@123",
+      "id": "016d2c04-7091-458a-aa29-f18aa86f475a"
     }
   }
 }

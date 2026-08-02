@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class PostDto {
+    private String id;
     private String ownerId;
     private Set<String> photoIds= new LinkedHashSet<>();
     private Set<String> albumIds= new LinkedHashSet<>();
@@ -19,12 +20,13 @@ public class PostDto {
     public PostDto(
             Post post
     ) {
+        this.id = post.getId();
         this.ownerId = post.getOwnerId();
         this.photoIds = post.getPhotoIds();
         this.albumIds = post.getAlbumIds();
         this.commentIds = post.getCommentIds();
         this.commentsAllowed = post.getCommentsAllowed();
-        this.createAt = post.getCreateAt();
+        this.createAt = post.getCreatedAt();
         this.lastModified = post.getLastModified();
     }
 
@@ -55,6 +57,18 @@ public class PostDto {
 
     public LocalDateTime getLastModified() {
         return lastModified;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        PostDto postDto = (PostDto) o;
+        return Objects.equals(ownerId, postDto.ownerId) && Objects.equals(photoIds, postDto.photoIds) && Objects.equals(albumIds, postDto.albumIds) && Objects.equals(commentIds, postDto.commentIds) && Objects.equals(commentsAllowed, postDto.commentsAllowed);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ownerId, photoIds, albumIds, commentIds, commentsAllowed);
     }
 }
 

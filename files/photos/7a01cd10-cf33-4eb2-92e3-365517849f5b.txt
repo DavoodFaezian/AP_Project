@@ -1,0 +1,83 @@
+{
+  "className": "MainClasses.Photo",
+  "items": {
+    "35418a3b-6d60-4a7a-b412-7f7e07e06459": {
+      "ownerId": "7a01cd10-cf33-4eb2-92e3-365517849f5b",
+      "photoName": "new photo",
+      "tags": [],
+      "caption": "caption",
+      "isFavorable": false,
+      "commentIds": [],
+      "albumIds": [
+        "ca2b38bb-d342-4cc7-9407-5c8faed73588"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 2
+        },
+        "time": {
+          "hour": 19,
+          "minute": 4,
+          "second": 16,
+          "nano": 4393900
+        }
+      },
+      "id": "35418a3b-6d60-4a7a-b412-7f7e07e06459"
+    },
+    "4b8247db-4923-41aa-8cfe-08af3241ef70": {
+      "ownerId": "7a01cd10-cf33-4eb2-92e3-365517849f5b",
+      "photoName": "new photo 2",
+      "tags": [],
+      "caption": "caption 2",
+      "isFavorable": false,
+      "commentIds": [],
+      "albumIds": [
+        "ca2b38bb-d342-4cc7-9407-5c8faed73588"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 2
+        },
+        "time": {
+          "hour": 19,
+          "minute": 4,
+          "second": 16,
+          "nano": 15395000
+        }
+      },
+      "id": "4b8247db-4923-41aa-8cfe-08af3241ef70"
+    },
+    "150ec598-0aaf-4970-b683-417eacec8e3c": {
+      "ownerId": "7a01cd10-cf33-4eb2-92e3-365517849f5b",
+      "photoName": "new photo 3",
+      "tags": [],
+      "caption": "caption 3",
+      "isFavorable": false,
+      "commentIds": [],
+      "albumIds": [
+        "f9438dd6-ecfe-47d6-a54d-ac9d62a7ed3d"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 2
+        },
+        "time": {
+          "hour": 19,
+          "minute": 4,
+          "second": 16,
+          "nano": 21395900
+        }
+      },
+      "id": "150ec598-0aaf-4970-b683-417eacec8e3c"
+    }
+  }
+}

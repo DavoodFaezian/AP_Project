@@ -9,7 +9,7 @@ public class Post extends BaseClass<Post>{
     private Set<String> albumIds;
     private Set<String> commentIds = new LinkedHashSet<>();
     private Boolean commentsAllowed;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private LocalDateTime lastModified;
 
     public Post(String ownerId, Set<String> photoIds, Set<String> albumIds, Boolean commentsAllowed) {
@@ -17,7 +17,8 @@ public class Post extends BaseClass<Post>{
         this.photoIds = photoIds;
         this.albumIds = albumIds;
         this.commentsAllowed = commentsAllowed;
-        this.createAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+        this.lastModified = LocalDateTime.now();
     }
     public void updateTime(){
         this.lastModified = LocalDateTime.now();
@@ -62,8 +63,8 @@ public class Post extends BaseClass<Post>{
         this.commentsAllowed = commentsAllowed;
     }
 
-    public LocalDateTime getCreateAt() {
-        return createAt;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public LocalDateTime getLastModified() {

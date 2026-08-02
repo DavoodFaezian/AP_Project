@@ -4,6 +4,7 @@ import Exceptions.ItemNotFoundException;
 import FileManager.GenericFileManager;
 import MainClasses.BannedUser;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -13,7 +14,7 @@ public class BannedUserRepository {
     private static final BannedUserRepository instance = new BannedUserRepository();
 
     private static final GenericFileManager<BannedUser> bannedUserFileManager =
-            new GenericFileManager<>("banned_users.txt", new ReentrantReadWriteLock());
+            new GenericFileManager<>("admin"+File.separator+"banned_users.txt", new ReentrantReadWriteLock());
 
     private BannedUserRepository() {}
 

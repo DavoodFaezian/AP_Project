@@ -1,16 +1,10 @@
 package Services;
 
 import DTO.Post.*;
-import MainClasses.Album;
-import MainClasses.Photo;
-import MainClasses.Post;
-import MainClasses.User;
-import Repositories.AlbumRepository;
-import Repositories.CommentRepository;
-import Repositories.PhotoRepository;
-import Repositories.PostRepository;
-import Repositories.SessionRepository;
-import Repositories.UserRepository;
+import Exceptions.ActionFailedException;
+import Exceptions.ItemNotFoundException;
+import MainClasses.*;
+import Repositories.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,6 +17,7 @@ public class PostService {
     private final PhotoRepository photoRepository = PhotoRepository.getInstance();
     private final AlbumRepository albumRepository = AlbumRepository.getInstance();
     private final UserRepository userRepository = UserRepository.getInstance();
+    private final UserProfileRepository userProfileRepository = UserProfileRepository.getInstance();
 
     private PostService() {}
 
@@ -30,7 +25,7 @@ public class PostService {
         return instance;
     }
 
-    public void addPost(AddPostDto dto) {
+    public String addPost(AddPostDto dto) {
 
         String sessionId = dto.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -39,6 +34,9 @@ public class PostService {
             throw new IllegalStateException("User is not logged in.");
         }
 
+        if(dto.getAlbumIds().isEmpty()&&dto.getPhotoIds().isEmpty()){
+            throw new ActionFailedException("Both photoIds and albumIds can't be null.");
+        }
         String ownerId = user.getId();
 
         Post post = new Post(
@@ -77,6 +75,7 @@ public class PostService {
                 albumRepository.editAlbum(album);
             }
         }
+        return post.getId();
 
     }
 
@@ -87,6 +86,9 @@ public class PostService {
 
         if (user == null) {
             throw new IllegalStateException("User is not logged in.");
+        }
+        if(dto.getAlbumIds().isEmpty()&&dto.getPhotoIds().isEmpty()){
+            throw new ActionFailedException("Both photoIds and albumIds can't be null.");
         }
 
         String ownerId = user.getId();
@@ -182,18 +184,22 @@ public class PostService {
 
         postRepository.editPost(post);
     }
-//    public Set<PostDto> getAllPostsOfFollowings(String userId) {
-//        User user = userRepository.findUserById(userId);
-//        Set<String> followingIds = user.getFollowingsId();
-//
-//        return followingIds.parallelStream()
-//                .map(postRepository::getPostsByOwnerId)
-//                .flatMap(Collection::stream)
-//                .map(PostDto::new)
-//                .collect(Collectors.toCollection(() ->
-//                        new TreeSet<>(Comparator.comparing(PostDto::getLastModified))
-//                ));
-//    }
+    public Set<PostDto> getAllPostsOfFollowings(String userId) {
+        User user = userRepository.findUserById(userId);
+        Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
+        if(profile.isEmpty()){
+            throw new ItemNotFoundException("UserProfile",userId);
+        }
+        Set<String> followingIds = profile.get().getFollowingsId();
+
+        return followingIds.parallelStream()
+                .map(postRepository::getPostsByOwnerId)
+                .flatMap(Collection::stream)
+                .map(PostDto::new)
+                .collect(Collectors.toCollection(() ->
+                        new TreeSet<>(Comparator.comparing(PostDto::getLastModified))
+                ));
+    }
 
 
     public void deletePost(DeletePostDto dto) {
@@ -291,5 +297,9 @@ public class PostService {
                 .stream()
                 .map(PostDto::new)
                 .collect(Collectors.toList());
+    }
+    public PostDto getPostById(String postId, String ownerId){
+        Post post = postRepository.findPostById(postId,ownerId);
+        return new PostDto(post);
     }
 }

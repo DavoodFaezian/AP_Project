@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -224,65 +225,78 @@ public class GenericFileManager<T extends BaseClass> {
         finally {
             writeLock.unlock();
         }
-    }
-
-    private void load() {
-        File file = filePath.toFile();
-        // If file doesn't exist or is empty ($0$ bytes)
-        if (!file.exists() || file.length() == 0) {
-            file.getParentFile().mkdirs();
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                throw new RuntimeException("Could not create file: " + file.getName(), e);
-            }
-            return;
-        }
-
-        try (Reader reader = new BufferedReader(new FileReader(file))) {
-            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            JsonElement classNameElement = root.get("className");
-            JsonElement itemsElement = root.get("items");
-
-            if (classNameElement != null && !classNameElement.isJsonNull() && itemsElement != null) {
-                String className = classNameElement.getAsString();
-                Class<?> clazz = Class.forName(className);
-
-                // Reconstruct the exact type for GSON: HashMap<String, T>
-                Type mapType = TypeToken.getParameterized(HashMap.class, String.class, clazz).getType();
-                HashMap<String, T> loadedMap = gson.fromJson(itemsElement, mapType);
-
-                if (loadedMap != null) {
-                    map.putAll(loadedMap);
+    }private void load() {
+        writeLock.lock();
+        try {
+            File file = filePath.toFile();
+            if (!file.exists() || file.length() == 0) {
+                file.getParentFile().mkdirs();
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    throw new RuntimeException("Could not create file: " + file.getName(), e);
                 }
+                return;
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to load data from JSON: " + file.getName(), e);
+
+            try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
+                JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+                JsonElement classNameElement = root.get("className");
+                JsonElement itemsElement = root.get("items");
+
+                if (classNameElement != null && !classNameElement.isJsonNull()
+                        && itemsElement != null && !itemsElement.isJsonNull()) {
+
+                    String className = classNameElement.getAsString();
+                    Class<?> clazz = Class.forName(className);
+
+                    Type mapType = TypeToken.getParameterized(LinkedHashMap.class, String.class, clazz).getType();
+                    LinkedHashMap<String, T> loadedMap = gson.fromJson(itemsElement, mapType);
+
+                    map.clear();
+                    if (loadedMap != null) {
+                        map.putAll(loadedMap);
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to load data from JSON: " + file.getName(), e);
+            }
+        } finally {
+            writeLock.unlock();
         }
     }
+
 
     private void saveTest() {
-        Path tempFilePath = Paths.get(filePath.toString() + ".tmp");
+        Path tempFilePath = filePath.getParent().resolve(filePath.getFileName().toString() + ".tmp");
 
-        try (Writer writer = new BufferedWriter(new FileWriter(tempFilePath.toFile()))) {
-            JsonObject root = new JsonObject();
-
-            // Save the class name so we know how to deserialize it later.
-            // If the map is empty, we save null and handle it safely on load.
-            String className = map.isEmpty() ? null : map.values().iterator().next().getClass().getName();
-            root.addProperty("className", className);
-            root.add("items", gson.toJsonTree(map));
-
-            gson.toJson(root, writer);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to save data to disk: " + tempFilePath.toFile().getName(), e);
-        }
-
-        // Safely swap the temp file with the actual file
         try {
-            Files.move(tempFilePath, filePath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to atomically replace the data file.", e);
+            // Write to a temporary file using UTF-8
+            try (BufferedWriter writer = Files.newBufferedWriter(tempFilePath, StandardCharsets.UTF_8)) {
+                JsonObject root = new JsonObject();
+
+                // Save class metadata
+                String className = map.isEmpty() ? null : map.values().iterator().next().getClass().getName();
+                root.addProperty("className", className);
+
+                // gson.toJsonTree preserves order since it maps to LinkedTreeMap internally
+                root.add("items", gson.toJsonTree(map));
+
+                gson.toJson(root, writer);
+            }
+
+            // Atomic move with fallback
+            try {
+                Files.move(tempFilePath, filePath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } catch (IOException e) {
+                Files.move(tempFilePath, filePath, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+        } catch (Exception e) {
+            try {
+                Files.deleteIfExists(tempFilePath);
+            } catch (IOException ignored) {}
+            throw new RuntimeException("Failed to save data to disk: " + filePath.getFileName(), e);
         }
     }
     private void saveInternal() {
