@@ -1,14 +1,16 @@
 package Repositories;
 
 import Exceptions.ItemNotFoundException;
+import FileManager.FileServer;
 import MainClasses.Photo;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class PhotoRepository extends BaseRepository<Photo>{
     private static PhotoRepository instance = new PhotoRepository();
+
+    private static final Map<String , FileServer> map = new HashMap<>();
 
     private PhotoRepository() {
         super("photos");
@@ -29,6 +31,10 @@ public class PhotoRepository extends BaseRepository<Photo>{
         photoFileManager.removeFromList(photo);
         photoFileManager.save();
 
+        FileServer server = map.get(photo.getOwnerId());
+        if (server != null) {
+           server.deleteData(photo.getId());
+        }
     }
 
     public void update(Photo photo) {
@@ -59,10 +65,24 @@ public class PhotoRepository extends BaseRepository<Photo>{
         return photo.get();
     }
 
-    public Photo createPhoto(String ownerId, String photoName, String albumId , Set<String> tags, String caption, Boolean isFavorable) {
+    public Photo createPhoto(String ownerId, String photoName, String albumId , Set<String> tags, String caption, Boolean isFavorable, byte[] photoBytes) {
         Photo photo = new Photo(ownerId , photoName , albumId , tags , caption , isFavorable);
         addPhoto(photo);
+        String fileName = "user_" + ownerId + ".bin";
+
+        FileServer server = map.computeIfAbsent(ownerId, id ->
+                new FileServer(fileName , new ReentrantReadWriteLock()));
+
+        server.saveData(photo.getId() , photoBytes);
         return photo;
+    }
+
+    public byte[] getPhotoBytes(String ownerId , String photoId) {
+        FileServer server = map.get(ownerId);
+        if(server == null) {
+            return null;
+        }
+        return server.readData(photoId);
     }
 
 

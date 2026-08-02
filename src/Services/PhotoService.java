@@ -40,8 +40,8 @@ public class PhotoService {
         Boolean isFavorable = data.getFavorable();
         String photoData = data.getPhotoData();
         validatePhotoName(photoName);
-        uploadPhoto(photoData);
-        Photo photo = PhotoRepository.getInstance().createPhoto(user.getId() , photoName , albumId , tags , caption , isFavorable);
+        byte[] photoBytes = uploadPhoto(photoData);
+        Photo photo = PhotoRepository.getInstance().createPhoto(user.getId() , photoName , albumId , tags , caption , isFavorable, photoBytes);
         if (!albumId.isEmpty()) {
             Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
             album.getPhotoIds().add(photo.getId());
@@ -74,8 +74,8 @@ public class PhotoService {
         PhotoRepository.getInstance().editPhoto(photo);
     }
 
-    public void uploadPhoto(String photoData) {
-        byte[] bytes = Base64.getDecoder().decode(photoData);
+    public byte[] uploadPhoto(String photoData) {
+        return Base64.getDecoder().decode(photoData);
     }
 
 }
