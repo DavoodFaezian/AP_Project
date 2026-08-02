@@ -121,6 +121,14 @@ public class Photo extends BaseClass<Photo>{
         this.postIds = postIds;
     }
 
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

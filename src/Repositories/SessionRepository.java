@@ -53,6 +53,14 @@ public class SessionRepository {
         return UserRepository.getInstance().findUserById(userId);
     }
 
+    public void validateSession(String sessionId) {
+        Optional<Session> session = sessionFileManager.findItemById(sessionId);
+        if(session.isEmpty()){
+            throw new ItemNotFoundException("session" , sessionId);
+        }
+
+    }
+
     public boolean isSessionIdValid(String userId , String sessionId) {
         return sessionFileManager.exists(s -> s.getId().equals(sessionId));
     }

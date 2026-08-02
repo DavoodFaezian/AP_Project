@@ -1,5 +1,7 @@
 package DTO.Album;
 
+import MainClasses.Album;
+
 import java.util.Objects;
 import java.util.Set;
 
@@ -9,11 +11,11 @@ public class AlbumDto {
     private final Set<String> photoIds;
     private final Set<String> postIds;
 
-    public AlbumDto(String ownerId, String albumName, Set<String> photoIds, Set<String> postIds) {
-        this.ownerId = ownerId;
-        this.albumName = albumName;
-        this.photoIds = photoIds;
-        this.postIds = postIds;
+    public AlbumDto(Album album) {
+        this.ownerId = album.getOwnerId();
+        this.albumName = album.getAlbumName();
+        this.photoIds = album.getPhotoIds();
+        this.postIds = album.getPostIds();
     }
 
     public String ownerId() {

@@ -83,7 +83,7 @@ public class CommentService {
     }
 
     public List<CommentDto> getAllCommentsByPostId(GetCommentsByPostDto data) {
-        sessionRepository.findUserBySessionId(data.getSessionId());
+        sessionRepository.validateSession(data.getSessionId());
 
         List<Comment> comments = commentRepository.getAllCommentsByPostId(data.getPostId());
         if (comments == null) {

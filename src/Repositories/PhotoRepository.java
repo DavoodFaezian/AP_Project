@@ -86,6 +86,11 @@ public class PhotoRepository extends BaseRepository<Photo>{
     }
 
 
+    public Optional<Photo> getPhotoById(String ownerId , String photoId) {
+        return getFileManager(ownerId).findItemById(photoId);
+    }
+
+
     public boolean isPhotoIdValid(String photoId,String ownerId){
         return getFileManager(ownerId).exists(p->p.getId().equals(photoId));
     }
