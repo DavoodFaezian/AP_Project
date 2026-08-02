@@ -1,10 +1,9 @@
 import APIServer.Request;
 import DTO.Album.AddAlbumDto;
+import DTO.Album.AlbumDto;
 import DTO.Album.DeleteAlbumDto;
-import DTO.Photo.AddPhotoDto;
-import DTO.Photo.AddPhotoToAndRemovePhotoFromAlbum;
-import DTO.Photo.DeletePhotoDto;
-import DTO.Photo.MovePhotoDto;
+import DTO.Album.GetAlbumDto;
+import DTO.Photo.*;
 import DTO.User.LogInDto;
 import DTO.User.SignUpDto;
 import Exceptions.ActionFailedException;
@@ -47,15 +46,15 @@ public class PhotoTests {
 
         ));
 
-        Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user1.getId());
+        PhotoDto photo = photoService.getPhotoById(new GetPhotoDto(sessionId,photoId , user1.getId()));
 
         assertEquals(2 , photo.getAlbumIds().size());
 
-        Album album2 = AlbumRepository.getInstance().findAlbumById(albumId2, user1.getId());
+        AlbumDto album2 = albumService.getAlbum(new GetAlbumDto(sessionId,albumId2,user1.getId()));
 
         assertEquals(1 , album2.getPhotoIds().size());
 
-        Album album1 = AlbumRepository.getInstance().findAlbumById(albumId1 , user1.getId());
+        AlbumDto album1 = albumService.getAlbum(new GetAlbumDto(sessionId,albumId1,user1.getId()));
 
         assertEquals(1 , album1.getPhotoIds().size());
 
@@ -64,9 +63,9 @@ public class PhotoTests {
                sessionId , photoId , albumId1
        ));
 
-       photo = PhotoRepository.getInstance().findPhotoById(photoId , user1.getId());
+       photo = photoService.getPhotoById(new GetPhotoDto(sessionId,photoId , user1.getId()));
 
-       album1 = AlbumRepository.getInstance().findAlbumById(albumId1 , user1.getId());
+       album1 = albumService.getAlbum(new GetAlbumDto(sessionId,albumId1,user1.getId()));
 
        assertEquals(1 , photo.getAlbumIds().size());
        assertEquals(0 , album1.getPhotoIds().size());
@@ -75,11 +74,11 @@ public class PhotoTests {
                sessionId , photoId , albumId2 , albumId1
        ));
 
-       photo = PhotoRepository.getInstance().findPhotoById(photoId , user1.getId());
+       photo = photoService.getPhotoById(new GetPhotoDto(sessionId,photoId , user1.getId()));
 
-       album1 = AlbumRepository.getInstance().findAlbumById(albumId1 , user1.getId());
+       album1 = albumService.getAlbum(new GetAlbumDto(sessionId,albumId1,user1.getId()));
 
-       album2 = AlbumRepository.getInstance().findAlbumById(albumId2 , user1.getId());
+       album2 = albumService.getAlbum(new GetAlbumDto(sessionId,albumId2,user1.getId()));
 
        assertEquals(1 , photo.getAlbumIds().size());
 
@@ -109,7 +108,7 @@ public class PhotoTests {
           sessionId , "photo2" , "" , new HashSet<>() ,
           "caption" , false , "1234"));
 
-       Photo photo2 = PhotoRepository.getInstance().findPhotoById(photoId2 , user1.getId());
+       PhotoDto photo2 = photoService.getPhotoById(new GetPhotoDto(sessionId,photoId2 , user1.getId()));
 
        assertEquals(1 , photo2.getAlbumIds().size());
 
@@ -117,7 +116,7 @@ public class PhotoTests {
                sessionId , photoId , ""
        ));
 
-       photo = PhotoRepository.getInstance().findPhotoById(photoId , user1.getId());
+       photo = photoService.getPhotoById(new GetPhotoDto(sessionId,photoId , user1.getId()));
 
        assertEquals(2 , photo.getAlbumIds().size());
 
@@ -125,9 +124,9 @@ public class PhotoTests {
                sessionId , photoId , "" , albumId2
        ));
 
-       photo = PhotoRepository.getInstance().findPhotoById(photoId , user1.getId());
+       photo = photoService.getPhotoById(new GetPhotoDto(sessionId,photoId , user1.getId()));
 
-       album2 = AlbumRepository.getInstance().findAlbumById(albumId2 , user1.getId());
+       album2 = albumService.getAlbum(new GetAlbumDto(sessionId,albumId2,user1.getId()));
 
        assertEquals(1 , album2.getPhotoIds().size());
 
@@ -135,7 +134,7 @@ public class PhotoTests {
                albumId2 , sessionId
        ));
 
-       photo = PhotoRepository.getInstance().findPhotoById(photoId , user1.getId());
+       photo = photoService.getPhotoById(new GetPhotoDto(sessionId,photoId , user1.getId()));
 
        assertEquals(1 , photo.getAlbumIds().size());
 
@@ -143,9 +142,9 @@ public class PhotoTests {
                sessionId , photoId2 , albumId1
        ));
 
-       photo2 = PhotoRepository.getInstance().findPhotoById(photoId2 , user1.getId());
+       photo2 = photoService.getPhotoById(new GetPhotoDto(sessionId,photoId2 , user1.getId()));
 
-       album1 = AlbumRepository.getInstance().findAlbumById(albumId1 , user1.getId());
+       album1 = albumService.getAlbum(new GetAlbumDto(sessionId,albumId1,user1.getId()));
 
        assertEquals(2 , album1.getPhotoIds().size());
 
@@ -155,7 +154,7 @@ public class PhotoTests {
                sessionId , photoId2
        ));
 
-       album1 = AlbumRepository.getInstance().findAlbumById(albumId1 , user1.getId());
+       album1 = albumService.getAlbum(new GetAlbumDto(sessionId,albumId1,user1.getId()));
 
        assertEquals(1 , album1.getPhotoIds().size());
     }

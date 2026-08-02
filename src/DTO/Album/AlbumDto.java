@@ -18,19 +18,19 @@ public class AlbumDto {
         this.postIds = album.getPostIds();
     }
 
-    public String ownerId() {
+    public String getOwnerId() {
         return ownerId;
     }
 
-    public String albumName() {
+    public String getAlbumName() {
         return albumName;
     }
 
-    public Set<String> photoIds() {
+    public Set<String> getPhotoIds() {
         return photoIds;
     }
 
-    public Set<String> postIds() {
+    public Set<String> getPostIds() {
         return postIds;
     }
 
