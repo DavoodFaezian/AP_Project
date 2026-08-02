@@ -75,7 +75,7 @@ public class RequestHandler {
 
         }
     }
-    public void handle() {
+    public Object handle() {
         Gson gson = new Gson();
         try {
             ActionHandler action= actions.get(request.getActionName());
@@ -95,7 +95,7 @@ public class RequestHandler {
                     throw new RuntimeException("Method requires multiple arguments, but JSON is not an array.");
                 }
             }
-            action.method.invoke(action.instance, args);
+            return action.method.invoke(action.instance, args);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
@@ -104,6 +104,7 @@ public class RequestHandler {
                 throw new ActionFailedException(exp.getMessage());
             }
         }
+        return null;
 
 
     }
