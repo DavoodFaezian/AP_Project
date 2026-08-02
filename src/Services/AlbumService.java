@@ -2,6 +2,7 @@ package Services;
 import DTO.Album.AddAlbumDto;
 import DTO.Album.AlbumDto;
 import DTO.Album.DeleteAlbumDto;
+import DTO.Album.EditAlbumDto;
 import Exceptions.ActionFailedException;
 import MainClasses.Album;
 import MainClasses.Photo;
@@ -36,8 +37,6 @@ public class AlbumService {
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         String albumName = data.getName();
         Album album = AlbumRepository.getInstance().createAlbum(user.getId() , albumName);
-        user.getAlbumIds().add(album.getId());
-        UserRepository.getInstance().update();
         return album.getId();
     }
 
@@ -55,14 +54,13 @@ public class AlbumService {
                 PhotoRepository.getInstance().update(photo);
             }
         }
-        user.getAlbumIds().remove(albumId);
         AlbumRepository.getInstance().removeAlbum(album);
-        UserRepository.getInstance().update();
     }
 
-
-    public void editAlbum(Album album) {
-        album.updateTime();
+    public void editAlbum(EditAlbumDto data) {
+        String sessionId = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        Album album = data.getAlbumName();
         albumRepository.editAlbum(album);
     }
 

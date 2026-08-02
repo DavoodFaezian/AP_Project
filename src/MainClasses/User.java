@@ -10,10 +10,6 @@ public class User extends BaseClass<User>{
 
     private String profilePhotoId;
 
-    private Set<String> photoIds = new HashSet<>();
-
-    private Set<String> albumIds = new HashSet<>();
-
     private Theme theme = Theme.LIGHT;
 
     private Set<String> sessionIds = new HashSet<>();
@@ -21,27 +17,11 @@ public class User extends BaseClass<User>{
     private Set<String> followersId = new HashSet<>();
 
     private Set<String> followingsId = new HashSet<>();
-    private Set<String> receivedPostIds = new HashSet<>();
+
 
     public User(String userName, String password){
         this.userName = userName;
         this.password = password;
-    }
-
-    public void addPhotoToPhotos(String photoId){
-        photoIds.add(photoId);
-    }
-
-    public void removePhotoFromPhotos(String photoId){
-        photoIds.remove(photoId);
-    }
-
-    public void addAlbumToAlbums(String albumId){
-        albumIds.add(albumId);
-    }
-
-    public void removeAlbumFromAlbums(String albumId){
-        albumIds.remove(albumId);
     }
 
     public String getUserName(){
@@ -70,22 +50,6 @@ public class User extends BaseClass<User>{
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Set<String> getPhotoIds() {
-        return photoIds;
-    }
-
-    public void setPhotoIds(Set<String> photoIds) {
-        this.photoIds = photoIds;
-    }
-
-    public Set<String> getAlbumIds() {
-        return albumIds;
-    }
-
-    public void setAlbumIds(Set<String> albumIds) {
-        this.albumIds = albumIds;
     }
 
     public void setTheme(Theme theme){
@@ -121,13 +85,6 @@ public class User extends BaseClass<User>{
         this.followingsId = followingsId;
     }
 
-    public void setReceivedPostIds(Set<String> receivedPostIds) {
-        this.receivedPostIds = receivedPostIds;
-    }
-
-    public Set<String> getReceivedPostIds() {
-        return receivedPostIds;
-    }
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -140,8 +97,5 @@ public class User extends BaseClass<User>{
         return Objects.hash(userName, password);
     }
 
-
-    public void validateRemoveUser() {
-    }
 
 }

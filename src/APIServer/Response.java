@@ -1,14 +1,23 @@
 package APIServer;
 
+import com.google.gson.JsonObject;
+
 public class Response {
 
     private String status;
 
     private String message;
 
-    public Response(String status, String message) {
+    private JsonObject payLoad;
+
+    public Response() {
+
+    }
+
+    public Response(String status,String message, JsonObject payLoad) {
         this.status = status;
         this.message = message;
+        this.payLoad = payLoad;
     }
 
     public String getStatus() {
@@ -25,5 +34,13 @@ public class Response {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public JsonObject getPayLoad() {
+        return payLoad;
+    }
+
+    public void setPayLoad(JsonObject payLoad) {
+        this.payLoad = payLoad;
     }
 }

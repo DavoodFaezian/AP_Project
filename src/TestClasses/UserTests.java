@@ -1,192 +1,201 @@
-import APIServer.Request;
 import DTO.User.*;
 import Exceptions.ActionFailedException;
 import MainClasses.User;
-import RequestHandler.RequestHandler;
+import Repositories.UserRepository;
 import Services.UserService;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserTests {
 
     @Test
-    public void signUpTest() {
+    public void userTest() {
 
-        Gson gson = new Gson();
+        UserService userService = UserService.getInstance();
 
-        SignUpDto data1 = new SignUpDto("Ali" , "12345678@" , "12345678@");
+        assertDoesNotThrow(
+                () -> {
+                    userService.signUp(new SignUpDto("UniqueName","Unique@1234","Unique@1234"));
+                });
 
-        JsonObject obj = gson.fromJson(gson.toJson(data1) , JsonObject.class);
+        assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.signUp(new SignUpDto("UniqueName","Unique1234@","Unique1234@"));
+                });
 
-        Request request1 = new Request("User/signUp" , obj);
+        assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.signUp(new SignUpDto("MyName","Unique@1234","Unique@1234"));
+                });
 
-        RequestHandler handler = new RequestHandler(request1);
-        assertThrows(ActionFailedException.class , handler::handle);
+        Exception exp = assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.signUp(new SignUpDto("","Unique1234@","Unique1234@"));
+                });
+        assertEquals("User name must not be empty." , exp.getMessage());
 
-        SignUpDto data2 = new SignUpDto("Hamid" , "12345678@" , "12345678@");
+        Exception exp1 = assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.signUp(new SignUpDto("AliSabet","","Unique1234@"));
+                });
+        assertEquals("Password must not be empty." , exp1.getMessage());
 
-        obj = gson.fromJson(gson.toJson(data2) , JsonObject.class);
-
-        Request request2 = new Request("User/signUp" , obj);
-        handler = new RequestHandler(request2);
-        assertThrows(ActionFailedException.class , handler::handle);
-
-
-        SignUpDto data3 = new SignUpDto("Amir" , "12345" , "12345");
-
-        obj = gson.fromJson(gson.toJson(data3) , JsonObject.class);
-
-        Request request3 = new Request("User/signUp" , obj);
-        handler = new RequestHandler(request3);
-        Exception exp2 = assertThrows(ActionFailedException.class , handler::handle);
+        Exception exp2 = assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.signUp(new SignUpDto("AliSabet","Unique","Unique"));
+                });
         assertEquals("Password must have at least 8 characters." , exp2.getMessage());
 
-        SignUpDto data4 = new SignUpDto("Amin" , "" , "12345");
+        Exception exp3 = assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.signUp(new SignUpDto("AliSabet","Unique1234","Unique1234"));
+                });
+        assertEquals("Password must contain at least one special character." , exp3.getMessage());
 
-        obj = gson.fromJson(gson.toJson(data4) , JsonObject.class);
+        Exception exp4 = assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.signUp(new SignUpDto("Ali","Ali1234@","Ali1234@"));
+                });
+        assertEquals("Password must not contain user name." , exp4.getMessage());
 
-        Request request4 = new Request("User/signUp" , obj);
-        handler = new RequestHandler(request4);
-        Exception exp3 = assertThrows(ActionFailedException.class , handler::handle);
-        assertEquals("Password must not be empty." , exp3.getMessage());
+        Exception exp5 = assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.signUp(new SignUpDto("AliSabet","Ali1234@","Ali1234@t"));
+                });
+        assertEquals("Confirm password does not match password." , exp5.getMessage());
 
-        SignUpDto data5 = new SignUpDto("" , "123456789@" , "123456789@");
+        assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.logIn(new LogInDto("AliSabet" , "iehtwgh"));
+                });
 
-        obj = gson.fromJson(gson.toJson(data5) , JsonObject.class);
+        User user1 = userService.getUser("UniqueName","Unique@1234");
 
-        Request request5 = new Request("User/signUp" , obj);
-        handler = new RequestHandler(request5);
-        Exception exp4 = assertThrows(ActionFailedException.class , handler::handle);
-        assertEquals("User name must not be empty." , exp4.getMessage());
+        String sessionId = userService.logIn(new LogInDto("UniqueName","Unique@1234"));
 
-        SignUpDto data6 = new SignUpDto("Mohammad" , "12345678" , "12345678");
+        assertDoesNotThrow(
+                () -> {
+                    userService.logOut(
+                            new LogOutAndRemoveProfilePhotoDto(
+                              sessionId
+                            )
+                    );
+                }
+        );
 
-        obj = gson.fromJson(gson.toJson(data6) , JsonObject.class);
+        user1 = UserRepository.getInstance().findUserById(user1.getId());
 
-        Request request6 = new Request("User/signUp" , obj);
-        handler = new RequestHandler(request6);
-        Exception exp5 = assertThrows(ActionFailedException.class , handler::handle);
-        assertEquals("Password must contain at least one special character." , exp5.getMessage());
+        assertEquals(0 , user1.getSessionIds().size());
 
-        SignUpDto data7 = new SignUpDto("Mahdi" , "Mahdi1234@" , "Mahdi1234@");
+        final String sessionId1 = userService.logIn(
+                new LogInDto("UniqueName","Unique@1234")
+        );
 
-        obj = gson.fromJson(gson.toJson(data7) , JsonObject.class);
+        user1 = UserRepository.getInstance().findUserById(user1.getId());
 
-        Request request7 = new Request("User/signUp" , obj);
-        handler = new RequestHandler(request7);
-        Exception exp6 = assertThrows(ActionFailedException.class , handler::handle);
-        assertEquals("Password must not contain user name." , exp6.getMessage());
+        assertEquals(1 , user1.getSessionIds().size());
 
-        SignUpDto data8 = new SignUpDto("Helia" , "12345678910@" , "12345");
 
-        obj = gson.fromJson(gson.toJson(data8) , JsonObject.class);
+        assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.logIn(new LogInDto("MyName","Unique@1234"));
+                });
 
-        Request request8 = new Request("User/signUp" , obj);
-        handler = new RequestHandler(request8);
-        Exception exp7 = assertThrows(ActionFailedException.class , handler::handle);
-        assertEquals("Confirm password does not match password." , exp7.getMessage());
+        Exception exp6 = assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.changePassword(new ChangePasswordDto(sessionId1,"iksnbgeo","Ali123@" , "Ali1234@"));
+                });
+        assertEquals("Old password is incorrect." , exp6.getMessage());
 
-        LogInDto data9 = new LogInDto("Ali" , "12345678@");
+        Exception exp7 = assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.changePassword(new ChangePasswordDto(sessionId1,"Unique@1234","Ali" , "Ali"));
+                });
+        assertEquals("Password must have at least 8 characters." , exp7.getMessage());
 
-        obj = gson.fromJson(gson.toJson(data9) , JsonObject.class);
+        Exception exp8 = assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.changePassword(new ChangePasswordDto(sessionId1,"Unique@1234","Ali1234567" , "Ali1234567"));
+                });
+        assertEquals("Password must contain at least one special character." , exp8.getMessage());
 
-        Request request9 = new Request("User/logIn" , obj);
-        handler = new RequestHandler(request9);
-        assertThrows(ActionFailedException.class , handler::handle);
+        Exception exp9 = assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.changePassword(new ChangePasswordDto(sessionId1,"Unique@1234","UniqueName@100" , "UniqueName@100"));
+                });
+        assertEquals("Password must not contain user name." , exp9.getMessage());
 
-        LogInDto data10 = new LogInDto("Mosh" , "12345678@");
+        Exception exp10 = assertThrows(ActionFailedException.class ,
+                () -> {
+                    userService.changePassword(new ChangePasswordDto(sessionId1,"Unique@1234","Unique_Name@100" , "Unique_Name@"));
+                });
+        assertEquals("Verify password failed." , exp10.getMessage());
 
-        obj = gson.fromJson(gson.toJson(data10) , JsonObject.class);
+        assertDoesNotThrow(
+                () -> {
+                    userService.changePassword(new ChangePasswordDto(sessionId1 , "Unique@1234" , "Unique_1234@" , "Unique_1234@"));
 
-        Request request10 = new Request("User/logIn" , obj);
-        handler = new RequestHandler(request10);
-        Exception exp8 = assertThrows(ActionFailedException.class , handler::handle);
-        assertEquals("User wasn't found." , exp8.getMessage());
+                }
+        );
 
-        User user1 = UserService.getInstance().getUser("Ali" , "99999999@");
+        user1 = UserRepository.getInstance().findUserById(user1.getId());
 
-        ChangePasswordDto data12 = new ChangePasswordDto(user1.getSessionIds().stream().findFirst().get() , "99999999@" , "11111111@" , "11111111@");
+        assertEquals("Unique_1234@" , user1.getPassword());
 
-        obj = gson.fromJson(gson.toJson(data12) , JsonObject.class);
-        Request request12 = new Request("User/changePassword" , obj);
-        handler = new RequestHandler(request12);
+        assertDoesNotThrow(
+                () -> {
+                    userService.signUp(new SignUpDto("Unique_Name","Unique@1234","Unique@1234"));
+                });
 
-        assertDoesNotThrow(handler::handle);
-        assertEquals("11111111@" , user1.getPassword());
+        User user2 = userService.getUser("Unique_Name","Unique@1234");
 
-        ChangePasswordDto data13 = new ChangePasswordDto(user1.getSessionIds().stream().findFirst().get() , "11111111@" , "99999999@" ,"99999999@");
+        userService.follow(
+                new FollowAndUnfollowDto(
+                        sessionId1 , user2.getId()
+                )
+        );
 
-        obj = gson.fromJson(gson.toJson(data13) , JsonObject.class);
-        Request request13 = new Request("User/changePassword" , obj);
-        handler = new RequestHandler(request13);
-        assertDoesNotThrow(handler::handle);
+        user1 = UserRepository.getInstance().findUserById(user1.getId());
 
-        ChangePasswordDto data14 = new ChangePasswordDto(user1.getSessionIds().stream().findFirst().get() , "12345678@" , "@12345678" , "@12345678");
+        assertEquals(1 , user1.getFollowingsId().size());
 
-        obj = gson.fromJson(gson.toJson(data14) , JsonObject.class);
-        Request request14 = new Request("User/changePassword" , obj);
-        handler = new RequestHandler(request14);
-        assertThrows(ActionFailedException.class , handler::handle);
+        user2 = UserRepository.getInstance().findUserById(user2.getId());
 
-        AddProfilePhotoDto data15 = new AddProfilePhotoDto(user1.getSessionIds().stream().findFirst().get() , "1234");
+        assertEquals(1 , user2.getFollowersId().size());
 
-        obj = gson.fromJson(gson.toJson(data15) , JsonObject.class);
-        Request request15 = new Request("User/addProfilePhoto" , obj);
-        handler = new RequestHandler(request15);
-        assertDoesNotThrow(handler::handle);
+        userService.unfollow(
+                new FollowAndUnfollowDto(
+                        sessionId1 , user2.getId()
+                )
+        );
+
+        user1 = UserRepository.getInstance().findUserById(user1.getId());
+
+        assertEquals(0 , user1.getFollowingsId().size());
+
+        user2 = UserRepository.getInstance().findUserById(user2.getId());
+
+        assertEquals(0 , user2.getFollowersId().size());
+
+        userService.addProfilePhoto(
+                new AddProfilePhotoDto(
+                sessionId1 , "1234"
+        ));
+
+        user1 = UserRepository.getInstance().findUserById(user1.getId());
 
         assertEquals("1234" , user1.getProfilePhotoId());
 
-        LogOutAndRemoveProfilePhotoDto data16 = new LogOutAndRemoveProfilePhotoDto(user1.getSessionIds().stream().findFirst().get());
+        userService.removeProfilePhoto(
+                new LogOutAndRemoveProfilePhotoDto(
+                        sessionId1
+                ));
 
-        obj = gson.fromJson(gson.toJson(data16) , JsonObject.class);
-        Request request16 = new Request("User/removeProfilePhoto" , obj);
-        handler = new RequestHandler(request16);
-        assertDoesNotThrow(handler::handle);
+        user1 = UserRepository.getInstance().findUserById(user1.getId());
 
         assertNull(user1.getProfilePhotoId());
 
-        User user2 = UserService.getInstance().getUser("Hamid" , "12345678@");
 
-        FollowAndUnfollowDto data18 = new FollowAndUnfollowDto(user1.getSessionIds().stream().findAny().get() , user2.getId());
-
-        obj = gson.fromJson(gson.toJson(data18) , JsonObject.class);
-        Request request18 = new Request("User/follow" , obj);
-        handler = new RequestHandler(request18);
-
-        assertDoesNotThrow(handler::handle);
-        assertEquals(1 , user1.getFollowingsId().size());
-        assertEquals(1 , user2.getFollowersId().size());
-
-        Request request19 = new Request("User/unfollow" , obj);
-        handler = new RequestHandler(request19);
-
-        assertDoesNotThrow(handler::handle);
-        assertEquals(0 , user1.getFollowingsId().size());
-        assertEquals(0 , user2.getFollowersId().size());
-
-        ChangePasswordDto data20 = new ChangePasswordDto(user2.getSessionIds().stream().findFirst().get() , "3945hg" , "9847y583" , "urhgt9");
-
-        obj = gson.fromJson(gson.toJson(data20) , JsonObject.class);
-
-        Request request20 = new Request("User/changePassword" , obj);
-
-        handler = new RequestHandler(request20);
-        Exception exp = assertThrows(ActionFailedException.class , handler::handle);
-        assertEquals("Old password is incorrect." , exp.getMessage());
-
-
-        ChangePasswordDto data21 = new ChangePasswordDto(user2.getSessionIds().stream().findFirst().get() , "12345678@" , "@@@@@1234" , "93738");
-        obj = gson.fromJson(gson.toJson(data21) , JsonObject.class);
-        Request request21 = new Request("User/changePassword" , obj);
-        handler = new RequestHandler(request21);
-        Exception exp10 = assertThrows(ActionFailedException.class , handler::handle);
-        assertEquals("Verify password failed." , exp10.getMessage());
-
-        assertEquals(1 , user2.getSessionIds().size());
 
     }
 }

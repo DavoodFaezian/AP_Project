@@ -1,6 +1,7 @@
 package Services;
 import DTO.Photo.AddPhotoDto;
 import DTO.Photo.DeletePhotoDto;
+import DTO.Photo.EditPhotoDto;
 import Exceptions.ActionFailedException;
 import MainClasses.Album;
 import MainClasses.Photo;
@@ -43,8 +44,6 @@ public class PhotoService {
             album.getPhotoIds().add(photo.getId());
             AlbumRepository.getInstance().update(album);
         }
-        user.getPhotoIds().add(photo.getId());
-        UserRepository.getInstance().update();
         return photo.getId();
     }
 
@@ -53,9 +52,23 @@ public class PhotoService {
         String photoId = data.getPhotoId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
-        user.getPhotoIds().remove(photoId);
+        for (String i : photo.getAlbumIds()) {
+            if (!i.isEmpty()) {
+                Album album = AlbumRepository.getInstance().findAlbumById(i , user.getId());
+                album.getPhotoIds().remove(photoId);
+                album.updateTime();
+                AlbumRepository.getInstance().update(album);
+            }
+        }
         PhotoRepository.getInstance().removePhoto(photo);
-        UserRepository.getInstance().update();
+
+    }
+
+    public void editPhoto(EditPhotoDto data) {
+        String sessionId = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        Photo photo = data.getPhoto();
+        PhotoRepository.getInstance().editPhoto(photo);
     }
 
 }

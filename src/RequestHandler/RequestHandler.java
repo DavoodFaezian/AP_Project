@@ -7,6 +7,7 @@ import Services.UserService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +23,11 @@ public class RequestHandler {
     private Request request;
 
     private Response response;
+
+    private static final String SECCEED = "200";
+
+    private static final String FAILED = "500";
+
 
     public RequestHandler(Request request) {
         this.request = request;
@@ -75,7 +81,7 @@ public class RequestHandler {
 
         }
     }
-    public Object handle() {
+    public Response handle() {
         Gson gson = new Gson();
         try {
             ActionHandler action= actions.get(request.getActionName());
@@ -95,18 +101,31 @@ public class RequestHandler {
                     throw new RuntimeException("Method requires multiple arguments, but JSON is not an array.");
                 }
             }
-            return action.method.invoke(action.instance, args);
+
+
+            Object result = action.method.invoke(action.instance, args);
+
+            response = new Response();
+
+            response.setStatus(SECCEED);
+            if (result != null) {
+                JsonObject payload = new JsonObject();
+                payload.addProperty("id" , result.toString());
+                response.setPayLoad(payload);
+            } else {
+                response.setMessage("Request handled successfully.");
+                response.setPayLoad(new JsonObject());
+            }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
             Throwable exp = e.getCause();
-            if (exp instanceof ActionFailedException) {
-                throw new ActionFailedException(exp.getMessage());
-            }
+            response.setStatus(FAILED);
+            response.setMessage(exp.getMessage());
+            response.setPayLoad(new JsonObject());
         }
-        return null;
 
-
+        return response;
     }
 
 }

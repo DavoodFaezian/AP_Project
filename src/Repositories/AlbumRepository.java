@@ -67,7 +67,7 @@ public class AlbumRepository extends BaseRepository<Album> {
 
     public void update(Album album) {
         var albumFileManager = getFileManager(album.getOwnerId());
-        albumFileManager.save();
+        albumFileManager.edit(album);
     }
 
 }
