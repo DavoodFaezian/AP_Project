@@ -32,31 +32,34 @@ public class CommentRepository {
         );
     }
 
-    public void validateCommentForeignKeys(Comment comment, String postId) {
+    public void validateCommentForeignKeys(Comment comment, String postId,String postOwnerId) {
         if (!UserRepository.getInstance().isUserIdValid(comment.getOwnerId())) {
             throw new ItemNotFoundException("user", comment.getOwnerId());
         }
 
         if (!PostRepository.getInstance()
-                .findPostById(comment.getPostId(),postId)
+                .findPostById(comment.getPostId(),postOwnerId)
                 .getCommentsAllowed()) {
             throw new ActionFailedException("You cannot comment on this post");
         }
     }
 
-    public void addComment(Comment comment, String postId) {
+    public void addComment(Comment comment, String postId,String postOwnerId) {
         comment.validate();
-        validateCommentForeignKeys(comment,postId);
+        validateCommentForeignKeys(comment,postId,postOwnerId);
 
         var commentFileManager = getCommentFileManager(postId);
         commentFileManager.addToList(comment);
-        commentFileManager.save();
     }
 
     public void removeComment(Comment comment, String postId) {
         var commentFileManager = getCommentFileManager(postId);
         commentFileManager.removeFromList(comment);
-        commentFileManager.save();
+    }
+
+    public void editComment(Comment comment, String postId) {
+        var commentFileManager = getCommentFileManager(postId);
+        commentFileManager.edit(comment);
     }
 
     public void removeComment(String id, String postId) {
@@ -75,7 +78,6 @@ public class CommentRepository {
         var commentFileManager = getCommentFileManager(postId);
         commentFileManager.removeAll();
     }
-
 
     public List<Comment> getAllCommentsByPostId(String postId) {
 

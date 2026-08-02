@@ -1,0 +1,88 @@
+{
+  "className": "MainClasses.Photo",
+  "items": {
+    "7b2828b7-057a-4039-892d-a6aab70c3cc5": {
+      "ownerId": "1dd83800-9aa7-4174-a802-26f6fa30c67b",
+      "photoName": "new photo",
+      "tags": [],
+      "caption": "caption",
+      "isFavorable": false,
+      "commentIds": [],
+      "albumIds": [
+        "954c6e51-9703-4593-abf3-00bc123989e2"
+      ],
+      "postIds": [
+        "74b2f5cf-3617-44a7-9ae6-ebd9b0114720"
+      ],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 2
+        },
+        "time": {
+          "hour": 21,
+          "minute": 21,
+          "second": 56,
+          "nano": 319095500
+        }
+      },
+      "id": "7b2828b7-057a-4039-892d-a6aab70c3cc5"
+    },
+    "af5aecaa-405b-4036-ba93-330ca251d16d": {
+      "ownerId": "1dd83800-9aa7-4174-a802-26f6fa30c67b",
+      "photoName": "new photo 2",
+      "tags": [],
+      "caption": "caption 2",
+      "isFavorable": false,
+      "commentIds": [],
+      "albumIds": [
+        "954c6e51-9703-4593-abf3-00bc123989e2"
+      ],
+      "postIds": [
+        "74b2f5cf-3617-44a7-9ae6-ebd9b0114720",
+        "3c7aa097-52f9-4b9e-b687-ec7c385dc944"
+      ],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 2
+        },
+        "time": {
+          "hour": 21,
+          "minute": 21,
+          "second": 56,
+          "nano": 330095300
+        }
+      },
+      "id": "af5aecaa-405b-4036-ba93-330ca251d16d"
+    },
+    "028e279c-e06a-4895-b987-1a6489fb4eb8": {
+      "ownerId": "1dd83800-9aa7-4174-a802-26f6fa30c67b",
+      "photoName": "new photo 3",
+      "tags": [],
+      "caption": "caption 3",
+      "isFavorable": false,
+      "commentIds": [],
+      "albumIds": [
+        "a5be72a7-5458-4bd0-a058-3365308d5d4e"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 2
+        },
+        "time": {
+          "hour": 21,
+          "minute": 21,
+          "second": 56,
+          "nano": 338095600
+        }
+      },
+      "id": "028e279c-e06a-4895-b987-1a6489fb4eb8"
+    }
+  }
+}

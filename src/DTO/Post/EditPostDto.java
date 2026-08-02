@@ -1,12 +1,10 @@
 package DTO.Post;
 
-import java.util.Objects;
 import java.util.Set;
 
 public class EditPostDto {
     private String id;
     private String sessionId;
-    private String ownerId;
     private Set<String> photoIds;
     private Set<String> albumIds;
     private Boolean commentsAllowed;
@@ -14,14 +12,12 @@ public class EditPostDto {
     public EditPostDto(
             String id,
             String sessionId,
-            String ownerId,
             Set<String> photoIds,
             Set<String> albumIds,
             Boolean commentsAllowed
     ) {
         this.id = id;
         this.sessionId = sessionId;
-        this.ownerId = ownerId;
         this.photoIds = photoIds;
         this.albumIds = albumIds;
         this.commentsAllowed = commentsAllowed;
@@ -41,14 +37,6 @@ public class EditPostDto {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
-    }
-
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
     }
 
     public Set<String> getPhotoIds() {

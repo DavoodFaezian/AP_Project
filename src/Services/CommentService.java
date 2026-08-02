@@ -1,9 +1,8 @@
 package Services;
 
-import DTO.Comment.CommentDto;
-import DTO.Comment.AddCommentDto;
-import DTO.Comment.DeleteCommentDto;
-import DTO.Comment.GetCommentsByPostDto;
+import DTO.AddResultDto;
+import DTO.Comment.*;
+import Exceptions.ActionFailedException;
 import MainClasses.Comment;
 import MainClasses.Post;
 import MainClasses.User;
@@ -28,20 +27,20 @@ public class CommentService {
         return instance;
     }
 
-    public void addComment(AddCommentDto data) {
-        if(sessionRepository.isSessionIdValid(data.getOwnerId(), data.getSessionId())){
-            throw new IllegalStateException("User is not logged in.");
-
-        }
+    public AddResultDto addComment(AddCommentDto data) {
+        User user = sessionRepository.findUserBySessionId(data.getSessionId());
         Comment comment = new Comment(
-                data.getOwnerId(),
+                user.getId(),
                 data.getScript(),
                 data.getPostId()
         );
 
-        commentRepository.addComment(comment, comment.getPostId());
+        commentRepository.addComment(comment, comment.getPostId(),data.getPostOwnerId());
 
         Post post = postRepository.findPostById(comment.getPostId(), data.getPostOwnerId());
+        if(!post.getCommentsAllowed()){
+            throw new ActionFailedException("Comments are not allowed on post:"+post.getId());
+        }
         if (post != null) {
             if (post.getCommentIds() == null) {
                 post.setCommentIds(new java.util.HashSet<>());
@@ -49,12 +48,30 @@ public class CommentService {
             post.getCommentIds().add(comment.getId());
             postRepository.editPost(post);
         }
+        return new AddResultDto(comment.getId());
     }
 
-    public void deleteComment(DeleteCommentDto data) {
-        if(sessionRepository.isSessionIdValid(data.getCommentOwnerId(), data.getSessionId())){
-            throw new IllegalStateException("User is not logged in.");
 
+    public void editComment(EditCommentDto data) {
+        User user = sessionRepository.findUserBySessionId(data.getSessionId());
+        Comment edit = commentRepository.findCommentById(data.getId(), data.getPostId());
+
+        if(!user.getId().equals(edit.getOwnerId())){
+            throw new ActionFailedException("Comment is not owned by the logged in user");
+        }
+        if(data.getScript().isEmpty()){
+            throw new ActionFailedException("script cannot be null");
+        }
+        edit.setScript(data.getScript());
+        commentRepository.editComment(edit,data.getPostId());
+
+    }
+    public void deleteComment(DeleteCommentDto data) {
+        User user = sessionRepository.findUserBySessionId(data.getSessionId());
+        Comment del = commentRepository.findCommentById(data.getId(), data.getPostId());
+
+        if(!user.getId().equals(del.getOwnerId())){
+            throw new ActionFailedException("Comment is not owned by the logged in user");
         }
         commentRepository.removeComment(data.getId(), data.getPostId());
 
@@ -66,6 +83,7 @@ public class CommentService {
     }
 
     public List<CommentDto> getAllCommentsByPostId(GetCommentsByPostDto data) {
+        sessionRepository.findUserBySessionId(data.getSessionId());
 
         List<Comment> comments = commentRepository.getAllCommentsByPostId(data.getPostId());
         if (comments == null) {

@@ -2,7 +2,7 @@ package DTO.Comment;
 
 import java.util.Objects;
 
-public final class CommentDto {
+public class CommentDto {
     private final String id;
     private final String ownerId;
     private final String script;

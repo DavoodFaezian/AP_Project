@@ -118,7 +118,6 @@ public class PostTests {
         String post1 = postService.addPost(
                 new AddPostDto(
                         sessionId,
-                        userId,
                         Set.of(photoId1,photoId2),
                         Set.of(albumId1,albumId2),
                         true
@@ -128,7 +127,6 @@ public class PostTests {
         String post2 = postService.addPost(
                 new AddPostDto(
                         sessionId,
-                        userId,
                         Set.of(photoId2),
                         Set.of(),
                         true
@@ -182,7 +180,6 @@ public class PostTests {
                 new EditPostDto(
                         post1,
                         sessionId,
-                        userId,
                         Set.of(photoId2),
                         Set.of(),
                         true
@@ -199,7 +196,6 @@ public class PostTests {
                 new EditPostDto(
                         post2,
                         sessionId,
-                        userId,
                         Set.of(photoId3),
                         Set.of(),
                         true
@@ -233,7 +229,6 @@ public class PostTests {
         assertThrows(ActionFailedException.class,()->postService.addPost(
                 new AddPostDto(
                         sessionId,
-                        userId,
                         Set.of(),
                         Set.of(),
                         true
@@ -244,7 +239,6 @@ public class PostTests {
                 new EditPostDto(
                         post2,
                         sessionId,
-                        userId,
                         Set.of(),
                         Set.of(),
                         true
@@ -358,7 +352,6 @@ public class PostTests {
         String post1 = postService.addPost(
                 new AddPostDto(
                         sessionId2,
-                        userId,
                         Set.of(photoId4),
                         Set.of(albumId4),
                         true
@@ -368,7 +361,6 @@ public class PostTests {
         String post2 = postService.addPost(
                 new AddPostDto(
                         sessionId2,
-                        userId,
                         Set.of(photoId5),
                         Set.of(albumId4),
                         true
@@ -385,7 +377,6 @@ public class PostTests {
         String post3 = postService.addPost(
                 new AddPostDto(
                         sessionId3,
-                        followingUserId2,
                         Set.of(),
                         Set.of(albumId6),
                         true

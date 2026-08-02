@@ -51,6 +51,10 @@ public class PostDto {
         return commentsAllowed;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public LocalDateTime getCreateAt() {
         return createAt;
     }

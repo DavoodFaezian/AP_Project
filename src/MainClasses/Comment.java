@@ -11,10 +11,10 @@ public class Comment extends BaseClass<Comment> {
     private String postId;
 
 
-    public Comment(String ownerId, String script, String photoId) {
+    public Comment(String ownerId, String script, String postId) {
         this.ownerId = ownerId;
         this.script = script;
-        this.postId = photoId;
+        this.postId = postId;
     }
 
     public String getOwnerId() {
