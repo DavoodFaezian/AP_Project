@@ -2,10 +2,16 @@ package MainClasses;
 
 public class BannedUser extends BaseClass<BannedUser> {
     private String userId;
-    private User user;
-    private boolean isUserAllowedToAddPhotos;
+    private boolean isUserAllowedToLogin;
     private boolean isUserAllowedToComment;
-    private boolean isUserAllowToShare;
+    private boolean isUserAllowedToPost;
+
+    public BannedUser(String userId, boolean isUserAllowedToLogin, boolean isUserAllowedToComment, boolean isUserAllowedToPost) {
+        this.userId = userId;
+        this.isUserAllowedToLogin = isUserAllowedToLogin;
+        this.isUserAllowedToComment = isUserAllowedToComment;
+        this.isUserAllowedToPost = isUserAllowedToPost;
+    }
 
     public String getUserId() {
         return userId;
@@ -23,20 +29,20 @@ public class BannedUser extends BaseClass<BannedUser> {
         isUserAllowedToComment = userAllowedToComment;
     }
 
-    public boolean isUserAllowedToAddPhotos() {
-        return isUserAllowedToAddPhotos;
+    public boolean isUserAllowedToLogin() {
+        return isUserAllowedToLogin;
     }
 
-    public void setUserAllowedToAddPhotos(boolean userAllowedToAddPhotos) {
-        isUserAllowedToAddPhotos = userAllowedToAddPhotos;
+    public void setUserAllowedToLogin(boolean userAllowedToLogin) {
+        isUserAllowedToLogin = userAllowedToLogin;
     }
 
-    public boolean isUserAllowToShare() {
-        return isUserAllowToShare;
+    public boolean isUserAllowedToPost() {
+        return isUserAllowedToPost;
     }
 
-    public void setUserAllowToShare(boolean userAllowToShare) {
-        isUserAllowToShare = userAllowToShare;
+    public void setUserAllowedToPost(boolean userAllowedToPost) {
+        isUserAllowedToPost = userAllowedToPost;
     }
 
 
