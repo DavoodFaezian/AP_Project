@@ -1,0 +1,15 @@
+{
+  "className": "MainClasses.Session",
+  "items": {
+    "de2f9316-dcfe-44e6-93b1-cb99d9205e0c": {
+      "userId": "7ce97939-5412-43b6-b6bf-4a44e665e03a",
+      "token": "a05a457a-08f8-4dee-835e-9eff1dc2911b",
+      "id": "de2f9316-dcfe-44e6-93b1-cb99d9205e0c"
+    },
+    "1a390d4c-25f1-4aaa-b7f7-e5239faaa603": {
+      "userId": "7ce97939-5412-43b6-b6bf-4a44e665e03a",
+      "token": "fe6e68b6-811c-44a1-bfe6-9a957dc5eb94",
+      "id": "1a390d4c-25f1-4aaa-b7f7-e5239faaa603"
+    }
+  }
+}
