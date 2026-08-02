@@ -6,8 +6,11 @@ import DTO.Comment.DeleteCommentDto;
 import DTO.Comment.GetCommentsByPostDto;
 import MainClasses.Comment;
 import MainClasses.Post;
+import MainClasses.User;
 import Repositories.CommentRepository;
 import Repositories.PostRepository;
+import Repositories.SessionRepository;
+import Repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +20,7 @@ public class CommentService {
     private static final CommentService instance = new CommentService();
     private final CommentRepository commentRepository = CommentRepository.getInstance();
     private final PostRepository postRepository = PostRepository.getInstance();
+    private final SessionRepository sessionRepository = SessionRepository.getInstance();
 
     private CommentService() {}
 
@@ -25,6 +29,10 @@ public class CommentService {
     }
 
     public void addComment(AddCommentDto data) {
+        if(sessionRepository.isSessionIdValid(data.getOwnerId(), data.getSessionId())){
+            throw new IllegalStateException("User is not logged in.");
+
+        }
         Comment comment = new Comment(
                 data.getOwnerId(),
                 data.getScript(),
@@ -44,6 +52,10 @@ public class CommentService {
     }
 
     public void deleteComment(DeleteCommentDto data) {
+        if(sessionRepository.isSessionIdValid(data.getCommentOwnerId(), data.getSessionId())){
+            throw new IllegalStateException("User is not logged in.");
+
+        }
         commentRepository.removeComment(data.getId(), data.getPostId());
 
         Post post = postRepository.findPostById(data.getPostId(), data.getPostOwnerId());
@@ -54,6 +66,7 @@ public class CommentService {
     }
 
     public List<CommentDto> getAllCommentsByPostId(GetCommentsByPostDto data) {
+
         List<Comment> comments = commentRepository.getAllCommentsByPostId(data.getPostId());
         if (comments == null) {
             return Collections.emptyList();

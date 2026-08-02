@@ -71,6 +71,10 @@ public class CommentRepository {
         }
         return comment.get();
     }
+    public void removeCommentsByPostId(String postId){
+        var commentFileManager = getCommentFileManager(postId);
+        commentFileManager.removeAll();
+    }
 
 
     public List<Comment> getAllCommentsByPostId(String postId) {

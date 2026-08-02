@@ -14,13 +14,14 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class GenericFileManager<T extends BaseClass> {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     // Get the path where the server will run.
     private static final Path CURRENT_DIR = Paths.get(System.getProperty("user.dir"));
-    private final Map<String,T> map = new HashMap<>();
+    private final Map<String,T> map = new LinkedHashMap<>();
     private final Path filePath;
     boolean testMode = true;
 
@@ -302,4 +303,6 @@ public class GenericFileManager<T extends BaseClass> {
             throw new RuntimeException("Failed to save data to disk: " + filePath.toFile().getName(), e);
         }
     }
+
+
 }

@@ -1,32 +1,33 @@
 package DTO.Post;
 
+import MainClasses.Post;
+
+import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
 public class PostDto {
-    private final String sessionId;
-    private final String ownerId;
-    private final Set<String> photoIds;
-    private final Set<String> albumIds;
-    private final Boolean commentsAllowed;
+    private String ownerId;
+    private Set<String> photoIds= new LinkedHashSet<>();
+    private Set<String> albumIds= new LinkedHashSet<>();
+    private Set<String> commentIds = new LinkedHashSet<>();
+    private Boolean commentsAllowed;
+    private LocalDateTime createAt;
+    private LocalDateTime lastModified;
 
     public PostDto(
-            String sessionId,
-            String ownerId,
-            Set<String> photoIds,
-            Set<String> albumIds,
-            Boolean commentsAllowed
+            Post post
     ) {
-        this.sessionId = sessionId;
-        this.ownerId = ownerId;
-        this.photoIds = photoIds;
-        this.albumIds = albumIds;
-        this.commentsAllowed = commentsAllowed;
+        this.ownerId = post.getOwnerId();
+        this.photoIds = post.getPhotoIds();
+        this.albumIds = post.getAlbumIds();
+        this.commentIds = post.getCommentIds();
+        this.commentsAllowed = post.getCommentsAllowed();
+        this.createAt = post.getCreateAt();
+        this.lastModified = post.getLastModified();
     }
 
-    public String getSessionId() {
-        return sessionId;
-    }
 
     public String getOwnerId() {
         return ownerId;
@@ -40,10 +41,20 @@ public class PostDto {
         return albumIds;
     }
 
+    public Set<String> getCommentIds() {
+        return commentIds;
+    }
+
     public Boolean getCommentsAllowed() {
         return commentsAllowed;
     }
 
+    public LocalDateTime getCreateAt() {
+        return createAt;
+    }
 
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
 }
 

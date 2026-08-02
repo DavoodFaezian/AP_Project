@@ -2,11 +2,12 @@ package DTO.Comment;
 
 public class AddCommentDto {
     private String ownerId;
+    private String sessionId;
     private String script;
     private String postId;
     private String postOwnerId;
 
-    public AddCommentDto(String ownerId, String script, String postId, String postOwnerId) {
+    public AddCommentDto(String ownerId,String sessionId, String script, String postId, String postOwnerId) {
         this.ownerId = ownerId;
         this.script = script;
         this.postId = postId;
@@ -27,5 +28,9 @@ public class AddCommentDto {
 
     public String getPostOwnerId() {
         return postOwnerId;
+    }
+
+    public String getSessionId() {
+        return sessionId;
     }
 }

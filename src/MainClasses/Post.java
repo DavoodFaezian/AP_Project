@@ -1,16 +1,16 @@
 package MainClasses;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class Post extends BaseClass<Post>{
     private String ownerId;
     private Set<String> photoIds;
     private Set<String> albumIds;
-    private Set<String> sharedUserIds;
-    private Set<String> commentIds;
+    private Set<String> commentIds = new LinkedHashSet<>();
     private Boolean commentsAllowed;
+    private LocalDateTime createAt;
+    private LocalDateTime lastModified;
 
     public Post(String ownerId, Set<String> photoIds, Set<String> albumIds, Boolean commentsAllowed) {
         this.ownerId = ownerId;
@@ -18,7 +18,9 @@ public class Post extends BaseClass<Post>{
         this.albumIds = albumIds;
         this.commentsAllowed = commentsAllowed;
     }
-
+    public void updateTime(){
+        this.lastModified = LocalDateTime.now();
+    }
     public String getOwnerId() {
         return ownerId;
     }
@@ -43,14 +45,6 @@ public class Post extends BaseClass<Post>{
         this.albumIds = albumIds;
     }
 
-    public Set<String> getSharedUserIds() {
-        return sharedUserIds;
-    }
-
-    public void setSharedUserIds(Set<String> sharedUserIds) {
-        this.sharedUserIds = sharedUserIds;
-    }
-
     public Set<String> getCommentIds() {
         return commentIds;
     }
@@ -66,4 +60,13 @@ public class Post extends BaseClass<Post>{
     public void setAreCommentsAllowed(Boolean commentsAllowed) {
         this.commentsAllowed = commentsAllowed;
     }
+
+    public LocalDateTime getCreateAt() {
+        return createAt;
+    }
+
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
 }
