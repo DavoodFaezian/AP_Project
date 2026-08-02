@@ -1,0 +1,15 @@
+{
+  "className": "MainClasses.User",
+  "items": {
+    "d7ff4758-eb5e-45bd-9d0c-85139cd28406": {
+      "userName": "UniqueName",
+      "password": "Unique_1234@",
+      "id": "d7ff4758-eb5e-45bd-9d0c-85139cd28406"
+    },
+    "d3ed3ceb-390c-4734-a74f-d900e8e980c7": {
+      "userName": "Unique_Name",
+      "password": "Unique@1234",
+      "id": "d3ed3ceb-390c-4734-a74f-d900e8e980c7"
+    }
+  }
+}

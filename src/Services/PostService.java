@@ -182,18 +182,18 @@ public class PostService {
 
         postRepository.editPost(post);
     }
-    public Set<PostDto> getAllPostsOfFollowings(String userId) {
-        User user = userRepository.findUserById(userId);
-        Set<String> followingIds = user.getFollowingsId();
-
-        return followingIds.parallelStream()
-                .map(postRepository::getPostsByOwnerId)
-                .flatMap(Collection::stream)
-                .map(PostDto::new)
-                .collect(Collectors.toCollection(() ->
-                        new TreeSet<>(Comparator.comparing(PostDto::getLastModified))
-                ));
-    }
+//    public Set<PostDto> getAllPostsOfFollowings(String userId) {
+//        User user = userRepository.findUserById(userId);
+//        Set<String> followingIds = user.getFollowingsId();
+//
+//        return followingIds.parallelStream()
+//                .map(postRepository::getPostsByOwnerId)
+//                .flatMap(Collection::stream)
+//                .map(PostDto::new)
+//                .collect(Collectors.toCollection(() ->
+//                        new TreeSet<>(Comparator.comparing(PostDto::getLastModified))
+//                ));
+//    }
 
 
     public void deletePost(DeletePostDto dto) {

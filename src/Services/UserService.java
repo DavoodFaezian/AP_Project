@@ -5,14 +5,18 @@ import DTO.User.*;
 import Exceptions.*;
 import MainClasses.Session;
 import MainClasses.User;
+import MainClasses.UserProfile;
 import Repositories.SessionRepository;
+import Repositories.UserProfileRepository;
 import Repositories.UserRepository;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class UserService {
 
     private static final UserService instance = new UserService();
+    private final UserProfileRepository userProfileRepository = UserProfileRepository.getInstance();
 
     public static UserService getInstance() {
         return instance;
@@ -89,78 +93,127 @@ public class UserService {
     public void signUp(SignUpDto data) {
         String userName = data.getUserName();
         String password = data.getPassword();
-        String repeatedPassword = data.getRepeatedPassword();
-        validateSignUp(userName , password , repeatedPassword);
-        User user = UserRepository.getInstance().create(userName , password);
+
+        validateSignUp(userName, password, data.getRepeatedPassword());
+
+        User user = UserRepository.getInstance().create(userName, password);
+        userProfileRepository.createUserProfile(user.getId());
+
         Session session = SessionRepository.getInstance().createSession(user.getId());
-        user.getSessionIds().add(session.getId());
-        UserRepository.getInstance().update();
+
+        UserProfile profile = userProfileRepository.getUserProfileByUserId(user.getId())
+                .orElseThrow(() -> new ItemNotFoundException("user profile", user.getId()));
+
+        profile.getSessionIds().add(session.getId());
+        userProfileRepository.updateUserProfile(profile);
     }
 
+
     public String logIn(LogInDto data) {
-        String userName = data.getUserName();
-        String password = data.getPassword();
-        User user = validateLogIn(userName , password);
+        User user = validateLogIn(data.getUserName(), data.getPassword());
         Session session = SessionRepository.getInstance().createSession(user.getId());
-        user.getSessionIds().add(session.getId());
-        UserRepository.getInstance().update();
+
+        UserProfile profile = userProfileRepository.getUserProfileByUserId(user.getId())
+                .orElseThrow(() -> new ItemNotFoundException("user profile", user.getId()));
+
+        profile.getSessionIds().add(session.getId());
+        userProfileRepository.updateUserProfile(profile);
+
         return session.getId();
     }
 
     public void logOut(LogOutAndRemoveProfilePhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        SessionRepository.getInstance().removeSessions(user);
-        UserRepository.getInstance().update();
+
+
+        userProfileRepository.getUserProfileByUserId(user.getId()).ifPresent(profile -> {
+            profile.getSessionIds().remove(sessionId);
+            userProfileRepository.updateUserProfile(profile);
+            SessionRepository.getInstance().removeSessions(profile);
+
+        });
     }
 
     public void changePassword(ChangePasswordDto data) {
-        String sessionId = data.getSessionId();
-        String oldPassword = data.getOldPassword();
-        String newPassword = data.getNewPassword();
-        String confirmNewPassword = data.getConfirmNewPassword();
-        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        validateOldPassword(user , oldPassword);
-        validatePassword(user.getUserName() , newPassword);
-        validateNewPassword(newPassword , confirmNewPassword);
-        user.setPassword(newPassword);
+        User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
+
+        validateOldPassword(user, data.getOldPassword());
+        validatePassword(user.getUserName(), data.getNewPassword());
+        validateNewPassword(data.getNewPassword(), data.getConfirmNewPassword());
+
+        user.setPassword(data.getNewPassword());
         UserRepository.getInstance().update();
     }
+
 
     public void addProfilePhoto(AddProfilePhotoDto data) {
         String sessionId = data.getSessionId();
         String profilePhotoId = data.getProfilePhotoId();
        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-       user.setProfilePhotoId(profilePhotoId);
-       UserRepository.getInstance().update();
+       Optional<UserProfile> userProfile = userProfileRepository.getUserProfileByUserId(user.getId());
+       if(userProfile.isPresent()){
+           userProfile.get().setProfilePhotoId(profilePhotoId);
+           userProfileRepository.updateUserProfile(userProfile.get());
+       }
     }
 
     public void removeProfilePhoto(LogOutAndRemoveProfilePhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        user.setProfilePhotoId(null);
-        UserRepository.getInstance().update();
+        Optional<UserProfile> userProfile = userProfileRepository.getUserProfileByUserId(user.getId());
+        if(userProfile.isPresent()){
+            userProfile.get().setProfilePhotoId(null);
+            userProfileRepository.updateUserProfile(userProfile.get());
+        }
     }
 
     public void follow(FollowAndUnfollowDto data) {
-        String followerSessionId = data.getFollowerSessionId();
+        User follower = SessionRepository.getInstance()
+                .findUserBySessionId(data.getFollowerSessionId());
+
         String followingUserId = data.getFollowingUserId();
-        User follower = SessionRepository.getInstance().findUserBySessionId(followerSessionId);
-        User following = UserRepository.getInstance().findUserById(followingUserId);
-        following.getFollowersId().add(follower.getId());
-        follower.getFollowingsId().add(following.getId());
-        UserRepository.getInstance().update();
+
+        if (follower.getId().equals(followingUserId)) {
+            throw new ActionFailedException("You cannot follow yourself.");
+        }
+
+        UserProfile followerProfile = userProfileRepository
+                .getUserProfileByUserId(follower.getId())
+                .orElseThrow(() -> new ItemNotFoundException("user profile", follower.getId()));
+
+        UserProfile followingProfile = userProfileRepository
+                .getUserProfileByUserId(followingUserId)
+                .orElseThrow(() -> new ItemNotFoundException("user profile", followingUserId));
+
+        followerProfile.getFollowingsId().add(followingUserId);
+        followingProfile.getFollowersId().add(follower.getId());
+
+        userProfileRepository.updateUserProfile(followerProfile);
+        userProfileRepository.updateUserProfile(followingProfile);
     }
 
     public void unfollow(FollowAndUnfollowDto data) {
-        String followerSessionId = data.getFollowerSessionId();
+        User follower = SessionRepository.getInstance()
+                .findUserBySessionId(data.getFollowerSessionId());
+
         String followingUserId = data.getFollowingUserId();
-        User follower = SessionRepository.getInstance().findUserBySessionId(followerSessionId);
-        User following = UserRepository.getInstance().findUserById(followingUserId);
-        following.getFollowersId().remove(follower.getId());
-        follower.getFollowingsId().remove(following.getId());
-        UserRepository.getInstance().update();
+
+        UserProfile followerProfile = userProfileRepository
+                .getUserProfileByUserId(follower.getId())
+                .orElseThrow(() -> new ItemNotFoundException("user profile", follower.getId()));
+
+        UserProfile followingProfile = userProfileRepository
+                .getUserProfileByUserId(followingUserId)
+                .orElseThrow(() -> new ItemNotFoundException("user profile", followingUserId));
+
+        followerProfile.getFollowingsId().remove(followingUserId);
+        followingProfile.getFollowersId().remove(follower.getId());
+
+        userProfileRepository.updateUserProfile(followerProfile);
+        userProfileRepository.updateUserProfile(followingProfile);
     }
+
 
     public User getUser(String userName , String password) {
         return UserRepository.getInstance().findUserByUserNameAndPassword(userName , password);

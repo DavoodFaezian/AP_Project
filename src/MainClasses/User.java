@@ -8,16 +8,6 @@ public class User extends BaseClass<User>{
 
     private String password;
 
-    private String profilePhotoId;
-
-    private Theme theme = Theme.LIGHT;
-
-    private Set<String> sessionIds = new HashSet<>();
-
-    private Set<String> followersId = new HashSet<>();
-
-    private Set<String> followingsId = new HashSet<>();
-
 
     public User(String userName, String password){
         this.userName = userName;
@@ -32,17 +22,6 @@ public class User extends BaseClass<User>{
         return password;
     }
 
-    public void setProfilePhotoId(String profilePhotoId) {
-        this.profilePhotoId = profilePhotoId;
-    }
-
-    public String getProfilePhotoId() {
-        return profilePhotoId;
-    }
-
-    public Theme getTheme(){
-        return theme;
-    }
 
     public void setUserName(String userName) {
         this.userName = userName;
@@ -52,38 +31,7 @@ public class User extends BaseClass<User>{
         this.password = password;
     }
 
-    public void setTheme(Theme theme){
-        this.theme = theme;
-    }
 
-
-    public void setSessions(Set<String> sessions) {
-        this.sessionIds = sessions;
-    }
-
-    public Set<String> getSessionIds() {
-        return sessionIds;
-    }
-
-    public void setSessionIds(Set<String> sessionIds) {
-        this.sessionIds = sessionIds;
-    }
-
-    public Set<String> getFollowersId() {
-        return followersId;
-    }
-
-    public void setFollowersId(Set<String> followersId) {
-        this.followersId = followersId;
-    }
-
-    public Set<String> getFollowingsId() {
-        return followingsId;
-    }
-
-    public void setFollowingsId(Set<String> followingsId) {
-        this.followingsId = followingsId;
-    }
 
     @Override
     public boolean equals(Object o) {

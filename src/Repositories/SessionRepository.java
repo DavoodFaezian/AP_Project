@@ -4,6 +4,7 @@ import Exceptions.ItemNotFoundException;
 import FileManager.GenericFileManager;
 import MainClasses.Session;
 import MainClasses.User;
+import MainClasses.UserProfile;
 
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -37,8 +38,9 @@ public class SessionRepository {
         return session;
     }
 
-    public void removeSessions(User user) {
+    public void removeSessions(UserProfile user) {
         user.getSessionIds().clear();
+        UserProfileRepository.getInstance().updateUserProfile(user);
         sessionFileManager.save();
     }
 

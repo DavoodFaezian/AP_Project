@@ -17,6 +17,7 @@ public class Post extends BaseClass<Post>{
         this.photoIds = photoIds;
         this.albumIds = albumIds;
         this.commentsAllowed = commentsAllowed;
+        this.createAt = LocalDateTime.now();
     }
     public void updateTime(){
         this.lastModified = LocalDateTime.now();

@@ -1,7 +1,9 @@
 import DTO.User.*;
 import Exceptions.ActionFailedException;
 import MainClasses.User;
+import MainClasses.UserProfile;
 import Repositories.UserRepository;
+import Repositories.UserProfileRepository;
 import Services.UserService;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,6 +14,7 @@ public class UserTests {
     public void userTest() {
 
         UserService userService = UserService.getInstance();
+        UserProfileRepository userProfileRepository = UserProfileRepository.getInstance();
 
         assertDoesNotThrow(
                 () -> {
@@ -77,7 +80,7 @@ public class UserTests {
                 () -> {
                     userService.logOut(
                             new LogOutAndRemoveProfilePhotoDto(
-                              sessionId
+                                    sessionId
                             )
                     );
                 }
@@ -85,15 +88,18 @@ public class UserTests {
 
         user1 = UserRepository.getInstance().findUserById(user1.getId());
 
-        assertEquals(0 , user1.getSessionIds().size());
+        UserProfile profile1 = userProfileRepository.getUserProfileByUserId(user1.getId()).orElseThrow();
+
+        assertEquals(0 , profile1.getSessionIds().size());
 
         final String sessionId1 = userService.logIn(
                 new LogInDto("UniqueName","Unique@1234")
         );
 
         user1 = UserRepository.getInstance().findUserById(user1.getId());
+        profile1 = userProfileRepository.getUserProfileByUserId(user1.getId()).orElseThrow();
 
-        assertEquals(1 , user1.getSessionIds().size());
+        assertEquals(1 , profile1.getSessionIds().size());
 
 
         assertThrows(ActionFailedException.class ,
@@ -155,13 +161,11 @@ public class UserTests {
                 )
         );
 
-        user1 = UserRepository.getInstance().findUserById(user1.getId());
+        profile1 = userProfileRepository.getUserProfileByUserId(user1.getId()).orElseThrow();
+        UserProfile profile2 = userProfileRepository.getUserProfileByUserId(user2.getId()).orElseThrow();
 
-        assertEquals(1 , user1.getFollowingsId().size());
-
-        user2 = UserRepository.getInstance().findUserById(user2.getId());
-
-        assertEquals(1 , user2.getFollowersId().size());
+        assertEquals(1 , profile1.getFollowingsId().size());
+        assertEquals(1 , profile2.getFollowersId().size());
 
         userService.unfollow(
                 new FollowAndUnfollowDto(
@@ -169,33 +173,28 @@ public class UserTests {
                 )
         );
 
-        user1 = UserRepository.getInstance().findUserById(user1.getId());
+        profile1 = userProfileRepository.getUserProfileByUserId(user1.getId()).orElseThrow();
+        profile2 = userProfileRepository.getUserProfileByUserId(user2.getId()).orElseThrow();
 
-        assertEquals(0 , user1.getFollowingsId().size());
-
-        user2 = UserRepository.getInstance().findUserById(user2.getId());
-
-        assertEquals(0 , user2.getFollowersId().size());
+        assertEquals(0 , profile1.getFollowingsId().size());
+        assertEquals(0 , profile2.getFollowersId().size());
 
         userService.addProfilePhoto(
                 new AddProfilePhotoDto(
-                sessionId1 , "1234"
-        ));
+                        sessionId1 , "1234"
+                ));
 
-        user1 = UserRepository.getInstance().findUserById(user1.getId());
+        profile1 = userProfileRepository.getUserProfileByUserId(user1.getId()).orElseThrow();
 
-        assertEquals("1234" , user1.getProfilePhotoId());
+        assertEquals("1234" , profile1.getProfilePhotoId());
 
         userService.removeProfilePhoto(
                 new LogOutAndRemoveProfilePhotoDto(
                         sessionId1
                 ));
 
-        user1 = UserRepository.getInstance().findUserById(user1.getId());
+        profile1 = userProfileRepository.getUserProfileByUserId(user1.getId()).orElseThrow();
 
-        assertNull(user1.getProfilePhotoId());
-
-
-
+        assertNull(profile1.getProfilePhotoId());
     }
 }
