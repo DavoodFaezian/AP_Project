@@ -102,6 +102,7 @@ public class RequestHandler {
                 }
             }
 
+
             Object result = action.method.invoke(action.instance, args);
 
             response = new Response();
