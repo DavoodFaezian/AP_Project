@@ -11,6 +11,7 @@ import Repositories.PhotoRepository;
 import Repositories.SessionRepository;
 import Repositories.UserRepository;
 
+import java.util.Base64;
 import java.util.Set;
 
 public class PhotoService {
@@ -37,8 +38,10 @@ public class PhotoService {
         Set<String> tags = data.getTags();
         String caption = data.getCaption();
         Boolean isFavorable = data.getFavorable();
+        String photoData = data.getPhotoData();
         validatePhotoName(photoName);
-        Photo photo = PhotoRepository.getInstance().createPhoto(user.getId() , photoName , albumId , tags , caption , isFavorable);
+        byte[] photoBytes = uploadPhoto(photoData);
+        Photo photo = PhotoRepository.getInstance().createPhoto(user.getId() , photoName , albumId , tags , caption , isFavorable, photoBytes);
         if (!albumId.isEmpty()) {
             Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
             album.getPhotoIds().add(photo.getId());
@@ -69,6 +72,10 @@ public class PhotoService {
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         Photo photo = data.getPhoto();
         PhotoRepository.getInstance().editPhoto(photo);
+    }
+
+    public byte[] uploadPhoto(String photoData) {
+        return Base64.getDecoder().decode(photoData);
     }
 
 }
