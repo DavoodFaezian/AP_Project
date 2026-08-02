@@ -1,15 +1,15 @@
 {
   "className": "MainClasses.Session",
   "items": {
-    "d13f173d-f08e-447b-bce5-ba57074f4b32": {
-      "userId": "2f9b5e80-8edc-45b2-9fbd-fd6b3004728d",
-      "token": "a61710f4-8b30-4c43-b633-2b63cb4760e4",
-      "id": "d13f173d-f08e-447b-bce5-ba57074f4b32"
+    "9c851845-d425-4438-8ea6-5b04609de326": {
+      "userId": "c75ee16c-0eba-416a-bb05-3795c08e1be5",
+      "token": "31a9f178-bc02-4832-b9f8-9bc9c2d63f53",
+      "id": "9c851845-d425-4438-8ea6-5b04609de326"
     },
-    "249d7da0-e2ab-4667-ae63-ae6158b9b781": {
-      "userId": "2f9b5e80-8edc-45b2-9fbd-fd6b3004728d",
-      "token": "85dbff99-b4d4-42c1-9bc7-55974a2d4b23",
-      "id": "249d7da0-e2ab-4667-ae63-ae6158b9b781"
+    "5d306dde-2f4c-496b-8738-338f43bb8b1d": {
+      "userId": "c75ee16c-0eba-416a-bb05-3795c08e1be5",
+      "token": "983ba2b7-c065-4cdd-bc88-05cb4438b15e",
+      "id": "5d306dde-2f4c-496b-8738-338f43bb8b1d"
     }
   }
 }

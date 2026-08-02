@@ -3,8 +3,10 @@ import DTO.Comment.*;
 import DTO.Photo.AddPhotoDto;
 import DTO.Photo.AddPhotoToAndRemovePhotoFromAlbum;
 import DTO.Post.AddPostDto;
+import DTO.Post.EditPostDto;
 import DTO.User.LogInDto;
 import DTO.User.SignUpDto;
+import Exceptions.ActionFailedException;
 import Services.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,8 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CommentTests {
     static UserService userService = UserService.getInstance();
@@ -187,7 +188,23 @@ public class CommentTests {
                 postId2
         ));
         assertEquals("edited",commentDtos.getFirst().getScript());
-
+        postService.editPost(
+                new EditPostDto(
+                        postId1,
+                        sessionId,
+                        Set.of(photoId1),
+                        Set.of(albumId1),
+                        false
+                )
+        );
+        assertThrows(ActionFailedException.class,()->commentService.addComment(
+                new AddCommentDto(
+                        sessionId,
+                        "new comment2",
+                        postId1,
+                        userId
+                )
+        ));
 
     }
 }
