@@ -92,7 +92,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
             String sessionId = responseMap["sessionId"];
 
-            SessionManager.instance.setSession(
+            SessionManager.instance.saveSessionId(
               sessionId
             );
 

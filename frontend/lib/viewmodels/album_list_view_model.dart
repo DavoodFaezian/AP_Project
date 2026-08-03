@@ -18,13 +18,13 @@ class AlbumListViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> loadAlbums(String ownerId) async {
+  Future<void> loadAlbums() async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final albums = await _albumRepository.getAlbumsByOwner(ownerId);
+      final albums = await _albumRepository.getAlbumsByOwner();
       _albums
         ..clear()
         ..addAll(albums);
@@ -37,7 +37,6 @@ class AlbumListViewModel extends ChangeNotifier {
   }
 
   Future<void> addAlbum({
-    required String ownerId,
     required String albumName,
   }) async {
     final trimmedName = albumName.trim();
@@ -49,7 +48,6 @@ class AlbumListViewModel extends ChangeNotifier {
 
     try {
       final createdAlbum = await _albumRepository.createAlbum(
-        ownerId: ownerId,
         albumName: trimmedName,
       );
       _albums.add(createdAlbum);

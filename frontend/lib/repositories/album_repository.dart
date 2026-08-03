@@ -4,9 +4,8 @@ import '../services/socket_service.dart';
 import '../services/session_manager.dart';
 
 abstract class AlbumRepository {
-  Future<List<Album>> getAlbumsByOwner(String ownerId);
+  Future<List<Album>> getAlbumsByOwner();
   Future<Album> createAlbum({
-    required String ownerId,
     required String albumName,
   });
   Future<Album> updateAlbum({
@@ -18,7 +17,7 @@ abstract class AlbumRepository {
 
 class SocketAlbumRepository implements AlbumRepository {
   @override
-  Future<List<Album>> getAlbumsByOwner(String ownerId) async {
+  Future<List<Album>> getAlbumsByOwner() async {
     final requestMap = {
       "action": "Album/getAllAlbumsByOwnerId",
       "sessionId": SessionManager.instance.sessionId,
@@ -38,7 +37,6 @@ class SocketAlbumRepository implements AlbumRepository {
 
   @override
   Future<Album> createAlbum({
-    required String ownerId,
     required String albumName,
   }) async {
     final requestMap = {

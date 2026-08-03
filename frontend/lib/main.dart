@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:test_app/views/layout/screens/auth/sign_up_screen.dart';
+import 'services/session_manager.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await SessionManager.instance.init();
+
   runApp(const MyApp());
 }
 
