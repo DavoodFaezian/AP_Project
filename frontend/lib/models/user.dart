@@ -5,9 +5,8 @@ class User {
     required this.id,
     required this.userName,
     required this.password,
-    this.photoIds = const {},
-    this.albumIds = const {},
-    this.sharedPhotoIds = const {},
+    this.followingIds = const {},
+    this.followerIds = const {},
     this.theme = AppTheme.light,
     this.profilePictureUrl,
   });
@@ -15,9 +14,8 @@ class User {
   final String id;
   final String userName;
   final String password;
-  final Set<String> photoIds;
-  final Set<String> albumIds;
-  final Set<String> sharedPhotoIds;
+  final Set<String> followingIds;
+  final Set<String> followerIds;
   final AppTheme theme;
   final String? profilePictureUrl;
 
@@ -30,9 +28,8 @@ class User {
     String? id,
     String? userName,
     String? password,
-    Set<String>? photoIds,
-    Set<String>? albumIds,
-    Set<String>? sharedPhotoIds,
+    Set<String>? followingIds,
+    Set<String>? followerIds,
     AppTheme? theme,
     String? profilePictureUrl,
   }) {
@@ -40,9 +37,8 @@ class User {
       id: id ?? this.id,
       userName: userName ?? this.userName,
       password: password ?? this.password,
-      photoIds: photoIds ?? this.photoIds,
-      albumIds: albumIds ?? this.albumIds,
-      sharedPhotoIds: sharedPhotoIds ?? this.sharedPhotoIds,
+      followingIds: followingIds ?? this.followingIds,
+      followerIds: followerIds ?? this.followerIds,
       theme: theme ?? this.theme,
       profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
     );
@@ -53,9 +49,8 @@ class User {
       id: json['id'] as String,
       userName: json['userName'] as String,
       password: json['password'] as String,
-      photoIds: Set<String>.from(json['photoIds'] ?? const []),
-      albumIds: Set<String>.from(json['albumIds'] ?? const []),
-      sharedPhotoIds: Set<String>.from(json['sharedPhotoIds'] ?? const []),
+      followerIds: Set<String>.from(json['followers'] ?? const []),
+      followingIds: Set<String>.from(json['followingIds'] ?? const []),
       theme: _themeFromString(json['theme'] as String?),
       profilePictureUrl: json['profilePictureUrl'] as String?,
     );
@@ -66,9 +61,8 @@ class User {
       'id': id,
       'userName': userName,
       'password': password,
-      'photoIds': photoIds.toList(),
-      'albumIds': albumIds.toList(),
-      'sharedPhotoIds': sharedPhotoIds.toList(),
+      'followingIds': followingIds.toList(),
+      'followerIds': followerIds.toList(),
       'theme': theme.name,
       'profilePictureUrl': profilePictureUrl,
     };

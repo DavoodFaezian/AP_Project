@@ -32,6 +32,7 @@ public class ClientHandler implements Runnable {
 
                 Request request = gson.fromJson(line , Request.class);
                 RequestHandler handler = new RequestHandler(request);
+
                 Response response = handler.handle();
 
                 String responseString = gson.toJson(response);
