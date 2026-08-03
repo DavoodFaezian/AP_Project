@@ -1,80 +1,84 @@
 import 'app_theme.dart';
 
 class User {
-  const User({
-    required this.id,
-    required this.userName,
-    required this.password,
-    this.followingIds = const {},
-    this.followerIds = const {},
-    this.theme = AppTheme.light,
-    this.profilePictureUrl,
-  });
-
   final String id;
-  final String userName;
-  final String password;
-  final Set<String> followingIds;
-  final Set<String> followerIds;
-  final AppTheme theme;
-  final String? profilePictureUrl;
+  final String username;
+  final String? profilePhotoId;
+  final Set<String> followersId;
+  final Set<String> followingsId;
+  final AppTheme appTheme; // تم انتخابی کاربر
 
-  String get initial {
-    if (userName.isEmpty) return '?';
-    return userName[0].toUpperCase();
-  }
+  User({
+    required this.id,
+    required this.username,
+    this.profilePhotoId,
+    Set<String>? followersId,
+    Set<String>? followingsId,
+    this.appTheme = AppTheme.system, // پیش‌فرض: بر اساس تنظیمات سیستم
+  })  : followersId = followersId ?? <String>{},
+        followingsId = followingsId ?? <String>{};
 
-  User copyWith({
-    String? id,
-    String? userName,
-    String? password,
-    Set<String>? followingIds,
-    Set<String>? followerIds,
-    AppTheme? theme,
-    String? profilePictureUrl,
-  }) {
-    return User(
-      id: id ?? this.id,
-      userName: userName ?? this.userName,
-      password: password ?? this.password,
-      followingIds: followingIds ?? this.followingIds,
-      followerIds: followerIds ?? this.followerIds,
-      theme: theme ?? this.theme,
-      profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
-    );
-  }
-
+  /// ساخت مدل از JSON دریافتی از سرور
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as String,
-      userName: json['userName'] as String,
-      password: json['password'] as String,
-      followerIds: Set<String>.from(json['followers'] ?? const []),
-      followingIds: Set<String>.from(json['followingIds'] ?? const []),
-      theme: _themeFromString(json['theme'] as String?),
-      profilePictureUrl: json['profilePictureUrl'] as String?,
+      id: json['id'] ?? json['userId'] ?? '',
+      username: json['userName'] ?? json['username'] ?? '',
+      profilePhotoId: json['profilePhotoId'],
+      followersId: json['followersId'] != null
+          ? Set<String>.from(json['followersId'])
+          : json['followers'] != null
+              ? Set<String>.from(json['followers'])
+              : <String>{},
+      followingsId: json['followingsId'] != null
+          ? Set<String>.from(json['followingsId'])
+          : json['followings'] != null
+              ? Set<String>.from(json['followings'])
+              : <String>{},
+      appTheme: _parseTheme(json['appTheme']),
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'userName': userName,
-      'password': password,
-      'followingIds': followingIds.toList(),
-      'followerIds': followerIds.toList(),
-      'theme': theme.name,
-      'profilePictureUrl': profilePictureUrl,
-    };
-  }
-
-  static AppTheme _themeFromString(String? value) {
-    switch (value) {
+  /// تبدیل رشته دریافتی به Enum تم
+  static AppTheme _parseTheme(String? themeStr) {
+    switch (themeStr?.toLowerCase()) {
       case 'dark':
         return AppTheme.dark;
       case 'light':
+        return AppTheme.light;
+      case 'system':
       default:
         return AppTheme.light;
     }
+  }
+
+  /// تبدیل به Map جهت ذخیره‌سازی یا ارسال به سرور
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'userName': username,
+      if (profilePhotoId != null) 'profilePhotoId': profilePhotoId,
+      'followersId': followersId.toList(),
+      'followingsId': followingsId.toList(),
+      'appTheme': appTheme.name, // ذخیره به صورت رشته "light", "dark" یا "system"
+    };
+  }
+
+  /// متد copyWith جهت به‌روزرسانی آسان تم یا بقیه فیلدها
+  User copyWith({
+    String? id,
+    String? username,
+    String? profilePhotoId,
+    Set<String>? followersId,
+    Set<String>? followingsId,
+    AppTheme? appTheme,
+  }) {
+    return User(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      profilePhotoId: profilePhotoId ?? this.profilePhotoId,
+      followersId: followersId ?? this.followersId,
+      followingsId: followingsId ?? this.followingsId,
+      appTheme: appTheme ?? this.appTheme,
+    );
   }
 }

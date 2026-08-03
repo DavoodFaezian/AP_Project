@@ -147,7 +147,7 @@ class PostRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['status'] == 'SUCCESS' || responseMap['statusCode'] == 200) {
+    if (responseMap['status'] == 'SUCCESS' || responseMap['statusCode'] == '200') {
       return responseMap;
     } else {
       throw Exception(responseMap['message'] ?? 'Action $actionName failed');

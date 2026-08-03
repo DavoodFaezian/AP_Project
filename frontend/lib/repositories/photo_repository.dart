@@ -242,7 +242,7 @@ class PhotoRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] != 200 && responseMap['status'] != 'SUCCESS') {
+    if (responseMap['statusCode'] != '200' && responseMap['status'] != 'SUCCESS') {
       throw Exception(responseMap['message'] ?? 'Failed to move photo');
     }
   }

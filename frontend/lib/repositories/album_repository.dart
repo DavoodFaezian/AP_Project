@@ -27,7 +27,7 @@ class SocketAlbumRepository implements AlbumRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] == 200 || responseMap['status'] == 'SUCCESS') {
+    if (responseMap['statusCode'] == '200' || responseMap['status'] == 'SUCCESS') {
       List<dynamic> albumsJson = responseMap['albums'] ?? [];
       return albumsJson.map((json) => Album.fromJson(json)).toList();
     } else {
