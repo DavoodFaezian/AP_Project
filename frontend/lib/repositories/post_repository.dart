@@ -11,7 +11,7 @@ class PostRepository {
     required bool commentsAllowed,
   }) async {
     final responseMap = await _sendSocketRequest(
-      actionName: "ADD_POST",
+      actionName: "Post/addPost",
       payload: {
         "sessionId": SessionManager.instance.sessionId,
         "photoIds": photoIds,
@@ -30,7 +30,7 @@ class PostRepository {
     required bool commentsAllowed,
   }) async {
     await _sendSocketRequest(
-      actionName: "EDIT_POST",
+      actionName: "Post/editPost",
       payload: {
         "sessionId": SessionManager.instance.sessionId,
         "id": postId,
@@ -44,7 +44,7 @@ class PostRepository {
   /// ۳. حذف پست (deletePost)
   Future<void> deletePost(String postId) async {
     await _sendSocketRequest(
-      actionName: "DELETE_POST",
+      actionName: "Post/deletePost",
       payload: {
         "sessionId": SessionManager.instance.sessionId,
         "id": postId,
@@ -55,7 +55,7 @@ class PostRepository {
   /// ۴. دریافت تمامی پست‌های کاربر جاری (getAllPostsByOwnerId)
   Future<List<Post>> getAllPostsByOwner() async {
     final responseMap = await _sendSocketRequest(
-      actionName: "GET_ALL_POSTS_BY_OWNER",
+      actionName: "Post/getAllPostsByOwner",
       payload: {
         "sessionId": SessionManager.instance.sessionId,
       },
@@ -68,7 +68,7 @@ class PostRepository {
   /// ۵. دریافت پست‌های افراد دنبال‌شده (getAllPostsOfFollowings)
   Future<List<Post>> getAllPostsOfFollowings() async {
     final responseMap = await _sendSocketRequest(
-      actionName: "GET_ALL_POSTS_OF_FOLLOWINGS",
+      actionName: "Post/getAllPostsOfFollowings",
       payload: {
         "sessionId": SessionManager.instance.sessionId,
       },
@@ -81,7 +81,7 @@ class PostRepository {
   /// دریافت پست‌های یک کاربر دیگر با ارسال targetUserId به بک‌اند
     Future<List<Post>> getPostsByUserId(String targetUserId) async {
       final responseMap = await _sendSocketRequest(
-        actionName: "GET_POSTS_BY_USER_ID",
+        actionName: "Post/getPostsByUserId",
         payload: {
           "sessionId": SessionManager.instance.sessionId,
           "targetUserId": targetUserId, // آیدی کاربری که می‌خواهیم پست‌هایش را ببینیم
@@ -95,7 +95,7 @@ class PostRepository {
   /// ۶. دریافت یک پست با شناسه (getPostById)
   Future<Post> getPostById(String postId) async {
     final responseMap = await _sendSocketRequest(
-      actionName: "GET_POST_BY_ID",
+      actionName: "Post/getPostById",
       payload: {
         "sessionId": SessionManager.instance.sessionId,
         "postId": postId,
@@ -108,7 +108,7 @@ class PostRepository {
   /// ۷. دریافت آیدی عکس‌های یک پست (getPhotoIdsOfPost)
   Future<List<String>> getPhotoIdsOfPost(String postId) async {
     final responseMap = await _sendSocketRequest(
-      actionName: "GET_PHOTO_IDS_OF_POST",
+      actionName: "Post/getPhotoIdsOfPost",
       payload: {
         "sessionId": SessionManager.instance.sessionId,
         "postId": postId,
@@ -122,7 +122,7 @@ class PostRepository {
   /// ۸. دریافت آیدی آلبوم‌های یک پست (getAlbumIdsOfPost)
   Future<List<String>> getAlbumIdsOfPost(String postId) async {
     final responseMap = await _sendSocketRequest(
-      actionName: "GET_ALBUM_IDS_OF_POST",
+      actionName: "Post/getAlbumIdsPost",
       payload: {
         "sessionId": SessionManager.instance.sessionId,
         "postId": postId,
