@@ -1,20 +1,15 @@
 import 'package:flutter/foundation.dart';
-
 import '../models/photo.dart';
 import '../repositories/photo_repository.dart';
 
 class PhotoListViewModel extends ChangeNotifier {
   PhotoListViewModel({
     required PhotoRepository repository,
-    required this.currentUserId,
     this.albumId,
-    this.albumOwnerId,
   }) : _repository = repository;
 
   final PhotoRepository _repository;
-  final String currentUserId;
   final String? albumId;
-  final String? albumOwnerId;
 
   List<Photo> _photos = [];
   bool _isLoading = false;
@@ -29,13 +24,6 @@ class PhotoListViewModel extends ChangeNotifier {
   bool get selectionMode => _selectionMode;
   Set<String> get selectedPhotoIds => Set.unmodifiable(_selectedPhotoIds);
 
-  bool get isOwnerContext {
-    if (albumOwnerId == null) {
-      return true;
-    }
-    return albumOwnerId == currentUserId;
-  }
-
   bool get isSingleSelection => _selectedPhotoIds.length == 1;
   bool get hasSelection => _selectedPhotoIds.isNotEmpty;
 
@@ -45,10 +33,10 @@ class PhotoListViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      if (albumId != null) {
-        _photos = await _repository.getPhotosByAlbum(albumId!);
+      if (albumId != null && albumId!.isNotEmpty) {
+        _photos = await _repository.getPhotosByAlbumId(albumId!);
       } else {
-        _photos = await _repository.getPhotosByOwner(currentUserId);
+        _photos = await _repository.getPhotosByOwnerId();
       }
     } catch (e) {
       _errorMessage = e.toString();
@@ -85,9 +73,7 @@ class PhotoListViewModel extends ChangeNotifier {
   }
 
   Photo? get selectedPhoto {
-    if (!isSingleSelection) {
-      return null;
-    }
+    if (!isSingleSelection) return null;
 
     final id = _selectedPhotoIds.first;
     try {
@@ -98,10 +84,15 @@ class PhotoListViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteSelectedPhotos() async {
-    for (final id in _selectedPhotoIds) {
-      await _repository.deletePhoto(id);
+    try {
+      for (final id in _selectedPhotoIds) {
+        await _repository.deletePhoto(id);
+      }
+      clearSelection();
+      await loadPhotos();
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
     }
-    clearSelection();
-    await loadPhotos();
   }
 }

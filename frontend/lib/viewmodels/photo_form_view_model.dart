@@ -1,12 +1,10 @@
 import 'package:flutter/foundation.dart';
-
 import '../models/photo.dart';
 import '../repositories/photo_repository.dart';
 
 class PhotoFormViewModel extends ChangeNotifier {
   PhotoFormViewModel({
     required PhotoRepository repository,
-    required this.currentUserId,
     this.initialPhoto,
     this.sourceAlbumId,
   }) : _repository = repository {
@@ -14,18 +12,15 @@ class PhotoFormViewModel extends ChangeNotifier {
       photoName = initialPhoto!.photoName;
       caption = initialPhoto!.caption;
       tagsText = initialPhoto!.tags.join(', ');
-      permissionForLeavingComment =
-          initialPhoto!.permissionForLeavingComment;
+      permissionForLeavingComment = initialPhoto!.permissionForLeavingComment;
       fileName = initialPhoto!.id;
       selectedAlbumIds = Set<String>.from(initialPhoto!.albumIds);
     } else {
-      selectedAlbumIds =
-      sourceAlbumId == null ? <String>{} : <String>{sourceAlbumId!};
+      selectedAlbumIds = sourceAlbumId == null ? <String>{} : <String>{sourceAlbumId!};
     }
   }
 
   final PhotoRepository _repository;
-  final String currentUserId;
   final Photo? initialPhoto;
   final String? sourceAlbumId;
 
@@ -35,7 +30,7 @@ class PhotoFormViewModel extends ChangeNotifier {
   bool permissionForLeavingComment = true;
   Set<String> selectedAlbumIds = <String>{};
 
-  String? fileName;
+  String? fileName; // می‌تواند شناسه بایت‌های آپلود شده (Base64) یا آدرس فایل باشد
   bool isSubmitting = false;
   String? errorMessage;
 
@@ -68,17 +63,17 @@ class PhotoFormViewModel extends ChangeNotifier {
         .toSet();
   }
 
-  Future<Photo?> submit() async {
+  Future<bool> submit() async {
     if (photoName.trim().isEmpty) {
       errorMessage = 'Photo name is required';
       notifyListeners();
-      return null;
+      return false;
     }
 
-    if (fileName == null || fileName!.trim().isEmpty) {
+    if (!isEdit && (fileName == null || fileName!.trim().isEmpty)) {
       errorMessage = 'Please pick a photo';
       notifyListeners();
-      return null;
+      return false;
     }
 
     isSubmitting = true;
@@ -87,7 +82,7 @@ class PhotoFormViewModel extends ChangeNotifier {
 
     try {
       if (isEdit) {
-        final updated = initialPhoto!.copyWith(
+        final updatedPhoto = initialPhoto!.copyWith(
           photoName: photoName.trim(),
           caption: caption.trim(),
           tags: _parseTags(),
@@ -95,30 +90,24 @@ class PhotoFormViewModel extends ChangeNotifier {
           lastModified: DateTime.now(),
           albumIds: Set<String>.from(selectedAlbumIds),
         );
-        return await _repository.updatePhoto(updated);
+        await _repository.editPhoto(updatedPhoto);
+      } else {
+        // انتخاب آلبوم اول در صورت وجود (چون addPhoto آلبوم اصلی را می‌گیرد)
+        String mainAlbumId = selectedAlbumIds.isNotEmpty ? selectedAlbumIds.first : '';
+
+        await _repository.addPhoto(
+          photoName: photoName.trim(),
+          title: photoName.trim(),
+          albumId: mainAlbumId,
+          tags: _parseTags(),
+          caption: caption.trim(),
+          favorable: false,
+        );
       }
-
-      final now = DateTime.now();
-
-      final photo = Photo(
-        id: fileName!.trim(),
-        ownerId: currentUserId,
-        photoName: photoName.trim(),
-        tags: _parseTags(),
-        caption: caption.trim(),
-        isFavorable: false,
-        permissionForLeavingComment: permissionForLeavingComment,
-        dateOfShare: null,
-        lastModified: now,
-        commentIds: <String>{},
-        albumIds: Set<String>.from(selectedAlbumIds),
-        sharedUserIds: <String>{},
-        createdAt: now,
-      );
-      return await _repository.createPhoto(photo);
+      return true;
     } catch (e) {
       errorMessage = e.toString();
-      return null;
+      return false;
     } finally {
       isSubmitting = false;
       notifyListeners();
@@ -126,15 +115,15 @@ class PhotoFormViewModel extends ChangeNotifier {
   }
 
   Future<void> deletePhoto() async {
-    if (initialPhoto == null) {
-      return;
-    }
+    if (initialPhoto == null) return;
 
     isSubmitting = true;
     notifyListeners();
 
     try {
       await _repository.deletePhoto(initialPhoto!.id);
+    } catch (e) {
+      errorMessage = e.toString();
     } finally {
       isSubmitting = false;
       notifyListeners();
