@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
 import '../../../models/user.dart';
 import '../../../repositories/user_repository.dart';
-
 
 class UserAvatar extends StatelessWidget {
   const UserAvatar({
@@ -19,21 +17,27 @@ class UserAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<User?>(
-      future: userRepository.getUserById(userId),
+      // بر اساس متد جدید userRepository
+      future: userRepository.getUserById(userId), 
       builder: (context, snapshot) {
         final user = snapshot.data;
         final isLoading = snapshot.connectionState == ConnectionState.waiting;
-        final profilePictureUrl = user?.profilePictureUrl;
-        final initial = user?.initial ?? '?';
+        
+        final profilePhotoId = user?.profilePhotoId;
+        
+        // استخراج حرف اول نام کاربری جهت نمایش در صورت نداشتن عکس
+        final initial = (user != null && user.username.isNotEmpty)
+            ? user.username[0].toUpperCase()
+            : '?';
 
         if (isLoading) {
           return CircleAvatar(
             radius: radius,
-            backgroundColor: Colors.grey,
-            child: const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(
+            backgroundColor: Colors.grey.shade300,
+            child: SizedBox(
+              width: radius,
+              height: radius,
+              child: const CircularProgressIndicator(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
@@ -41,14 +45,17 @@ class UserAvatar extends StatelessWidget {
           );
         }
 
-        if (profilePictureUrl != null && profilePictureUrl.isNotEmpty) {
+        // اگر آیدی عکس پروفایل وجود داشت
+        if (profilePhotoId != null && profilePhotoId.isNotEmpty) {
           return CircleAvatar(
             radius: radius,
-            backgroundImage: NetworkImage(profilePictureUrl),
+            // آدرس یا ای پی سرور برای دریافت فایل تصویر بر اساس profilePhotoId
+            backgroundImage: NetworkImage('http://YOUR_SERVER_IP:PORT/files/$profilePhotoId'),
             backgroundColor: Colors.grey.shade200,
           );
         }
 
+        // نمایش حرف اول نام کاربری در صورت عدم وجود عکس پروفایل
         return CircleAvatar(
           radius: radius,
           backgroundColor: Theme.of(context).primaryColor,

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../models/app_theme.dart';
 import '../models/user.dart';
 import '../repositories/user_repository.dart';
+import '../services/session_manager.dart';
 
 class UserViewModel extends ChangeNotifier {
   UserViewModel({
@@ -196,6 +197,41 @@ class UserViewModel extends ChangeNotifier {
       _setLoading(false);
     }
   }
+
+  /// ورود به برنامه با استفاده از اثر انگشت
+Future<bool> logInWithBiometrics() async {
+  _setLoading(true);
+  try {
+    // ۱. بررسی پشتیبانی دستگاه
+    final isAvailable = await _userRepository.isBiometricAvailable();
+    if (!isAvailable) {
+      _setError('بیومتریک یا اثر انگشت روی این دستگاه فعال نیست.');
+      return false;
+    }
+
+    // ۲. درخواست اسکن اثر انگشت از کاربر
+    final isAuthenticated = await _userRepository.authenticateWithBiometrics();
+
+    if (isAuthenticated) {
+      // ۳. خواندن sessionId ذخیره‌شده و تنظیم کاربر جاری
+      final savedSessionId = SessionManager.instance.sessionId;
+      if (savedSessionId != null && savedSessionId.isNotEmpty) {
+        // کاربر با موفقیت تایید شد
+        _setLoading(false);
+        return true;
+      } else {
+        _setError('نشست قبلی یافت نشد، لطفاً ابتدا با رمز عبور وارد شوید.');
+        return false;
+      }
+    } else {
+      _setError('احراز هویت با اثر انگشت ناموفق بود.');
+      return false;
+    }
+  } catch (e) {
+    _setError('خطا در ورود با اثر انگشت: $e');
+    return false;
+  }
+}
 
   // --- متدهای کمکی جهت مدیریت State ---
   void _setLoading(bool loading) {

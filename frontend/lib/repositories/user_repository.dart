@@ -3,8 +3,11 @@ import '../models/user.dart';
 import '../services/session_manager.dart';
 import '../services/socket_service.dart';
 import '../models/app_theme.dart';
+import 'package:local_auth/local_auth.dart';
 
 class UserRepository {
+
+  final LocalAuthentication _localAuth = LocalAuthentication();
   /// ۱. ثبت نام کاربر (signUp) -> خروجی: sessionId
   Future<String> signUp({
     required String userName,
@@ -25,6 +28,29 @@ class UserRepository {
       SessionManager.instance.saveSessionId(sessionId);
     }
     return sessionId;
+  }
+
+  Future<bool> isBiometricAvailable() async {
+    try {
+      final bool canAuthenticateWithBiometrics = await _localAuth.canCheckBiometrics;
+      final bool isDeviceSupported = await _localAuth.isDeviceSupported();
+      return canAuthenticateWithBiometrics && isDeviceSupported;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// احراز هویت با اثر انگشت
+  Future<bool> authenticateWithBiometrics() async {
+    try {
+      return await _localAuth.authenticate(
+        localizedReason: 'Please put your finger to open the application',
+        biometricOnly: true,
+        persistAcrossBackgrounding: true,
+      );
+    } catch (e) {
+      return false;
+    }
   }
 
   /// ۲. ورود به حساب کاربری (logIn) -> خروجی: sessionId
@@ -147,7 +173,8 @@ class UserRepository {
         "sessionId": sessionId,
         "appTheme": theme.name
     });
-  }  
+  }
+  
 
   /// متد کمکی کپسوله‌سازی درخواست سوکت
   Future<Map<String, dynamic>> _sendSocketRequest({
