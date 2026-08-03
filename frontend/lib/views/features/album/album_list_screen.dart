@@ -23,7 +23,7 @@ class _AlbumListPageState extends State<AlbumListPage> {
 
   late final AlbumListViewModel viewModel;
 
-  final AlbumRepository albumRepository = InMemoryAlbumRepository();
+  final AlbumRepository albumRepository = SocketAlbumRepository();
   final PhotoRepository photoRepository = InMemoryPhotoRepository();
 
   final Set<String> _selectedAlbumIds = {};

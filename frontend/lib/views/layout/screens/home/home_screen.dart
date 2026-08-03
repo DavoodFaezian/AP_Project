@@ -20,7 +20,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   static const String _currentUserId = 'user1';
   final PhotoRepository _photoRepository = InMemoryPhotoRepository();
-  final AlbumRepository _albumRepository = InMemoryAlbumRepository();
+  final AlbumRepository _albumRepository = SocketAlbumRepository();
   
   late final PhotoListViewModel viewModel;
 

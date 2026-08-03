@@ -4,6 +4,7 @@ import '../../../../services/socket_service.dart';
 import '../../../components/widgets/auth_header.dart';
 import '../../../components/widgets/input_decoration.dart';
 import '../../navigation/navigator_screen.dart';
+import '../../../../services/session_manager.dart';
 
 
 class SignUpPage extends StatefulWidget {
@@ -88,6 +89,13 @@ class _SignUpPageState extends State<SignUpPage> {
           // اگر کد پاسخ موفقیت‌آمیز بود (مثلاً 200 یا status == SUCCESS)
           if (responseMap['status'] == '200') {
             
+
+            String sessionId = responseMap["sessionId"];
+
+            SessionManager.instance.setSession(
+              sessionId
+            );
+
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Account created successfully!")),
             );
