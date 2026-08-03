@@ -7,12 +7,13 @@ import java.util.Set;
 public class EditAlbumDto {
 
     private String sessionId;
+    private String albumId;
+    private String albumName;
 
-    private Album album;
-
-    public EditAlbumDto(String sessionId, Album album) {
+    public EditAlbumDto(String sessionId, String albumName,String albumId) {
         this.sessionId = sessionId;
-        this.album = album;
+        this.albumName = albumName;
+        this.albumId = albumId;
     }
 
     public String getSessionId() {
@@ -23,11 +24,11 @@ public class EditAlbumDto {
         this.sessionId = sessionId;
     }
 
-    public Album getAlbumName() {
-        return album;
+    public String getAlbumId() {
+        return albumId;
     }
 
-    public void setAlbumName(Album album) {
-        this.album = album;
+    public String getAlbumName() {
+        return albumName;
     }
 }

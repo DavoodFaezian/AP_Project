@@ -5,6 +5,7 @@ import '../../../components/widgets/auth_header.dart';
 import '../../../components/widgets/input_decoration.dart';
 import '../../navigation/navigator_screen.dart';
 import '../../../../services/session_manager.dart';
+import 'log_in_screen.dart';
 
 
 class SignUpPage extends StatefulWidget {
@@ -68,7 +69,7 @@ class _SignUpPageState extends State<SignUpPage> {
       try {
         // الف) ساخت شیء Request مطابق با نیازمندی‌های بک‌اند جاوا
         final requestMap = {
-          "actionName": "user/signup",
+          "actionName": "User/signUp",
           "payload": {
             "userName": _userNameController.text.trim(),
             "repeatedPassword": _confirmPasswordController.text.trim(),
@@ -90,7 +91,7 @@ class _SignUpPageState extends State<SignUpPage> {
           if (responseMap['status'] == '200') {
             
 
-            String sessionId = responseMap["sessionId"];
+            String sessionId = responseMap["payload"]["id"];
 
             SessionManager.instance.setSession(
               sessionId
@@ -238,6 +239,29 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                       ),
                     ),
+                    const SizedBox(height: 16),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Already have an account?'),
+                        const SizedBox(width: 5),
+                        TextButton(
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const LogInPage(),
+                              ),
+                            );
+                          },
+                          child: const Text('Log In'),
+                        ),
+                      ],
+                    ),
+
                   ],
                 ),
               ),

@@ -1,0 +1,25 @@
+{
+  "className": "MainClasses.Album",
+  "items": {
+    "7338e131-a596-402f-9019-ed1e1725345f": {
+      "ownerId": "ee70f305-5365-4b27-bc01-e2d45ace70d3",
+      "albumName": "dfd",
+      "photoIds": [],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 3
+        },
+        "time": {
+          "hour": 20,
+          "minute": 14,
+          "second": 17,
+          "nano": 741897500
+        }
+      },
+      "id": "7338e131-a596-402f-9019-ed1e1725345f"
+    }
+  }
+}

@@ -1,12 +1,11 @@
 package Services;
+import DTO.StringResultDto;
 import DTO.Album.*;
 import Exceptions.ActionFailedException;
 import MainClasses.Album;
 import MainClasses.Photo;
 import MainClasses.User;
 import Repositories.*;
-
-import MainClasses.Post;
 
 import java.util.Collections;
 import java.util.Set;
@@ -30,12 +29,12 @@ public class AlbumService {
            throw new ActionFailedException("Album name must not be empty.");
         }
     }
-    public String addAlbum(AddAlbumDto data) {
+    public StringResultDto addAlbum(AddAlbumDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         String albumName = data.getName();
         Album album = AlbumRepository.getInstance().createAlbum(user.getId() , albumName);
-        return album.getId();
+        return new StringResultDto(album.getId());
     }
 
     public void deleteAlbum(DeleteAlbumDto data) {
@@ -56,10 +55,12 @@ public class AlbumService {
     }
 
     public void editAlbum(EditAlbumDto data) {
+        if(data.getAlbumName().isEmpty()){
+            throw new ActionFailedException("album name can't be empty");
+        }
         String sessionId = data.getSessionId();
-        SessionRepository.getInstance().validateSession(sessionId);
-        Album album = data.getAlbumName();
-        albumRepository.editAlbum(album);
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        albumRepository.editAlbum(data.getAlbumId(),data.getAlbumName(),user.getId());
     }
     public Set<String> getPhotoIdsOfAlbum(GetAlbumDto data) {
         SessionRepository.getInstance().validateSession(data.getSessionId());
@@ -68,15 +69,15 @@ public class AlbumService {
     }
 
 
-    public List<AlbumDto> getAllAlbumsByOwnerId(GetAllAlbumsDto data) {
+    public AlbumListDto getAllAlbumsByOwnerId(GetAllAlbumsDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         List<Album> albums = albumRepository.getAlbumsByOwner(user.getId());
         if (albums == null) {
-            return Collections.emptyList();
+            return new AlbumListDto(Collections.emptyList());
         }
 
-        return albums.stream().map(AlbumDto::new).collect(Collectors.toList());
+        return new AlbumListDto(albums.stream().map(AlbumDto::new).collect(Collectors.toList()));
     }
 
 

@@ -1,5 +1,6 @@
 import 'dart:convert'; // 👈 برای jsonEncode و jsonDecode
 import 'package:flutter/material.dart';
+import 'package:test_app/views/layout/screens/auth/sign_up_screen.dart';
 import '../../../../services/session_manager.dart';
 import '../../../components/widgets/auth_header.dart';
 import '../../../components/widgets/input_decoration.dart';
@@ -48,9 +49,11 @@ class _LogInPageState extends State<LogInPage> {
       try {
         // الف) ساخت Map درخواست با اکشن LOG_IN
         final requestMap = {
-          "action": "User/logIn",
-          "userName": _userNameController.text.trim(),
-          "password": _passwordController.text,
+          "actionName": "User/logIn",
+          "payload": {
+            "userName": _userNameController.text.trim(),
+            "password": _passwordController.text,
+          }
         };
 
         // ب) تبدیل به JSON و اضافه کردن n\ برای readLine جاوا
@@ -62,9 +65,9 @@ class _LogInPageState extends State<LogInPage> {
 
         // د) بررسی پاسخ سرور
         if (mounted) {
-          if (responseMap['statusCode'] == 200 || responseMap['status'] == 'SUCCESS') {
+          if (responseMap['status'] == "200") {
 
-            String sessionId = responseMap['sessionId'];
+            String sessionId = responseMap['payload']['id'];
             SessionManager.instance.setSession(
               sessionId
             );
@@ -191,6 +194,29 @@ class _LogInPageState extends State<LogInPage> {
                               ),
                       ),
                     ),
+                    const SizedBox(height: 16),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Don't have an account?"),
+                        const SizedBox(width: 5),
+                        TextButton(
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const SignUpPage(),
+                              ),
+                            );
+                          },
+                          child: const Text('Sign Up'),
+                        ),
+                      ],
+                    ),
+
                   ],
                 ),
               ),

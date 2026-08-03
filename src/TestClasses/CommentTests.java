@@ -49,9 +49,9 @@ public class CommentTests {
         sessionId = userService.logIn(new LogInDto(
                 "UniName",
                 "newPass@123"
-        ));
+        )).getId();
 
-        userId = userService.getUser(
+        userId = userService.getUserMainClass(
                 "UniName",
                 "newPass@123"
         ).getId();
@@ -60,14 +60,14 @@ public class CommentTests {
                         sessionId,
                         "new album"
                 )
-        );
+        ).getId();
 
         albumId2 = albumService.addAlbum(
                 new AddAlbumDto(
                         sessionId,
                         "new album 2"
                 )
-        );
+        ).getId();
         photoId1 = photoService.addPhoto(
                 new AddPhotoDto(
                         sessionId,

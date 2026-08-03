@@ -72,9 +72,9 @@ public class UserTests {
                     userService.logIn(new LogInDto("AliSabet" , "iehtwgh"));
                 });
 
-        User user1 = userService.getUser("UniqueName","Unique@1234");
+        User user1 = userService.getUserMainClass("UniqueName","Unique@1234");
 
-        String sessionId = userService.logIn(new LogInDto("UniqueName","Unique@1234"));
+        String sessionId = userService.logIn(new LogInDto("UniqueName","Unique@1234")).getId();
 
         assertDoesNotThrow(
                 () -> {
@@ -94,7 +94,7 @@ public class UserTests {
 
         final String sessionId1 = userService.logIn(
                 new LogInDto("UniqueName","Unique@1234")
-        );
+        ).getId();
 
         user1 = UserRepository.getInstance().findUserById(user1.getId());
         profile1 = userProfileRepository.getUserProfileByUserId(user1.getId()).orElseThrow();
@@ -153,7 +153,7 @@ public class UserTests {
                     userService.signUp(new SignUpDto("Unique_Name","Unique@1234","Unique@1234"));
                 });
 
-        User user2 = userService.getUser("Unique_Name","Unique@1234");
+        User user2 = userService.getUserMainClass("Unique_Name","Unique@1234");
 
         userService.follow(
                 new FollowAndUnfollowDto(
@@ -186,7 +186,7 @@ public class UserTests {
 
         profile1 = userProfileRepository.getUserProfileByUserId(user1.getId()).orElseThrow();
 
-        assertEquals("1234" , profile1.getProfilePhotoId());
+        assertEquals("1234" , profile1.getProfilePhotoName());
 
         userService.removeProfilePhoto(
                 new LogOutAndRemoveProfilePhotoDto(
@@ -195,6 +195,6 @@ public class UserTests {
 
         profile1 = userProfileRepository.getUserProfileByUserId(user1.getId()).orElseThrow();
 
-        assertNull(profile1.getProfilePhotoId());
+        assertNull(profile1.getProfilePhotoName());
     }
 }

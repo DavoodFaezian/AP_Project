@@ -20,16 +20,18 @@ class SocketAlbumRepository implements AlbumRepository {
   @override
   Future<List<Album>> getAlbumsByOwner(String ownerId) async {
     final requestMap = {
-      "action": "Album/getAllAlbumsByOwnerId",
-      "sessionId": SessionManager.instance.sessionId,
+      "actionName": "Album/getAllAlbumsByOwnerId",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+      }
     };
 
     String jsonRequest = jsonEncode(requestMap) + "\n";
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] == 200 || responseMap['status'] == 'SUCCESS') {
-      List<dynamic> albumsJson = responseMap['albums'] ?? [];
+    if (responseMap['status'] == "200") {
+      List<dynamic> albumsJson = responseMap['payload']["albums"] ?? [];
       return albumsJson.map((json) => Album.fromJson(json)).toList();
     } else {
       throw Exception(responseMap['message'] ?? 'Failed to fetch albums');
@@ -42,17 +44,20 @@ class SocketAlbumRepository implements AlbumRepository {
     required String albumName,
   }) async {
     final requestMap = {
-      "action": "Album/addAlbum",
-      "sessionId": SessionManager.instance.sessionId,
-      "name": albumName,
+      "actionName": "Album/addAlbum",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "name": albumName,
+      }
     };
 
     String jsonRequest = jsonEncode(requestMap) + "\n";
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] == 200 || responseMap['status'] == 'SUCCESS') {
-      return Album.fromJson(responseMap['album']);
+    if (responseMap['status'] == "200") {
+      String id = responseMap['payload']['id'];
+      return Album(id: id, albumName: albumName);
     } else {
       throw Exception(responseMap['message'] ?? 'Failed to create album');
     }
@@ -64,18 +69,22 @@ class SocketAlbumRepository implements AlbumRepository {
     required String albumName,
   }) async {
     final requestMap = {
-      "action": "Album/editAlbum",
-      "sessionId": SessionManager.instance.sessionId,
-      "album": albumName,
+      "actionName": "Album/editAlbum",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "albumId": albumId,
+        "albumName": albumName,
+      }
     };
 
     String jsonRequest = jsonEncode(requestMap) + "\n";
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] == 200 || responseMap['status'] == 'SUCCESS') {
-      return Album.fromJson(responseMap['album']);
-    } else {
+    if (responseMap['status'] == "200") {
+      return Album(id: albumId, albumName: albumName);
+    }
+    else {
       throw Exception(responseMap['message'] ?? 'Failed to update album');
     }
   }
@@ -83,16 +92,18 @@ class SocketAlbumRepository implements AlbumRepository {
   @override
   Future<void> deleteAlbum(String albumId) async {
     final requestMap = {
-      "action": "Album/deleteAlbum",
-      "sessionId": SessionManager.instance.sessionId,
-      "albumId": albumId,
+      "actionName": "Album/deleteAlbum",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "albumId": albumId,
+      }
     };
 
     String jsonRequest = jsonEncode(requestMap) + "\n";
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] != 200 && responseMap['status'] != 'SUCCESS') {
+    if (responseMap['status'] != "200") {
       throw Exception(responseMap['message'] ?? 'Failed to delete album');
     }
   }

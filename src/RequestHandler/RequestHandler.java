@@ -2,8 +2,6 @@ package RequestHandler;
 
 import APIServer.Request;
 import APIServer.Response;
-import Exceptions.ActionFailedException;
-import Services.UserService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -54,9 +52,9 @@ public class RequestHandler {
                 Class<?> service = Class.forName("Services."+serviceName);
                 Object serviceInstance = service.getMethod("getInstance").invoke(null);
                 for(var method : service.getDeclaredMethods()){
-                    String actionName = serviceName.split("Service")[0].toLowerCase()
+                    String actionName = serviceName.split("Service")[0]
                             +'/'
-                            +method.getName().toLowerCase();
+                            +method.getName();
                     actions.put(actionName,new ActionHandler(serviceInstance,method));
                 }
 
@@ -76,7 +74,7 @@ public class RequestHandler {
         Gson gson = new Gson();
         try {
             if(!actions.containsKey(request.getActionName())){
-                return new Response("404","Service was not found"+request.getActionName(),new JsonObject());
+                return new Response("404","Service was not found:"+request.getActionName(),new JsonObject());
             }
             ActionHandler action= actions.get(request.getActionName());
             Type[] paramTypes = action.method.getGenericParameterTypes();
@@ -107,12 +105,13 @@ public class RequestHandler {
             Response response = new Response();
             response.setStatus(SECCEED);
             if (result != null) {
-                JsonObject payload = new JsonObject();
-                payload.addProperty("id" , result.toString());
-                response.setPayLoad(payload);
+                JsonObject payload;
+                payload = gson.toJsonTree(result).getAsJsonObject();
+
+                response.setPayload(payload);
             } else {
                 response.setMessage("Request handled successfully.");
-                response.setPayLoad(new JsonObject());
+                response.setPayload(new JsonObject());
             }
             return response;
         } catch (IllegalAccessException e) {
