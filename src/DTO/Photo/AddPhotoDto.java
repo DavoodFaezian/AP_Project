@@ -7,7 +7,8 @@ public class AddPhotoDto {
 
     private String sessionId;
 
-    private String name;
+    private String title;
+    private String photoName;
 
     private String albumId;
 
@@ -17,24 +18,31 @@ public class AddPhotoDto {
 
     private Boolean isFavorable;
 
-    private String photoData;
 
-    public AddPhotoDto(String sessionId, String name, String albumId , Set<String> tags, String caption, Boolean isFavorable, String photoData) {
+    public AddPhotoDto(String sessionId,String title, String photoName, String albumId , Set<String> tags, String caption, Boolean isFavorable) {
         this.sessionId = sessionId;
-        this.name = name;
+        this.photoName = photoName;
+        this.title = title;
         this.albumId = albumId;
         this.tags = tags;
         this.caption = caption;
         this.isFavorable = isFavorable;
-        this.photoData = photoData;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPhotoName() {
+        return photoName;
+    }
+
+    public void setPhotoName(String photoName) {
+        this.photoName = photoName;
     }
 
     public String getAlbumId() {
@@ -75,13 +83,5 @@ public class AddPhotoDto {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
-    }
-
-    public String getPhotoData() {
-        return photoData;
-    }
-
-    public void setPhotoData(String photoData) {
-        this.photoData = photoData;
     }
 }

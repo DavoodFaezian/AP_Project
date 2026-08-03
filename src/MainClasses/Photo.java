@@ -8,6 +8,7 @@ public class Photo extends BaseClass<Photo>{
     private String ownerId;
 
     private String photoName;
+    private String title;
 
     private Set<String> tags;
 
@@ -28,7 +29,7 @@ public class Photo extends BaseClass<Photo>{
         lastModified = LocalDateTime.now();
     }
 
-    public Photo(String ownerId, String photoName, String albumId , Set<String> tags, String caption, Boolean isFavorable) {
+    public Photo(String ownerId, String photoName, String albumId , Set<String> tags, String caption, Boolean isFavorable, String title) {
         this.ownerId = ownerId;
         this.photoName = photoName;
         this.tags = tags;
@@ -36,19 +37,7 @@ public class Photo extends BaseClass<Photo>{
         this.isFavorable = isFavorable;
         albumIds.add(albumId);
         createdAt = LocalDateTime.now();
-    }
-
-    public void addComment(String commentId){
-        commentIds.add(commentId);
-    }
-    public void removeComment(String commentId){
-        commentIds.remove(commentId);
-    }
-    public void addAlbum(String albumId){
-        albumIds.add(albumId);
-    }
-    public void removeAlbum(String albumId){
-        albumIds.remove(albumId);
+        this.title = title;
     }
 
 
@@ -127,6 +116,14 @@ public class Photo extends BaseClass<Photo>{
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Override

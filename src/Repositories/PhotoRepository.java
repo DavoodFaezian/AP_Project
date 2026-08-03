@@ -1,16 +1,16 @@
 package Repositories;
 
+import Exceptions.ActionFailedException;
 import Exceptions.ItemNotFoundException;
 import FileManager.FileServer;
 import MainClasses.Photo;
 
+import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class PhotoRepository extends BaseRepository<Photo>{
     private static PhotoRepository instance = new PhotoRepository();
 
-    private static final Map<String , FileServer> map = new HashMap<>();
 
     private PhotoRepository() {
         super("photos");
@@ -31,9 +31,10 @@ public class PhotoRepository extends BaseRepository<Photo>{
         photoFileManager.removeFromList(photo);
         photoFileManager.save();
 
-        FileServer server = map.get(photo.getOwnerId());
-        if (server != null) {
-           server.deleteData(photo.getId());
+        try {
+            FileServer.deletePhoto(photo.getOwnerId(),photo.getPhotoName());
+        } catch (IOException e) {
+            throw new ActionFailedException("Couldn't delete photo.");
         }
     }
 
@@ -65,24 +66,19 @@ public class PhotoRepository extends BaseRepository<Photo>{
         return photo.get();
     }
 
-    public Photo createPhoto(String ownerId, String photoName, String albumId , Set<String> tags, String caption, Boolean isFavorable, byte[] photoBytes) {
-        Photo photo = new Photo(ownerId , photoName , albumId , tags , caption , isFavorable);
+    public Photo createPhoto(String ownerId,String title, String photoName, String albumId , Set<String> tags, String caption, Boolean isFavorable) {
+        Photo photo = new Photo(ownerId , photoName , albumId , tags , caption , isFavorable,title );
         addPhoto(photo);
-        String fileName = "user_" + ownerId + ".bin";
-
-        FileServer server = map.computeIfAbsent(ownerId, id ->
-                new FileServer(fileName , new ReentrantReadWriteLock()));
-
-        server.saveData(photo.getId() , photoBytes);
         return photo;
     }
 
-    public byte[] getPhotoBytes(String ownerId , String photoId) {
-        FileServer server = map.get(ownerId);
-        if(server == null) {
-            return null;
+    public byte[] getPhotoBytes(String ownerId , String photoName) {
+
+        try {
+            return FileServer.getPhoto(ownerId,photoName);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return server.readData(photoId);
     }
 
 
@@ -93,5 +89,11 @@ public class PhotoRepository extends BaseRepository<Photo>{
 
     public boolean isPhotoIdValid(String photoId,String ownerId){
         return getFileManager(ownerId).exists(p->p.getId().equals(photoId));
+    }
+    public String uploadPhoto(String ownerId, byte[] photoBytes){        try {
+        return FileServer.savePhoto(ownerId , photoBytes);
+        } catch (IOException e) {
+            throw new ActionFailedException("Couldn't upload photo.");
+        }
     }
 }

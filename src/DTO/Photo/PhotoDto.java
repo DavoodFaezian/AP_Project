@@ -11,6 +11,7 @@ public class PhotoDto {
     private String ownerId;
 
     private String photoName;
+    private String title;
 
     private Set<String> tags;
 
@@ -32,6 +33,7 @@ public class PhotoDto {
         //complete the rest
         this.id = photo.getId();
         this.ownerId = photo.getOwnerId();
+        this.title = photo.getTitle();
         this.photoName = photo.getPhotoName();
         this.tags = photo.getTags() != null ? new HashSet<>(photo.getTags()) : new HashSet<>();
         this.caption = photo.getCaption();
@@ -61,6 +63,10 @@ public class PhotoDto {
 
     public String getCaption() {
         return caption;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public Boolean getFavorable() {

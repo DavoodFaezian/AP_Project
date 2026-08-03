@@ -2,6 +2,7 @@ package Services;
 import DTO.Photo.*;
 import Exceptions.ActionFailedException;
 import Exceptions.ItemNotFoundException;
+import FileManager.FileServer;
 import MainClasses.Album;
 import MainClasses.Photo;
 import MainClasses.User;
@@ -34,15 +35,14 @@ public class PhotoService {
     public String addPhoto(AddPhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        String photoName = data.getName();
+        String photoName = data.getPhotoName();
+        String title = data.getTitle();
         String albumId = data.getAlbumId();
         Set<String> tags = data.getTags();
         String caption = data.getCaption();
         Boolean isFavorable = data.getFavorable();
-        String photoData = data.getPhotoData();
         validatePhotoName(photoName);
-        byte[] photoBytes = uploadPhoto(photoData);
-        Photo photo = PhotoRepository.getInstance().createPhoto(user.getId() , photoName , albumId , tags , caption , isFavorable, photoBytes);
+        Photo photo = PhotoRepository.getInstance().createPhoto(user.getId(),title , photoName , albumId , tags , caption , isFavorable);
         if (!albumId.isEmpty()) {
             Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
             album.getPhotoIds().add(photo.getId());
@@ -50,7 +50,6 @@ public class PhotoService {
         }
         return photo.getId();
     }
-
     public void deletePhoto(DeletePhotoDto data) {
         String sessionId = data.getSessionId();
         String photoId = data.getPhotoId();
@@ -76,8 +75,10 @@ public class PhotoService {
     }
 
 
-    public byte[] uploadPhoto(String photoData) {
-        return Base64.getDecoder().decode(photoData);
+    public String uploadPhoto(String photoData,String sessionId) {
+        byte[] bytes = Base64.getDecoder().decode(photoData);
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        return PhotoRepository.getInstance().uploadPhoto(user.getId(),bytes);
     }
     public PhotoDto getPhotoById(GetPhotoDto data){
         String sessionId = data.getSessionId();

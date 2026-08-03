@@ -25,12 +25,19 @@ public class UserService {
     private static final int MIN_LENGTH = 8;
 
     private void validateUserName(String userName){
+        if(userName == null){
+            throw new ActionFailedException("User name must not be null.");
+        }
         if(userName.isEmpty()){
             throw new ActionFailedException("User name must not be empty.");
         }
     }
 
     private void validateNotEmpty(String password){
+        if(password == null){
+            throw new ActionFailedException("Password must not be null.");
+
+        }
         if(password.isEmpty()){
             throw new ActionFailedException("Password must not be empty.");
         }
@@ -55,6 +62,9 @@ public class UserService {
     }
 
     public void validateConfirmPassword(String password , String confirmPassword) {
+        if(confirmPassword == null){
+            throw new ActionFailedException("Confirm password cannot be null.");
+        }
         if (!password.equals(confirmPassword)) {
             throw new ActionFailedException("Confirm password does not match password.");
         }
@@ -70,7 +80,7 @@ public class UserService {
     public void validateSignUp(String userName , String password , String confirmPassword) {
         validateUserName(userName);
         validatePassword(userName , password);
-        UserRepository.getInstance().checkUserNameAndPassword(userName , password);
+        UserRepository.getInstance().checkUserNameAndPassword(userName);
         validateConfirmPassword(password , confirmPassword);
     }
 
@@ -90,7 +100,7 @@ public class UserService {
         }
     }
 
-    public void signUp(SignUpDto data) {
+    public String signUp(SignUpDto data) {
         String userName = data.getUserName();
         String password = data.getPassword();
 
@@ -106,6 +116,7 @@ public class UserService {
 
         profile.getSessionIds().add(session.getId());
         userProfileRepository.updateUserProfile(profile);
+        return session.getId();
     }
 
 

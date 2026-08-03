@@ -70,11 +70,11 @@ public class PostTests {
                 new AddPhotoDto(
                         sessionId,
                         "new photo",
+                        "new photo",
                         albumId1,
                         new HashSet<>(),
                         "caption",
-                        false,
-                        "1234"
+                        false
 
                 )
         );
@@ -83,11 +83,11 @@ public class PostTests {
                 new AddPhotoDto(
                         sessionId,
                         "new photo 2",
+                        "new photo 2",
                         albumId1,
                         new HashSet<>(),
                         "caption 2",
-                        false,
-                        "1234"
+                        false
 
                 )
         );
@@ -96,11 +96,11 @@ public class PostTests {
                 new AddPhotoDto(
                         sessionId,
                         "new photo 3",
+                        "new photo 3",
                         albumId2,
                         new HashSet<>(),
                         "caption 3",
-                        false,
-                        "1234"
+                        false
 
                 )
         );
@@ -308,11 +308,11 @@ public class PostTests {
                 new AddPhotoDto(
                         sessionId2,
                         "new photo 1 for following user",
+                        "new photo 1 for following user",
                         albumId5,
                         new HashSet<>(),
                         "caption",
-                        false,
-                        "1234"
+                        false
 
                 )
         );
@@ -321,11 +321,11 @@ public class PostTests {
                 new AddPhotoDto(
                         sessionId2,
                         "new photo 2 for following user",
+                        "new photo 2 for following user",
                         albumId5,
                         new HashSet<>(),
                         "caption 2",
-                        false,
-                        "1234"
+                        false
 
                 )
         );
@@ -334,11 +334,11 @@ public class PostTests {
                 new AddPhotoDto(
                         sessionId2,
                         "new photo 3 for following user",
+                        "new photo 3 for following user",
                         albumId4,
                         new HashSet<>(),
                         "caption 3",
-                        false,
-                        "1234"
+                        false
 
                 )
         );

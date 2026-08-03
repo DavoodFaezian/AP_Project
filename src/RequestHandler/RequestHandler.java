@@ -22,7 +22,6 @@ public class RequestHandler {
 
     private Request request;
 
-    private Response response;
 
     private static final String SECCEED = "200";
 
@@ -40,14 +39,6 @@ public class RequestHandler {
     public void setRequest(Request request) {
         this.request = request;
     }
-
-    public Response getResponse() {
-        return response;
-    }
-
-    public void setResponse(Response response) {
-        this.response = response;
-    }
     private static final Path CURRENT_DIR = Paths.get(System.getProperty("user.dir"));
 
     private record ActionHandler(Object instance, Method method) {}
@@ -63,9 +54,9 @@ public class RequestHandler {
                 Class<?> service = Class.forName("Services."+serviceName);
                 Object serviceInstance = service.getMethod("getInstance").invoke(null);
                 for(var method : service.getDeclaredMethods()){
-                    String actionName = serviceName.split("Service")[0]
+                    String actionName = serviceName.split("Service")[0].toLowerCase()
                             +'/'
-                            +method.getName();
+                            +method.getName().toLowerCase();
                     actions.put(actionName,new ActionHandler(serviceInstance,method));
                 }
 
@@ -84,6 +75,9 @@ public class RequestHandler {
     public Response handle() {
         Gson gson = new Gson();
         try {
+            if(!actions.containsKey(request.getActionName())){
+                return new Response("404","Service was not found"+request.getActionName(),new JsonObject());
+            }
             ActionHandler action= actions.get(request.getActionName());
             Type[] paramTypes = action.method.getGenericParameterTypes();
             Object[] args = new Object[paramTypes.length];
@@ -101,12 +95,16 @@ public class RequestHandler {
                     throw new RuntimeException("Method requires multiple arguments, but JSON is not an array.");
                 }
             }
+            Object result;
+            if (action.method.getReturnType().equals(void.class)) {
+                action.method.invoke(action.instance, args);
+                result = null;
+            } else {
+                result = action.method.invoke(action.instance, args);
+            }
 
 
-            Object result = action.method.invoke(action.instance, args);
-
-            response = new Response();
-
+            Response response = new Response();
             response.setStatus(SECCEED);
             if (result != null) {
                 JsonObject payload = new JsonObject();
@@ -116,16 +114,14 @@ public class RequestHandler {
                 response.setMessage("Request handled successfully.");
                 response.setPayLoad(new JsonObject());
             }
+            return response;
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
             Throwable exp = e.getCause();
-            response.setStatus(FAILED);
-            response.setMessage(exp.getMessage());
-            response.setPayLoad(new JsonObject());
+            return new Response(FAILED,exp.getMessage(),new JsonObject());
         }
 
-        return response;
     }
 
 }

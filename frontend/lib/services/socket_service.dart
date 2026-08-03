@@ -7,7 +7,7 @@ class SocketService {
     Socket? socket;
     try {
       // 10.0.2.2 برای شبیه‌ساز اندروید و localhost برای ویندوز/وب
-      socket = await Socket.connect('10.0.2.2', 1234);
+      socket = await Socket.connect('localhost', 1234);
 
       // ارسال درخواست
       socket.write(jsonRequest);

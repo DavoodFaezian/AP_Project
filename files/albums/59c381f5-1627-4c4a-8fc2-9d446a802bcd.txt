@@ -1,0 +1,40 @@
+{
+  "className": "MainClasses.Album",
+  "items": {
+    "c3b10ac5-7eef-4356-9743-b99ee87662ea": {
+      "ownerId": "59c381f5-1627-4c4a-8fc2-9d446a802bcd",
+      "albumName": "new album 1",
+      "photoIds": [
+        "5bc10e0f-b365-48c8-877e-02d4bd6b2ab6"
+      ],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 3
+        },
+        "time": {
+          "hour": 11,
+          "minute": 40,
+          "second": 25,
+          "nano": 142597800
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 3
+        },
+        "time": {
+          "hour": 11,
+          "minute": 40,
+          "second": 24,
+          "nano": 985597500
+        }
+      },
+      "id": "c3b10ac5-7eef-4356-9743-b99ee87662ea"
+    }
+  }
+}

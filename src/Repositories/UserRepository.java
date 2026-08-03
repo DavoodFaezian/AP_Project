@@ -54,11 +54,11 @@ public class UserRepository {
         return user.get();
     }
 
-    public void checkUserNameAndPassword(String userName , String password) {
-        Predicate<User> condition = s -> s.getUserName().equals(userName) || s.getPassword().equals(password);
+    public void checkUserNameAndPassword(String userName) {
+        Predicate<User> condition = s -> s.getUserName().equals(userName);
         List<User> users = userFileManager.filterItems(condition);
         if(!users.isEmpty()) {
-            throw new ActionFailedException("userName or password already exists.");
+            throw new ActionFailedException("UserName already exists.");
         }
     }
 

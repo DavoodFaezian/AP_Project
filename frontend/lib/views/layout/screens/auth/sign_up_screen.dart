@@ -67,9 +67,12 @@ class _SignUpPageState extends State<SignUpPage> {
       try {
         // الف) ساخت شیء Request مطابق با نیازمندی‌های بک‌اند جاوا
         final requestMap = {
-          "action": "SIGN_UP",
-          "username": _userNameController.text.trim(),
-          "password": _passwordController.text,
+          "actionName": "user/signup",
+          "payload": {
+            "userName": _userNameController.text.trim(),
+            "repeatedPassword": _confirmPasswordController.text.trim(),
+            "password": _passwordController.text,
+          }
         };
 
         // ب) تبدیل به JSON و اضافه کردن \n الزامی برای readLine بک‌اند
@@ -83,7 +86,7 @@ class _SignUpPageState extends State<SignUpPage> {
         // د) بررسی وضعیت پاسخ بک‌اند
         if (mounted) {
           // اگر کد پاسخ موفقیت‌آمیز بود (مثلاً 200 یا status == SUCCESS)
-          if (responseMap['statusCode'] == '200' || responseMap['status'] == 'SUCCESS') {
+          if (responseMap['status'] == '200') {
             
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Account created successfully!")),
