@@ -1,0 +1,32 @@
+{
+  "className": "MainClasses.Photo",
+  "items": {
+    "68b0d957-5e71-4c48-97d7-2bd6615069eb": {
+      "ownerId": "067f41a4-838b-4c03-beec-c014a48f43ca",
+      "photoName": "new photo",
+      "title": "new photo",
+      "tags": [],
+      "caption": "caption",
+      "isFavorable": false,
+      "commentIds": [],
+      "albumIds": [
+        "5166fa9e-849e-4e54-a0ed-208aef05327c"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 16,
+          "minute": 47,
+          "second": 10,
+          "nano": 883773400
+        }
+      },
+      "id": "68b0d957-5e71-4c48-97d7-2bd6615069eb"
+    }
+  }
+}

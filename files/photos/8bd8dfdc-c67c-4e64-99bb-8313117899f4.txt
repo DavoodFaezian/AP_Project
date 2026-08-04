@@ -1,0 +1,147 @@
+{
+  "className": "MainClasses.Photo",
+  "items": {
+    "a380aa70-58f9-469e-b615-7fbc95f3ce98": {
+      "ownerId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
+      "photoName": "f8a9873d-3925-4927-bd38-dc5adc1c3ec5",
+      "title": "dfd",
+      "tags": [],
+      "caption": "",
+      "commentIds": [],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 17,
+          "minute": 26,
+          "second": 14,
+          "nano": 822953000
+        }
+      },
+      "id": "a380aa70-58f9-469e-b615-7fbc95f3ce98"
+    },
+    "cdbfdf76-65e5-4424-95c0-c6ed52a80f79": {
+      "ownerId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
+      "photoName": "d1d7e7ce-39c8-4772-ad68-c692e720048c",
+      "title": "dfd",
+      "tags": [],
+      "caption": "dfwe",
+      "commentIds": [],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 17,
+          "minute": 42,
+          "second": 58,
+          "nano": 163412000
+        }
+      },
+      "id": "cdbfdf76-65e5-4424-95c0-c6ed52a80f79"
+    },
+    "a64a8644-7aed-44cc-b1ee-1f891473f6fe": {
+      "ownerId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
+      "photoName": "0700958a-cdd6-4676-adce-a29978d8305b",
+      "title": "dfd",
+      "tags": [],
+      "caption": "ddf",
+      "commentIds": [],
+      "albumIds": [
+        "f7f71d69-9ef2-4164-9914-2cfb9d297ad7"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 17,
+          "minute": 53,
+          "second": 14,
+          "nano": 851307600
+        }
+      },
+      "id": "a64a8644-7aed-44cc-b1ee-1f891473f6fe"
+    },
+    "5322d10d-0b09-4f2c-a223-31e70ebc5b8c": {
+      "ownerId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
+      "photoName": "159f3dc1-4490-4186-be78-453afcac525c",
+      "title": "dfd",
+      "tags": [
+        "df"
+      ],
+      "caption": "ddf",
+      "commentIds": [],
+      "albumIds": [
+        "f7f71d69-9ef2-4164-9914-2cfb9d297ad7"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 17,
+          "minute": 53,
+          "second": 43,
+          "nano": 168244600
+        }
+      },
+      "id": "5322d10d-0b09-4f2c-a223-31e70ebc5b8c"
+    },
+    "6a501672-c3d5-4ade-9f46-0807a664ef16": {
+      "ownerId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
+      "photoName": "e2249a29-d05f-4a10-80f6-9b0dc3e6d888",
+      "title": "dre2444",
+      "tags": [],
+      "caption": "",
+      "isFavorable": false,
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 18,
+          "minute": 3,
+          "second": 59,
+          "nano": 525280700
+        }
+      },
+      "commentIds": [],
+      "albumIds": [
+        "e16ab078-0939-43fa-8c98-4e43a87b0007"
+      ],
+      "postIds": [
+        "d614ccbd-6641-4d48-917b-0fa074294079"
+      ],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 17,
+          "minute": 56,
+          "second": 35,
+          "nano": 653793100
+        }
+      },
+      "id": "6a501672-c3d5-4ade-9f46-0807a664ef16"
+    }
+  }
+}

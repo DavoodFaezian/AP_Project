@@ -10,7 +10,7 @@ public class AddPhotoDto {
     private String title;
     private String photoName;
 
-    private String albumId;
+    private Set<String> albumIds;
 
     private Set<String> tags;
 
@@ -19,11 +19,11 @@ public class AddPhotoDto {
     private Boolean isFavorable;
 
 
-    public AddPhotoDto(String sessionId,String title, String photoName, String albumId , Set<String> tags, String caption, Boolean isFavorable) {
+    public AddPhotoDto(String sessionId,String title, String photoName, Set<String> albumIds , Set<String> tags, String caption, Boolean isFavorable) {
         this.sessionId = sessionId;
         this.photoName = photoName;
         this.title = title;
-        this.albumId = albumId;
+        this.albumIds = albumIds;
         this.tags = tags;
         this.caption = caption;
         this.isFavorable = isFavorable;
@@ -45,12 +45,12 @@ public class AddPhotoDto {
         this.photoName = photoName;
     }
 
-    public String getAlbumId() {
-        return albumId;
+    public Set<String> getAlbumIds() {
+        return albumIds;
     }
 
-    public void setAlbumId(String albumId) {
-        this.albumId = albumId;
+    public void setAlbumIds(Set<String> albumIds) {
+        this.albumIds = albumIds;
     }
 
     public Set<String> getTags() {

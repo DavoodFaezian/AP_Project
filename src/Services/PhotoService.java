@@ -10,7 +10,6 @@ import MainClasses.UserProfile;
 import Repositories.*;
 
 import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,16 +35,18 @@ public class PhotoService {
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         String photoName = data.getPhotoName();
         String title = data.getTitle();
-        String albumId = data.getAlbumId();
+        Set<String> albumIds = data.getAlbumIds();
         Set<String> tags = data.getTags();
         String caption = data.getCaption();
         Boolean isFavorable = data.getFavorable();
         validatePhotoName(photoName);
-        Photo photo = PhotoRepository.getInstance().createPhoto(user.getId(),title , photoName , albumId , tags , caption , isFavorable);
-        if (!albumId.isEmpty()) {
-            Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
-            album.getPhotoIds().add(photo.getId());
-            AlbumRepository.getInstance().update(album);
+        Photo photo = PhotoRepository.getInstance().createPhoto(user.getId(),title , photoName , albumIds , tags , caption , isFavorable);
+        for(var albumId : albumIds){
+            if (!albumId.isEmpty()) {
+                Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
+                album.getPhotoIds().add(photo.getId());
+                AlbumRepository.getInstance().update(album);
+            }
         }
         return new StringResultDto(photo.getId());
     }
@@ -68,9 +69,24 @@ public class PhotoService {
 
     public void editPhoto(EditPhotoDto data) {
         String sessionId = data.getSessionId();
-        SessionRepository.getInstance().validateSession(sessionId);
-        Photo photo = data.getPhoto();
-        PhotoRepository.getInstance().editPhoto(photo);
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        PhotoDto photo = data.getPhoto();
+        PhotoAlbumService.getInstance().editPhotoByAlbum(
+                new EditPhotoByAlbumDto(
+                        sessionId,
+                        data.getPhoto().getId(),
+                        data.getPhoto().getAlbumIds()
+                )
+        );
+        Photo edit = PhotoRepository.getInstance().findPhotoById(data.getPhoto().getId(),user.getId());
+        edit.setPhotoName(photo.getPhotoName());
+        edit.setAlbumIds(photo.getAlbumIds());
+        edit.setCaption(photo.getCaption());
+        edit.setTags(photo.getTags());
+        edit.setFavorable(photo.getFavorable());
+        edit.setTitle(photo.getTitle());
+
+        PhotoRepository.getInstance().editPhoto(edit);
     }
 
 

@@ -1,0 +1,73 @@
+{
+  "className": "MainClasses.Album",
+  "items": {
+    "1afc07bb-416c-48ca-8512-a0e4caa862f0": {
+      "ownerId": "593ee58c-078d-4f45-b5fb-fcbd9373f4c4",
+      "albumName": "new album 1",
+      "photoIds": [
+        "179858ad-6d31-4886-a8cd-5ab43ba4239a"
+      ],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 16,
+          "minute": 43,
+          "second": 2,
+          "nano": 334880100
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 16,
+          "minute": 43,
+          "second": 2,
+          "nano": 298880700
+        }
+      },
+      "id": "1afc07bb-416c-48ca-8512-a0e4caa862f0"
+    },
+    "ca670584-b2f5-4600-85da-0f89db3df015": {
+      "ownerId": "593ee58c-078d-4f45-b5fb-fcbd9373f4c4",
+      "albumName": "new album 2",
+      "photoIds": [],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 16,
+          "minute": 43,
+          "second": 2,
+          "nano": 334880100
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 16,
+          "minute": 43,
+          "second": 2,
+          "nano": 303880200
+        }
+      },
+      "id": "ca670584-b2f5-4600-85da-0f89db3df015"
+    }
+  }
+}

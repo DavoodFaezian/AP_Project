@@ -252,4 +252,7 @@ public class UserService {
 
 
     }
+    public void loginBySessionId(SessionIdDto data){
+        SessionRepository.getInstance().validateSession(data.getSessionId());
+    }
 }

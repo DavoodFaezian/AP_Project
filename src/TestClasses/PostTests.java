@@ -71,7 +71,7 @@ public class PostTests {
                         sessionId,
                         "new photo",
                         "new photo",
-                        albumId1,
+                        Set.of(albumId1),
                         new HashSet<>(),
                         "caption",
                         false
@@ -84,7 +84,7 @@ public class PostTests {
                         sessionId,
                         "new photo 2",
                         "new photo 2",
-                        albumId1,
+                        Set.of(albumId1),
                         new HashSet<>(),
                         "caption 2",
                         false
@@ -97,7 +97,7 @@ public class PostTests {
                         sessionId,
                         "new photo 3",
                         "new photo 3",
-                        albumId2,
+                        Set.of(albumId2),
                         new HashSet<>(),
                         "caption 3",
                         false
@@ -309,7 +309,7 @@ public class PostTests {
                         sessionId2,
                         "new photo 1 for following user",
                         "new photo 1 for following user",
-                        albumId5,
+                        Set.of(albumId5),
                         new HashSet<>(),
                         "caption",
                         false
@@ -322,7 +322,7 @@ public class PostTests {
                         sessionId2,
                         "new photo 2 for following user",
                         "new photo 2 for following user",
-                        albumId5,
+                        Set.of(albumId5),
                         new HashSet<>(),
                         "caption 2",
                         false
@@ -335,7 +335,7 @@ public class PostTests {
                         sessionId2,
                         "new photo 3 for following user",
                         "new photo 3 for following user",
-                        albumId4,
+                        Set.of(albumId4),
                         new HashSet<>(),
                         "caption 3",
                         false

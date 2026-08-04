@@ -66,8 +66,8 @@ public class PhotoRepository extends BaseRepository<Photo>{
         return photo.get();
     }
 
-    public Photo createPhoto(String ownerId,String title, String photoName, String albumId , Set<String> tags, String caption, Boolean isFavorable) {
-        Photo photo = new Photo(ownerId , photoName , albumId , tags , caption , isFavorable,title );
+    public Photo createPhoto(String ownerId,String title, String photoName, Set<String> albumIds , Set<String> tags, String caption, Boolean isFavorable) {
+        Photo photo = new Photo(ownerId , photoName , albumIds , tags , caption , isFavorable,title );
         addPhoto(photo);
         return photo;
     }

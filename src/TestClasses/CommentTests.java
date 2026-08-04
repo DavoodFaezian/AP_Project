@@ -73,7 +73,7 @@ public class CommentTests {
                         sessionId,
                         "new photo",
                         "new photo",
-                        albumId1,
+                        Set.of(albumId1),
                         new HashSet<>(),
                         "caption",
                         false
@@ -85,7 +85,7 @@ public class CommentTests {
                         sessionId,
                         "new photo 2",
                         "new photo 2",
-                        albumId1,
+                        Set.of(albumId1),
                         new HashSet<>(),
                         "caption 2",
                         false
@@ -97,7 +97,7 @@ public class CommentTests {
                         sessionId,
                         "new photo 3",
                         "new photo 3",
-                        albumId2,
+                        Set.of(albumId2),
                         new HashSet<>(),
                         "caption 3",
                         false

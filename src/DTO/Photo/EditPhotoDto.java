@@ -6,9 +6,9 @@ public class EditPhotoDto {
 
     private String sessionId;
 
-    private Photo photo;
+    private PhotoDto photo;
 
-    public EditPhotoDto(String sessionId, Photo photo) {
+    public EditPhotoDto(String sessionId, PhotoDto photo) {
         this.sessionId = sessionId;
         this.photo = photo;
     }
@@ -21,11 +21,11 @@ public class EditPhotoDto {
         this.sessionId = sessionId;
     }
 
-    public Photo getPhoto() {
+    public PhotoDto getPhoto() {
         return photo;
     }
 
-    public void setPhotoId(Photo photo) {
+    public void setPhotoId(PhotoDto photo) {
         this.photo = photo;
     }
 }

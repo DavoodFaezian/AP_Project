@@ -14,6 +14,7 @@ import Services.UserService;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,7 +32,7 @@ public class PhotoTests {
         String albumId1 = albumService.addAlbum(new AddAlbumDto(sessionId,"new album 1")).getId();
         String albumId2 = albumService.addAlbum(new AddAlbumDto(sessionId,"new album 2")).getId();
         String photoId = photoService.addPhoto(new AddPhotoDto(
-            sessionId,"new photo","new photo",albumId1,new HashSet<>(),"caption",false)).getId();
+            sessionId,"new photo","new photo", Set.of(albumId1),new HashSet<>(),"caption",false)).getId();
         photoAlbumService.addPhotoToAlbum(new AddPhotoToAndRemovePhotoFromAlbum(
                 sessionId,photoId,albumId2
 
@@ -96,7 +97,7 @@ public class PhotoTests {
         });
 
        String photoId2 = photoService.addPhoto(new AddPhotoDto(
-          sessionId , "photo2" ,"photo 2", "" , new HashSet<>() ,
+          sessionId , "photo2" ,"photo 2",Set.of("") , new HashSet<>() ,
           "caption" , false)).getId();
 
        PhotoDto photo2 = photoService.getPhotoById(new GetPhotoDto(sessionId,photoId2 , user1.getId()));

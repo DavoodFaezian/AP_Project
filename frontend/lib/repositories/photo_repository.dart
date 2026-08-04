@@ -93,7 +93,7 @@ class PhotoRepository {
   Future<String> addPhoto({
     required String photoName,
     required String title,
-    required String? albumId,
+    required Set<String> albumIds,
     required Set<String> tags,
     required String caption,
     required bool favorable,
@@ -104,7 +104,7 @@ class PhotoRepository {
         "sessionId": SessionManager.instance.sessionId,
         "photoName": photoName,
         "title": title,
-        "albumId": albumId,
+        "albumIds": albumIds.toList(),
         "tags": tags.toList(),
         "caption": caption,
         "favorable": favorable,

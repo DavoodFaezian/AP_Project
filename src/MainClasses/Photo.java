@@ -29,13 +29,13 @@ public class Photo extends BaseClass<Photo>{
         lastModified = LocalDateTime.now();
     }
 
-    public Photo(String ownerId, String photoName, String albumId , Set<String> tags, String caption, Boolean isFavorable, String title) {
+    public Photo(String ownerId, String photoName, Set<String> albumIds , Set<String> tags, String caption, Boolean isFavorable, String title) {
         this.ownerId = ownerId;
         this.photoName = photoName;
         this.tags = tags;
         this.caption = caption;
         this.isFavorable = isFavorable;
-        albumIds.add(albumId);
+        this.albumIds = albumIds;
         createdAt = LocalDateTime.now();
         this.title = title;
     }

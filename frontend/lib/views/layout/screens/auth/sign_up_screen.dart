@@ -35,17 +35,29 @@ class _SignUpPageState extends State<SignUpPage> {
     _checkAutoLogin();
   }
 
-  void _checkAutoLogin() {
+  Future<void> _checkAutoLogin() async {
+
     if (SessionManager.instance.isLoggedIn) {
-      // استفاده از microtask یا Timer.run برای اطمینان از اینکه context آماده است
-      Future.microtask(() {
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const NavigatorPage()),
-          );
+      final requestMap = {
+        "actionName": "User/signUp",
+        "payload": {
+          "sessionId": SessionManager.instance.sessionId,
         }
-      });
+      };
+      String jsonRequest = jsonEncode(requestMap) + "\n";
+      String rawResponse = await SocketService.sendRequest(jsonRequest);
+      Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+      if (responseMap['status'] == '200') {
+        // استفاده از microtask یا Timer.run برای اطمینان از اینکه context آماده است
+        Future.microtask(() {
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const NavigatorPage()),
+            );
+          }
+        });
+      }
     }
   }
 

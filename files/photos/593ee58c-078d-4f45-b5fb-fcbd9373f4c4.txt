@@ -1,0 +1,57 @@
+{
+  "className": "MainClasses.Photo",
+  "items": {
+    "179858ad-6d31-4886-a8cd-5ab43ba4239a": {
+      "ownerId": "593ee58c-078d-4f45-b5fb-fcbd9373f4c4",
+      "photoName": "new photo",
+      "title": "new photo",
+      "tags": [],
+      "caption": "caption",
+      "isFavorable": false,
+      "commentIds": [],
+      "albumIds": [
+        "1afc07bb-416c-48ca-8512-a0e4caa862f0"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 16,
+          "minute": 43,
+          "second": 2,
+          "nano": 306881300
+        }
+      },
+      "id": "179858ad-6d31-4886-a8cd-5ab43ba4239a"
+    },
+    "a59a87f1-35f9-4cbe-834a-4f9c5e6eedab": {
+      "ownerId": "593ee58c-078d-4f45-b5fb-fcbd9373f4c4",
+      "photoName": "photo 2",
+      "title": "photo2",
+      "tags": [],
+      "caption": "caption",
+      "isFavorable": false,
+      "commentIds": [],
+      "albumIds": [],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 16,
+          "minute": 43,
+          "second": 2,
+          "nano": 347880100
+        }
+      },
+      "id": "a59a87f1-35f9-4cbe-834a-4f9c5e6eedab"
+    }
+  }
+}

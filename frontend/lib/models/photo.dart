@@ -83,11 +83,9 @@ class Photo {
       'tags': tags.toList(),
       'caption': caption,
       'isFavorable': isFavorable,
-      'lastModified': lastModified?.toIso8601String(),
       'commentIds': commentIds.toList(),
       'albumIds': albumIds.toList(),
       'postIds': postIds.toList(),
-      'createdAt': createdAt.toIso8601String(),
     };
   }
 }

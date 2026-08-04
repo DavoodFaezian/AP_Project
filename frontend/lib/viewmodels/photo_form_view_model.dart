@@ -97,7 +97,7 @@ class PhotoFormViewModel extends ChangeNotifier {
         await _repository.addPhoto(
           photoName: photoName.trim(),
           title: title.trim(),
-          albumId: sourceAlbumId!,
+          albumIds: Set<String>.from(selectedAlbumIds),
           tags: _parseTags(),
           caption: caption.trim(),
           favorable: false,

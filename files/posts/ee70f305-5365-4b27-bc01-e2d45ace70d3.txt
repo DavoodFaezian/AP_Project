@@ -14,7 +14,9 @@
         "cadf8dde-a33d-48f6-b77d-7d4e51fedea6",
         "06fada4e-f05f-4ca9-ab68-00436a8fdaa2",
         "d6a7cdcc-6f67-4787-b3c5-b924376812ae",
-        "496d4b0d-1bce-444a-b8a1-ad92aa087cca"
+        "496d4b0d-1bce-444a-b8a1-ad92aa087cca",
+        "379860f5-7f2a-4371-95c4-52d328cf5ab1",
+        "40530c5c-b6e8-4abc-9de6-51aced183b81"
       ],
       "commentsAllowed": true,
       "createdAt": {
@@ -157,12 +159,10 @@
     },
     "d12de223-7b8f-4d29-a752-f0040eacd369": {
       "ownerId": "ee70f305-5365-4b27-bc01-e2d45ace70d3",
-      "photoIds": [
-        "34357f8a-ea86-4680-a0fb-3110781481e8",
-        "08cc80ba-eddf-427e-bd8f-afa971538510"
-      ],
+      "photoIds": [],
       "albumIds": [
-        "2b5b1f2d-0a51-4be3-83fe-d07685e80932"
+        "2b5b1f2d-0a51-4be3-83fe-d07685e80932",
+        "7338e131-a596-402f-9019-ed1e1725345f"
       ],
       "commentIds": [],
       "commentsAllowed": true,

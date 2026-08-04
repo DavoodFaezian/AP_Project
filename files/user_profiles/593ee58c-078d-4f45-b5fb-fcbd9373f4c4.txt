@@ -1,0 +1,16 @@
+{
+  "className": "MainClasses.UserProfile",
+  "items": {
+    "ac5266cb-b7c3-4f8b-a8e0-019e48567776": {
+      "userId": "593ee58c-078d-4f45-b5fb-fcbd9373f4c4",
+      "theme": "SYSTEM",
+      "sessionIds": [
+        "8a4d018a-9afe-45d3-b863-359c59ea2d0d",
+        "932df7de-6224-4eaa-8617-2d7e8fe816f8"
+      ],
+      "followersId": [],
+      "followingsId": [],
+      "id": "ac5266cb-b7c3-4f8b-a8e0-019e48567776"
+    }
+  }
+}
