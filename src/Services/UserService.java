@@ -1,6 +1,7 @@
 package Services;
 
 
+import DTO.Photo.EditPhotoByAlbumDto;
 import DTO.Photo.UploadPhotoDto;
 import DTO.SessionIdDto;
 import DTO.StringResultDto;

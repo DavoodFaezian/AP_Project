@@ -125,7 +125,24 @@ public class PhotoAlbumService{
         PhotoRepository.getInstance().update(photo);
     }
 
+    public void editPhotoByAlbum(EditPhotoByAlbumDto data) {
+        String sessionId = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        Photo photo = PhotoRepository.getInstance().findPhotoById(data.getPhotoId() , user.getId());
 
+        for (String i : data.getAlbumIds()) {
+            if (!photo.getAlbumIds().contains(i)) {
+                addMethod(i , photo , user , photo.getId());
+            }
+        }
+
+        for (String i : photo.getAlbumIds()) {
+            if (!data.getAlbumIds().contains(i)) {
+               removeMethod(i , photo , user , photo.getId());
+            }
+        }
+
+    }
 
     public PhotoListDto getPhotosByAlbumId(GetAlbumPhotosDto data){
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
