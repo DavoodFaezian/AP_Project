@@ -3,11 +3,21 @@ package DTO.User;
 import MainClasses.Theme;
 
 public class ChangeThemeDto {
-    private Theme theme;
+
     private String sessionId;
 
-    public ChangeThemeDto(Theme theme, String sessionId) {
+    private Theme theme;
+
+    public ChangeThemeDto(String sessionId, Theme theme) {
+        this.sessionId = sessionId;
         this.theme = theme;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
 
@@ -15,7 +25,7 @@ public class ChangeThemeDto {
         return theme;
     }
 
-    public String getSessionId() {
-        return sessionId;
+    public void setTheme(Theme theme) {
+        this.theme = theme;
     }
 }

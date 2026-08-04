@@ -1,7 +1,6 @@
 package Services;
 
 
-import DTO.Photo.UploadPhotoDto;
 import DTO.SessionIdDto;
 import DTO.StringResultDto;
 import DTO.User.*;
@@ -9,12 +8,10 @@ import Exceptions.*;
 import MainClasses.Session;
 import MainClasses.User;
 import MainClasses.UserProfile;
-import Repositories.PhotoRepository;
+import Repositories.BannedUserRepository;
 import Repositories.SessionRepository;
 import Repositories.UserProfileRepository;
 import Repositories.UserRepository;
-
-import java.util.Base64;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -30,117 +27,91 @@ public class UserService {
     private static final int MIN_LENGTH = 8;
 
     private void validateUserName(String userName){
-        if(userName == null){
-            throw new ActionFailedException("User name must not be null.");
-        }
-        if(userName.isEmpty()){
-            throw new ActionFailedException("User name must not be empty.");
-        }
+        validateAction(userName == null, "User name must not be null.");
+        validateAction(userName.isEmpty(), "User name must not be empty.");
     }
 
     private void validateNotEmpty(String password){
-        if(password == null){
-            throw new ActionFailedException("Password must not be null.");
-
-        }
-        if(password.isEmpty()){
-            throw new ActionFailedException("Password must not be empty.");
-        }
+        validateAction(password == null, "Password must not be null.");
+        validateAction(password.isEmpty(), "Password must not be empty.");
     }
 
     private void validateLength(String password){
-        if(password.length() < MIN_LENGTH){
-            throw new ActionFailedException("Password must have at least 8 characters.");
-        }
+        validateAction(password.length() < MIN_LENGTH, "Password must have at least 8 characters.");
     }
 
     private void validateStrength(String password){
-        if(!Pattern.compile("[!@#$%^&*+=_?]").matcher(password).find()){
-            throw new ActionFailedException("Password must contain at least one special character.");
-        }
+        validateAction(!Pattern.compile("[!@#$%^&*+=_?]").matcher(password).find(), "Password must contain at least one special character.");
     }
 
     private void validateDoesNotContainUserName(String userName , String password){
-        if(password.contains(userName)){
-            throw new ActionFailedException("Password must not contain user name.");
-        }
+        validateAction(password.contains(userName), "Password must not contain user name.");
     }
 
     public void validateConfirmPassword(String password , String confirmPassword) {
-        if(confirmPassword == null){
-            throw new ActionFailedException("Confirm password cannot be null.");
-        }
-        if (!password.equals(confirmPassword)) {
-            throw new ActionFailedException("Confirm password does not match password.");
-        }
+        validateAction(confirmPassword == null, "Confirm password cannot be null.");
+        validateAction(!password.equals(confirmPassword), "Confirm password does not match password.");
     }
 
-    public void validatePassword(String userName , String password) {
+    public void validatePassword(String userName , String password , String confirmPassword) {
         validateNotEmpty(password);
         validateLength(password);
         validateStrength(password);
         validateDoesNotContainUserName(userName , password);
+        validateConfirmPassword(password, confirmPassword);
     }
 
     public void validateSignUp(String userName , String password , String confirmPassword) {
         validateUserName(userName);
-        validatePassword(userName , password);
-        UserRepository.getInstance().checkUserNameAndPassword(userName);
-        validateConfirmPassword(password , confirmPassword);
+        validatePassword(userName , password , confirmPassword);
+        UserRepository.getInstance().checkUserNameAndPassword(userName , password);
     }
 
     public User validateLogIn(String userName , String password) {
         return UserRepository.getInstance().findUserByUserNameAndPassword(userName , password);
     }
 
-    public void validateOldPassword(User user , String oldPassword) {
-        if (!user.getPassword().equals(oldPassword)) {
-            throw new ActionFailedException("Old password is incorrect.");
-        }
+    public void validatePermission(User user) {
+        BannedUserRepository.getInstance().isUserAllowedToLogin(user.getId());
     }
 
-    public void validateNewPassword(String password , String newPassword) {
-        if(!password.equals(newPassword)) {
-            throw new ActionFailedException("Verify password failed.");
-        }
+    public void validateOldPassword(User user , String oldPassword) {
+        validateAction(!user.getPassword().equals(oldPassword), "Old password is incorrect.");
     }
+
 
     public StringResultDto signUp(SignUpDto data) {
         String userName = data.getUserName();
         String password = data.getPassword();
-
-        validateSignUp(userName, password, data.getRepeatedPassword());
+        String reapetedPassword = data.getRepeatedPassword();
+        validateSignUp(userName, password, reapetedPassword);
 
         User user = UserRepository.getInstance().create(userName, password);
         userProfileRepository.createUserProfile(user.getId());
 
-        Session session = SessionRepository.getInstance().createSession(user.getId());
-
-        UserProfile profile = userProfileRepository.getUserProfileByUserId(user.getId())
-                .orElseThrow(() -> new ItemNotFoundException("user profile", user.getId()));
-
-        profile.getSessionIds().add(session.getId());
-        userProfileRepository.updateUserProfile(profile);
-        return new StringResultDto(session.getId());
+        return getResult(user);
     }
 
 
     public StringResultDto logIn(LogInDto data) {
         User user = validateLogIn(data.getUserName(), data.getPassword());
+        validatePermission(user);
+        return getResult(user);
+    }
+
+    private StringResultDto getResult(User user) {
         Session session = SessionRepository.getInstance().createSession(user.getId());
 
-        UserProfile profile = userProfileRepository.getUserProfileByUserId(user.getId())
-                .orElseThrow(() -> new ItemNotFoundException("user profile", user.getId()));
+        UserProfile profile = validateUserProfile(user.getId());
 
         profile.getSessionIds().add(session.getId());
         userProfileRepository.updateUserProfile(profile);
 
         return new StringResultDto(session.getId());
     }
+
     public void changeUserName(ChangeUserNameDto data){
-        if(data.getNewUserName()== null||data.getNewUserName().isEmpty()){
-            throw new ActionFailedException("UserName can't be null");
-        }
+        validateUserName(data.getNewUserName());
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         user.setUserName(data.getNewUserName());
@@ -164,8 +135,7 @@ public class UserService {
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
 
         validateOldPassword(user, data.getOldPassword());
-        validatePassword(user.getUserName(), data.getNewPassword());
-        validateNewPassword(data.getNewPassword(), data.getConfirmNewPassword());
+        validatePassword(user.getUserName(), data.getNewPassword(), data.getConfirmNewPassword());
 
         user.setPassword(data.getNewPassword());
         UserRepository.getInstance().update();
@@ -199,17 +169,11 @@ public class UserService {
 
         String followingUserId = data.getFollowingUserId();
 
-        if (follower.getId().equals(followingUserId)) {
-            throw new ActionFailedException("You cannot follow yourself.");
-        }
+        validateAction(follower.getId().equals(followingUserId), "You cannot follow yourself.");
 
-        UserProfile followerProfile = userProfileRepository
-                .getUserProfileByUserId(follower.getId())
-                .orElseThrow(() -> new ItemNotFoundException("user profile", follower.getId()));
+        UserProfile followerProfile = validateUserProfile(follower.getId());
 
-        UserProfile followingProfile = userProfileRepository
-                .getUserProfileByUserId(followingUserId)
-                .orElseThrow(() -> new ItemNotFoundException("user profile", followingUserId));
+        UserProfile followingProfile = validateUserProfile(followingUserId);
 
         followerProfile.getFollowingsId().add(followingUserId);
         followingProfile.getFollowersId().add(follower.getId());
@@ -218,19 +182,27 @@ public class UserService {
         userProfileRepository.updateUserProfile(followingProfile);
     }
 
+    private UserProfile validateUserProfile(String follower) {
+        return userProfileRepository
+                .getUserProfileByUserId(follower)
+                .orElseThrow(() -> new ItemNotFoundException("user profile", follower));
+    }
+
+    private static void validateAction(boolean condition, String actionName) {
+        if (condition) {
+            throw new ActionFailedException(actionName);
+        }
+    }
+
     public void unfollow(FollowAndUnfollowDto data) {
         User follower = SessionRepository.getInstance()
                 .findUserBySessionId(data.getFollowerSessionId());
 
         String followingUserId = data.getFollowingUserId();
 
-        UserProfile followerProfile = userProfileRepository
-                .getUserProfileByUserId(follower.getId())
-                .orElseThrow(() -> new ItemNotFoundException("user profile", follower.getId()));
+        UserProfile followerProfile = validateUserProfile(follower.getId());
 
-        UserProfile followingProfile = userProfileRepository
-                .getUserProfileByUserId(followingUserId)
-                .orElseThrow(() -> new ItemNotFoundException("user profile", followingUserId));
+        UserProfile followingProfile = validateUserProfile(followingUserId);
 
         followerProfile.getFollowingsId().remove(followingUserId);
         followingProfile.getFollowersId().remove(follower.getId());
@@ -246,9 +218,7 @@ public class UserService {
     public void changeTheme(ChangeThemeDto data){
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
         Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
-        if(profile.isEmpty()){
-            throw new ActionFailedException("Ops! profile was not found.");
-        }
+        validateAction(profile.isEmpty(), "Ops! profile was not found.");
         UserProfile notNullProfile = profile.get();
         notNullProfile.setTheme(data.getTheme());
         userProfileRepository.updateUserProfile(notNullProfile);
@@ -257,9 +227,7 @@ public class UserService {
     public UserProfileDto getUser(SessionIdDto data){
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
         Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
-        if(profile.isEmpty()){
-            throw new ActionFailedException("Ops! profile was not found.");
-        }
+        validateAction(profile.isEmpty(), "Ops! profile was not found.");
         UserProfile notNullProfile = profile.get();
         return new UserProfileDto(
                 user.getUserName(),

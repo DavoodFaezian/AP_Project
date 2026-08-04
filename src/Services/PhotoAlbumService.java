@@ -36,11 +36,15 @@ public class PhotoAlbumService{
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         validatePhoto(photoId);
         Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
+        addMethod(albumId, photo, user, photoId);
+    }
+
+    private static void addMethod(String albumId, Photo photo, User user, String photoId) {
         if(albumId.isEmpty()){
             photo.getAlbumIds().add(albumId);
         }
         else {
-            Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
+            Album album = AlbumRepository.getInstance().findAlbumById(albumId, user.getId());
             photo.getAlbumIds().add(albumId);
             album.getPhotoIds().add(photoId);
             album.updateTime();
@@ -55,11 +59,15 @@ public class PhotoAlbumService{
         String albumId = data.getAlbumId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         Photo photo = PhotoRepository.getInstance().findPhotoById(photoId , user.getId());
+        removeMethod(albumId, photo, user, photoId);
+    }
+
+    private static void removeMethod(String albumId, Photo photo, User user, String photoId) {
         if(albumId.isEmpty()){
             photo.getAlbumIds().remove(albumId);
         }
         else {
-            Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
+            Album album = AlbumRepository.getInstance().findAlbumById(albumId, user.getId());
             photo.getAlbumIds().remove(albumId);
             album.getPhotoIds().remove(photoId);
             album.updateTime();
@@ -115,6 +123,25 @@ public class PhotoAlbumService{
         photo.getAlbumIds().remove(fromAlbumId);
         photo.getAlbumIds().add(toAlbumId);
         PhotoRepository.getInstance().update(photo);
+    }
+
+    public void editPhotoByAlbum(EditPhotoByAlbumDto data) {
+        String sessionId = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        Photo photo = PhotoRepository.getInstance().findPhotoById(data.getPhotoId() , user.getId());
+
+        for (String i : data.getAlbumIds()) {
+            if (!photo.getAlbumIds().contains(i)) {
+                addMethod(i , photo , user , photo.getId());
+            }
+        }
+
+        for (String i : photo.getAlbumIds()) {
+            if (!data.getAlbumIds().contains(i)) {
+               removeMethod(i , photo , user , photo.getId());
+            }
+        }
+
     }
 
     public PhotoListDto getPhotosByAlbumId(GetAlbumPhotosDto data){

@@ -54,8 +54,8 @@ public class UserRepository {
         return user.get();
     }
 
-    public void checkUserNameAndPassword(String userName) {
-        Predicate<User> condition = s -> s.getUserName().equals(userName);
+    public void checkUserNameAndPassword(String userName , String password) {
+        Predicate<User> condition = s -> s.getUserName().equals(userName) || s.getPassword().equals(password);
         List<User> users = userFileManager.filterItems(condition);
         if(!users.isEmpty()) {
             throw new ActionFailedException("UserName already exists.");
@@ -76,6 +76,10 @@ public class UserRepository {
         User user = new User(userName , password);
         addUser(user);
         return user;
+    }
+
+    public List<User> filterUsers (Predicate<User> condition) {
+        return userFileManager.filterItems(condition);
     }
 
     public boolean isUserIdValid(String userId){

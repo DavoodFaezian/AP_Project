@@ -6,7 +6,7 @@ import java.util.Set;
 public class UserProfile extends BaseClass<UserProfile> {
     private String userId;
     private String profilePhotoName;
-    private Theme theme = Theme.LIGHT;
+    private Theme theme = Theme.SYSTEM;
 
     private Set<String> sessionIds = new HashSet<>();
 
