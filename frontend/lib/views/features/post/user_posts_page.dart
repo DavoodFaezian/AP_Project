@@ -32,7 +32,7 @@ class _UserPostsPageState extends State<UserPostsPage> {
     _viewModel.addListener(_onViewModelChange);
     
     // لود کردن پست‌های کاربر هنگام ورود به صفحه
-    _viewModel.loadUserPosts(widget.userId);
+    _viewModel.loadUserPosts();
   }
 
   void _onViewModelChange() {

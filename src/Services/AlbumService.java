@@ -67,6 +67,14 @@ public class AlbumService {
         Album album = albumRepository.findAlbumById(data.getAlbumId(), data.getOwnerId());
         return album.getPhotoIds() != null ? album.getPhotoIds() : Collections.emptySet();
     }
+    public AlbumDto getAlbumById(GetAlbumDto data){
+        String ownerId = SessionRepository.getInstance().findUserBySessionId(data.getSessionId()).getId();
+        if(data.getOwnerId() != null){
+            ownerId = data.getOwnerId();
+        }
+        Album album = albumRepository.findAlbumById(data.getAlbumId(), ownerId);
+        return new AlbumDto(album);
+    }
 
 
     public AlbumListDto getAllAlbumsByOwnerId(GetAllAlbumsDto data) {

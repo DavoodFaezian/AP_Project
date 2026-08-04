@@ -3,7 +3,9 @@ class Post {
   final String ownerId;
   final Set<String> photoIds;
   final Set<String> albumIds;
+  final Set<String> commentIds;
   final bool commentsAllowed;
+  final DateTime? createdAt;
   final DateTime? lastModified;
 
   Post({
@@ -11,7 +13,9 @@ class Post {
     required this.ownerId,
     required this.photoIds,
     required this.albumIds,
+    required this.commentIds,
     required this.commentsAllowed,
+    this.createdAt,
     this.lastModified,
   });
 
@@ -26,7 +30,13 @@ class Post {
       albumIds: json['albumIds'] != null
           ? Set<String>.from(json['albumIds'])
           : <String>{},
+      commentIds: json['commentIds'] != null
+          ? Set<String>.from(json['commentIds'])
+          : <String>{},
       commentsAllowed: json['commentsAllowed'] ?? json['areCommentsAllowed'] ?? true,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'].toString())
+          : null,
       lastModified: json['lastModified'] != null
           ? DateTime.tryParse(json['lastModified'].toString())
           : null,
@@ -40,7 +50,9 @@ class Post {
       'ownerId': ownerId,
       'photoIds': photoIds.toList(),
       'albumIds': albumIds.toList(),
+      'commentIds': commentIds.toList(),
       'commentsAllowed': commentsAllowed,
+      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
       if (lastModified != null) 'lastModified': lastModified!.toIso8601String(),
     };
   }
@@ -51,7 +63,9 @@ class Post {
     String? ownerId,
     Set<String>? photoIds,
     Set<String>? albumIds,
+    Set<String>? commentIds,
     bool? commentsAllowed,
+    DateTime? createdAt,
     DateTime? lastModified,
   }) {
     return Post(
@@ -59,7 +73,9 @@ class Post {
       ownerId: ownerId ?? this.ownerId,
       photoIds: photoIds ?? this.photoIds,
       albumIds: albumIds ?? this.albumIds,
+      commentIds: commentIds ?? this.commentIds,
       commentsAllowed: commentsAllowed ?? this.commentsAllowed,
+      createdAt: createdAt ?? this.createdAt,
       lastModified: lastModified ?? this.lastModified,
     );
   }

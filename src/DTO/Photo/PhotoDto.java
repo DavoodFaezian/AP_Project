@@ -29,7 +29,6 @@ public class PhotoDto {
 
     public PhotoDto(Photo photo) {
         this.id = photo.getId();
-        this.id = photo.getId();
         this.ownerId = photo.getOwnerId();
         this.title = photo.getTitle();
         this.photoName = photo.getPhotoName();

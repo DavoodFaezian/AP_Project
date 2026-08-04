@@ -41,7 +41,7 @@ class PhotoRepository {
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
     if (responseMap['status'] == "200" ) {
-      return Photo.fromJson(responseMap['photo'] ?? responseMap['data']);
+      return Photo.fromJson(responseMap['payload'] ?? responseMap['data']);
     } else {
       throw Exception(responseMap['message'] ?? 'Photo not found');
     }
@@ -62,7 +62,7 @@ class PhotoRepository {
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
     if (responseMap['status'] == "200" ) {
-      return responseMap['photoData'] ?? responseMap['data']; // رشته Base64 بایت‌ها
+      return responseMap['payload']['photoData'] ?? responseMap['data']; // رشته Base64 بایت‌ها
     } else {
       throw Exception(responseMap['message'] ?? 'Failed to fetch photo bytes');
     }
@@ -83,7 +83,7 @@ class PhotoRepository {
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
     if (responseMap['status'] == "200" ) {
-      return responseMap['photoId'] ?? responseMap['data']; // شناسه فایل ذخیره شده
+      return responseMap['payload']['photoId'] ?? responseMap['data']; // شناسه فایل ذخیره شده
     } else {
       throw Exception(responseMap['message'] ?? 'Failed to upload photo bytes');
     }

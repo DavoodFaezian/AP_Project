@@ -1,45 +1,45 @@
 class Comment {
-  final String? id;
+  final String id;
   final String ownerId;
   final String script;
-  final String photoId;
+  final String postId;
 
   const Comment({
-    this.id,
+    required this.id,
     required this.ownerId,
     required this.script,
-    required this.photoId,
+    required this.postId,
   });
 
   Comment copyWith({
     String? id,
     String? ownerId,
     String? script,
-    String? photoId,
+    String? postId,
   }) {
     return Comment(
       id: id ?? this.id,
       ownerId: ownerId ?? this.ownerId,
       script: script ?? this.script,
-      photoId: photoId ?? this.photoId,
+      postId: postId ?? this.postId,
     );
   }
 
   factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
-      id: json['id'] as String?,
-      ownerId: json['ownerId'] as String,
-      script: json['script'] as String,
-      photoId: json['photoId'] as String,
+      id: (json['id'] ?? '').toString(),
+      ownerId: (json['ownerId'] ?? '').toString(),
+      script: (json['script'] ?? '').toString(),
+      postId: (json['postId'] ?? '').toString(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      if (id != null) 'id': id,
+      'id': id,
       'ownerId': ownerId,
       'script': script,
-      'photoId': photoId,
+      'postId': postId,
     };
   }
 }

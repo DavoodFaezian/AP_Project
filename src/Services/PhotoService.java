@@ -92,8 +92,11 @@ public class PhotoService {
     }
     public PhotoDto getPhotoById(GetPhotoDto data){
         String sessionId = data.getSessionId();
-        SessionRepository.getInstance().validateSession(sessionId);
-        var res = PhotoRepository.getInstance().getPhotoById(data.getOwnerId(), data.getPhotoId());
+        String ownerId = SessionRepository.getInstance().findUserBySessionId(sessionId).getId();
+        if(data.getOwnerId() != null){
+            ownerId = data.getOwnerId();
+        }
+        var res = PhotoRepository.getInstance().getPhotoById(ownerId, data.getPhotoId());
         if(res.isEmpty())
         {
             throw new ItemNotFoundException("Photo", data.getPhotoId());

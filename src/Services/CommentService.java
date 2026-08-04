@@ -81,19 +81,19 @@ public class CommentService {
         }
     }
 
-    public List<CommentDto> getAllCommentsByPostId(GetCommentsByPostDto data) {
+    public CommentListDto getAllCommentsByPostId(GetCommentsByPostDto data) {
         sessionRepository.validateSession(data.getSessionId());
 
         List<Comment> comments = commentRepository.getAllCommentsByPostId(data.getPostId());
         if (comments == null) {
-            return Collections.emptyList();
+            return new CommentListDto(Collections.emptyList());
         }
 
         List<CommentDto> dtos = new ArrayList<>();
         for (Comment comment : comments) {
             dtos.add(mapCommentToDto(comment));
         }
-        return dtos;
+        return new CommentListDto(dtos);
     }
 
     private CommentDto mapCommentToDto(Comment comment) {
