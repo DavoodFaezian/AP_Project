@@ -17,7 +17,6 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  static const String _currentUserId = 'user1';
   bool hasSearched = false;
   final TextEditingController searchController = TextEditingController();
   final List<Photo> searchResult = [];

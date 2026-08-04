@@ -292,7 +292,7 @@ public class PostService {
                 .map(PostDto::new)
                 .collect(Collectors.toList()));
     }
-    
+
     public PostDto getPostById(String postId, String ownerId){
         Post post = postRepository.findPostById(postId,ownerId);
         return new PostDto(post);

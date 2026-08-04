@@ -1,5 +1,6 @@
 import 'dart:convert'; // 👈 برای jsonEncode و jsonDecode
 import 'package:flutter/material.dart';
+import 'package:local_auth/local_auth.dart'; // 👈 اضافه شدن پکیج اثر انگشت
 import 'package:test_app/views/layout/screens/auth/sign_up_screen.dart';
 import '../../../../services/session_manager.dart';
 import '../../../components/widgets/auth_header.dart';
@@ -19,6 +20,7 @@ class _LogInPageState extends State<LogInPage> {
   final _formKey = GlobalKey<FormState>();
   final _userNameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final LocalAuthentication _localAuth = LocalAuthentication(); // 👈 تعریف نمونه اثر انگشت
 
   bool _showPassword = false;
   
@@ -37,6 +39,87 @@ class _LogInPageState extends State<LogInPage> {
       return "Password is required";
     }
     return null;
+  }
+
+  // 👈 متد ورود با اثر انگشت
+  Future<void> _logInWithBiometrics() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final bool canAuthenticateWithBiometrics = await _localAuth.canCheckBiometrics;
+      final bool isDeviceSupported = await _localAuth.isDeviceSupported();
+
+      if (!canAuthenticateWithBiometrics || !isDeviceSupported) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Biometric authentication is not available on this device."),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
+
+      final bool isAuthenticated = await _localAuth.authenticate(
+        localizedReason: 'Please put your finger to open the application',
+        biometricOnly: true,
+        persistAcrossBackgrounding: true,
+      );
+
+      if (isAuthenticated) {
+        final savedSessionId = SessionManager.instance.sessionId;
+
+        if (savedSessionId != null && savedSessionId.isNotEmpty) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Welcome back!")),
+            );
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const NavigatorPage(),
+              ),
+            );
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("No active session found. Please log in with password first."),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Biometric authentication failed."),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error: $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   // 👈 ۲. اصلاح متد _logIn و اتصال به بک‌اند جاوا
@@ -177,22 +260,49 @@ class _LogInPageState extends State<LogInPage> {
 
                     const SizedBox(height: 20),
                 
-                    // 👈 ۳. تغییر دکمه Log In برای نمایش Spinner در زمان ارسال
-                    SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _logIn,
-                        style: TextButton.styleFrom(
-                          backgroundColor: const Color(0xFF1257FA),
-                        ),
-                        child: _isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text(
-                                "Log In",
-                                style: TextStyle(color: Colors.white, fontSize: 18),
+                    // 👈 ۳. ترکیب دکمه Log In و دکمه اثر انگشت در یک Row
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 60,
+                            child: ElevatedButton(
+                              onPressed: _isLoading ? null : _logIn,
+                              style: TextButton.styleFrom(
+                                backgroundColor: const Color(0xFF1257FA),
                               ),
-                      ),
+                              child: _isLoading
+                                  ? const CircularProgressIndicator(color: Colors.white)
+                                  : const Text(
+                                      "Log In",
+                                      style: TextStyle(color: Colors.white, fontSize: 18),
+                                    ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        InkWell(
+                          onTap: _isLoading ? null : _logInWithBiometrics,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1257FA).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: const Color(0xFF1257FA),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.fingerprint,
+                              color: Color(0xFF1257FA),
+                              size: 32,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
 
