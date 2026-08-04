@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/services/session_manager.dart';
+import 'package:test_app/views/components/widgets/socket_image.dart';
 import 'package:test_app/views/features/photo/photo_slider_page.dart';
 
 import '../../../repositories/album_repository.dart';
@@ -165,9 +167,19 @@ class _PhotoListPageState extends State<PhotoListPage> {
           items: viewModel.photos,
           initialItemId: photoId,
           idBuilder: (photo) => photo.id,
-          titleBuilder: (photo) => photo.photoName,
-          imageProviderBuilder: (photo) {
-            return const AssetImage('assets/images/Image post-cuate.png');
+          titleBuilder: (photo) => photo.title.isNotEmpty ? photo.title : photo.photoName,
+          imageBuilder: (photo) {
+            return SocketImage(
+              photoName: photo.photoName,
+              sessionId: SessionManager.instance.sessionId!,
+              ownerId: photo.ownerId,
+              loadingPlaceholder: const Center(child: CircularProgressIndicator()),
+              errorPlaceholder: const Icon(Icons.broken_image, color: Colors.white, size: 48),
+              builder: (context, provider) => Image(
+                image: provider,
+                fit: BoxFit.contain,
+              ),
+            );
           },
           onEyePressed: () {
             Navigator.of(context).push(
@@ -267,7 +279,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
                 return const Padding(
                   padding: EdgeInsets.all(8),
                   child: EmptyState(
-                    imagePath: 'assets/images/Image post-cuate.png',
+                    imagePath: 'assets/images/Photos-pana (1).png',
                     title: 'No photos yet',
                     subtitle: 'Add your first photo.',
                   ),
@@ -326,12 +338,20 @@ class _PhotoListPageState extends State<PhotoListPage> {
                                         borderRadius: const BorderRadius.vertical(
                                           top: Radius.circular(12),
                                         ),
-                                        child: Container(
-                                          color: Colors.grey.shade200,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            photo.id,
-                                            textAlign: TextAlign.center,
+                                        child: SocketImage(
+                                          photoName: photo.photoName,
+                                          sessionId: SessionManager.instance.sessionId!,
+                                          ownerId: photo.ownerId,
+                                          loadingPlaceholder: const Center(child: CircularProgressIndicator()),
+                                          errorPlaceholder: Container(
+                                            color: Colors.grey.shade200,
+                                            child: const Icon(Icons.broken_image, color: Colors.grey),
+                                          ),
+                                          builder: (context, provider) => Image(
+                                            image: provider,
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: double.infinity,
                                           ),
                                         ),
                                       ),
@@ -339,7 +359,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
                                     Padding(
                                       padding: const EdgeInsets.all(8),
                                       child: Text(
-                                        photo.photoName,
+                                        photo.title.isNotEmpty ? photo.title : photo.photoName,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),

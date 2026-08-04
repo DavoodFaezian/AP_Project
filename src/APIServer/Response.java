@@ -8,7 +8,7 @@ public class Response {
 
     private String message;
 
-    private JsonObject payLoad;
+    private JsonObject payload;
 
     public Response() {
 
@@ -17,7 +17,7 @@ public class Response {
     public Response(String status,String message, JsonObject payLoad) {
         this.status = status;
         this.message = message;
-        this.payLoad = payLoad;
+        this.payload = payLoad;
     }
 
     public String getStatus() {
@@ -36,11 +36,11 @@ public class Response {
         this.message = message;
     }
 
-    public JsonObject getPayLoad() {
-        return payLoad;
+    public JsonObject getPayload() {
+        return payload;
     }
 
-    public void setPayLoad(JsonObject payLoad) {
-        this.payLoad = payLoad;
+    public void setPayload(JsonObject payload) {
+        this.payload = payload;
     }
 }

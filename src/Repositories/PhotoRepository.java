@@ -72,11 +72,16 @@ public class PhotoRepository extends BaseRepository<Photo>{
         return photo;
     }
 
-    public byte[] getPhotoBytes(String ownerId , String photoName) {
+    public String getPhotoData(String ownerId , String photoName) {
 
         try {
-            return FileServer.getPhoto(ownerId,photoName);
-        } catch (IOException e) {
+            byte[] fileBytes = FileServer.getPhoto(ownerId, photoName);
+            if (fileBytes == null || fileBytes.length == 0) {
+                return "";
+            }
+            return Base64.getEncoder().encodeToString(fileBytes);
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -90,8 +95,9 @@ public class PhotoRepository extends BaseRepository<Photo>{
     public boolean isPhotoIdValid(String photoId,String ownerId){
         return getFileManager(ownerId).exists(p->p.getId().equals(photoId));
     }
-    public String uploadPhoto(String ownerId, byte[] photoBytes){        try {
-        return FileServer.savePhoto(ownerId , photoBytes);
+    public String uploadPhoto(String ownerId, byte[] photoBytes){
+        try {
+            return FileServer.savePhoto(ownerId , photoBytes);
         } catch (IOException e) {
             throw new ActionFailedException("Couldn't upload photo.");
         }

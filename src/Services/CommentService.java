@@ -1,6 +1,6 @@
 package Services;
 
-import DTO.AddResultDto;
+import DTO.StringResultDto;
 import DTO.Comment.*;
 import Exceptions.ActionFailedException;
 import MainClasses.Comment;
@@ -9,7 +9,6 @@ import MainClasses.User;
 import Repositories.CommentRepository;
 import Repositories.PostRepository;
 import Repositories.SessionRepository;
-import Repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +26,7 @@ public class CommentService {
         return instance;
     }
 
-    public AddResultDto addComment(AddCommentDto data) {
+    public StringResultDto addComment(AddCommentDto data) {
         User user = sessionRepository.findUserBySessionId(data.getSessionId());
         Comment comment = new Comment(
                 user.getId(),
@@ -48,7 +47,7 @@ public class CommentService {
             post.getCommentIds().add(comment.getId());
             postRepository.editPost(post);
         }
-        return new AddResultDto(comment.getId());
+        return new StringResultDto(comment.getId());
     }
 
 

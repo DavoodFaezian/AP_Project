@@ -49,9 +49,9 @@ public class CommentTests {
         sessionId = userService.logIn(new LogInDto(
                 "UniName",
                 "newPass@123"
-        ));
+        )).getId();
 
-        userId = userService.getUser(
+        userId = userService.getUserMainClass(
                 "UniName",
                 "newPass@123"
         ).getId();
@@ -60,14 +60,14 @@ public class CommentTests {
                         sessionId,
                         "new album"
                 )
-        );
+        ).getId();
 
         albumId2 = albumService.addAlbum(
                 new AddAlbumDto(
                         sessionId,
                         "new album 2"
                 )
-        );
+        ).getId();
         photoId1 = photoService.addPhoto(
                 new AddPhotoDto(
                         sessionId,
@@ -78,7 +78,7 @@ public class CommentTests {
                         "caption",
                         false
                 )
-        );
+        ).getId();
 
         photoId2 = photoService.addPhoto(
                 new AddPhotoDto(
@@ -90,7 +90,7 @@ public class CommentTests {
                         "caption 2",
                         false
                 )
-        );
+        ).getId();
 
         photoId3 = photoService.addPhoto(
                 new AddPhotoDto(
@@ -103,7 +103,7 @@ public class CommentTests {
                         false
 
                 )
-        );
+        ).getId();
         photoAlbumService.addPhotoToAlbum(
                 new AddPhotoToAndRemovePhotoFromAlbum(
                         sessionId,

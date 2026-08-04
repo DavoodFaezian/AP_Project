@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class UserProfile extends BaseClass<UserProfile> {
     private String userId;
-    private String profilePhotoId;
+    private String profilePhotoName;
     private Theme theme = Theme.SYSTEM;
 
     private Set<String> sessionIds = new HashSet<>();
@@ -19,7 +19,7 @@ public class UserProfile extends BaseClass<UserProfile> {
 
     public UserProfile(String userId, String profilePhotoId, Theme theme, Set<String> sessionIds, Set<String> followersId, Set<String> followingsId) {
         this.userId = userId;
-        this.profilePhotoId = profilePhotoId;
+        this.profilePhotoName = profilePhotoId;
         this.theme = theme;
         this.sessionIds = sessionIds;
         this.followersId = followersId;
@@ -34,12 +34,12 @@ public class UserProfile extends BaseClass<UserProfile> {
         this.userId = userId;
     }
 
-    public String getProfilePhotoId() {
-        return profilePhotoId;
+    public String getProfilePhotoName() {
+        return profilePhotoName;
     }
 
-    public void setProfilePhotoId(String profilePhotoId) {
-        this.profilePhotoId = profilePhotoId;
+    public void setProfilePhotoName(String profilePhotoName) {
+        this.profilePhotoName = profilePhotoName;
     }
 
     public Theme getTheme() {

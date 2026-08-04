@@ -1,19 +1,22 @@
 package Services;
 
 
+import DTO.Photo.UploadPhotoDto;
+import DTO.SessionIdDto;
+import DTO.StringResultDto;
 import DTO.User.*;
 import Exceptions.*;
 import MainClasses.Session;
 import MainClasses.User;
 import MainClasses.UserProfile;
+import Repositories.PhotoRepository;
 import Repositories.SessionRepository;
 import Repositories.UserProfileRepository;
 import Repositories.UserRepository;
 
-import java.util.List;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class UserService {
 
@@ -102,7 +105,7 @@ public class UserService {
         }
     }
 
-    public String signUp(SignUpDto data) {
+    public StringResultDto signUp(SignUpDto data) {
         String userName = data.getUserName();
         String password = data.getPassword();
 
@@ -111,10 +114,6 @@ public class UserService {
         User user = UserRepository.getInstance().create(userName, password);
         userProfileRepository.createUserProfile(user.getId());
 
-        return getString(user);
-    }
-
-    private String getString(User user) {
         Session session = SessionRepository.getInstance().createSession(user.getId());
 
         UserProfile profile = userProfileRepository.getUserProfileByUserId(user.getId())
@@ -122,13 +121,30 @@ public class UserService {
 
         profile.getSessionIds().add(session.getId());
         userProfileRepository.updateUserProfile(profile);
-        return session.getId();
+        return new StringResultDto(session.getId());
     }
 
 
-    public String logIn(LogInDto data) {
+    public StringResultDto logIn(LogInDto data) {
         User user = validateLogIn(data.getUserName(), data.getPassword());
-        return getString(user);
+        Session session = SessionRepository.getInstance().createSession(user.getId());
+
+        UserProfile profile = userProfileRepository.getUserProfileByUserId(user.getId())
+                .orElseThrow(() -> new ItemNotFoundException("user profile", user.getId()));
+
+        profile.getSessionIds().add(session.getId());
+        userProfileRepository.updateUserProfile(profile);
+
+        return new StringResultDto(session.getId());
+    }
+    public void changeUserName(ChangeUserNameDto data){
+        if(data.getNewUserName()== null||data.getNewUserName().isEmpty()){
+            throw new ActionFailedException("UserName can't be null");
+        }
+        String sessionId = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        user.setUserName(data.getNewUserName());
+        UserRepository.getInstance().editUser(user);
     }
 
     public void logOut(LogOutAndRemoveProfilePhotoDto data) {
@@ -162,7 +178,7 @@ public class UserService {
        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
        Optional<UserProfile> userProfile = userProfileRepository.getUserProfileByUserId(user.getId());
        if(userProfile.isPresent()){
-           userProfile.get().setProfilePhotoId(profilePhotoId);
+           userProfile.get().setProfilePhotoName(profilePhotoId);
            userProfileRepository.updateUserProfile(userProfile.get());
        }
     }
@@ -172,7 +188,7 @@ public class UserService {
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         Optional<UserProfile> userProfile = userProfileRepository.getUserProfileByUserId(user.getId());
         if(userProfile.isPresent()){
-            userProfile.get().setProfilePhotoId(null);
+            userProfile.get().setProfilePhotoName(null);
             userProfileRepository.updateUserProfile(userProfile.get());
         }
     }
@@ -223,30 +239,34 @@ public class UserService {
         userProfileRepository.updateUserProfile(followingProfile);
     }
 
-    public List<UserDataDto> searchUsers(SearchUsersDto data) {
-        String sessionId = data.getSessionId();
-        SessionRepository.getInstance().findUserBySessionId(sessionId);
-        String query = data.getQuery();
-        String cleanQuery = query.trim().toLowerCase();
-        List<User> users = UserRepository.getInstance().filterUsers(
-                user -> user.getUserName().contains(cleanQuery)
-        );
-        List<Optional<UserProfile>> userProfiles = users.stream().map(user -> userProfileRepository.getUserProfileByUserId(user.getId())).toList();
 
-        return userProfiles.stream().filter(Optional::isPresent).map(Optional::get).map(i -> new UserDataDto(i.getUserId(), UserRepository.getInstance().findUserById(i.getUserId()).getUserName() , i.getProfilePhotoId())).toList();
-    }
-
-    public void changeTheme(ChangeThemeDto data) {
-        String sessionId  = data.getSessionId();
-        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        UserProfile userProfile = userProfileRepository.getUserProfileByUserId(user.getId()).orElseThrow(
-                () -> new ItemNotFoundException("user profile", user.getId())
-        );
-        userProfile.setTheme(data.getTheme());
-
-    }
-
-    public User getUser(String userName , String password) {
+    public User getUserMainClass(String userName , String password) {
         return UserRepository.getInstance().findUserByUserNameAndPassword(userName , password);
+    }
+    public void changeTheme(ChangeThemeDto data){
+        User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
+        Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
+        if(profile.isEmpty()){
+            throw new ActionFailedException("Ops! profile was not found.");
+        }
+        UserProfile notNullProfile = profile.get();
+        notNullProfile.setTheme(data.getTheme());
+        userProfileRepository.updateUserProfile(notNullProfile);
+
+    }
+    public UserProfileDto getUser(SessionIdDto data){
+        User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
+        Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
+        if(profile.isEmpty()){
+            throw new ActionFailedException("Ops! profile was not found.");
+        }
+        UserProfile notNullProfile = profile.get();
+        return new UserProfileDto(
+                user.getUserName(),
+                notNullProfile.getProfilePhotoName(),
+                notNullProfile.getTheme()
+        );
+
+
     }
 }

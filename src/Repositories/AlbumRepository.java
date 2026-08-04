@@ -35,9 +35,15 @@ public class AlbumRepository extends BaseRepository<Album> {
         remove.validateRemoveAlbum();
         removeAlbum(remove);
     }
-    public void editAlbum(Album album){
-        var albumFileManager = getFileManager(album.getOwnerId());
-        albumFileManager.edit(album);
+    public void editAlbum(String albumId,String albumName,String ownerId){
+        var albumFileManager = getFileManager(ownerId);
+        var edit = albumFileManager.findItemById(albumId);
+
+        if (edit.isEmpty()) {
+            throw new ItemNotFoundException("album", albumId);
+        }
+        edit.get().setAlbumName(albumName);
+        albumFileManager.edit(edit.get());
         albumFileManager.save();
     }
 

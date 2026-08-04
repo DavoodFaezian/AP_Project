@@ -47,9 +47,9 @@ public class PostTests {
         sessionId = userService.logIn(new LogInDto(
                 "UniName",
                 "newPass@123"
-        ));
+        )).getId();
 
-        userId = userService.getUser(
+        userId = userService.getUserMainClass(
                 "UniName",
                 "newPass@123"
         ).getId();
@@ -58,14 +58,14 @@ public class PostTests {
                         sessionId,
                         "new album"
                 )
-        );
+        ).getId();
 
         albumId2 = albumService.addAlbum(
                 new AddAlbumDto(
                         sessionId,
                         "new album 2"
                 )
-        );
+        ).getId();
         photoId1 = photoService.addPhoto(
                 new AddPhotoDto(
                         sessionId,
@@ -77,7 +77,7 @@ public class PostTests {
                         false
 
                 )
-        );
+        ).getId();
 
         photoId2 = photoService.addPhoto(
                 new AddPhotoDto(
@@ -90,7 +90,7 @@ public class PostTests {
                         false
 
                 )
-        );
+        ).getId();
 
         photoId3 = photoService.addPhoto(
                 new AddPhotoDto(
@@ -103,7 +103,7 @@ public class PostTests {
                         false
 
                 )
-        );
+        ).getId();
         photoAlbumService.addPhotoToAlbum(
                 new AddPhotoToAndRemovePhotoFromAlbum(
                         sessionId,
@@ -267,9 +267,9 @@ public class PostTests {
         String sessionId2 = userService.logIn(new LogInDto(
                 "Uni2Name",
                 "newPass2@123"
-        ));
+        )).getId();
 
-        String followingUserId = userService.getUser(
+        String followingUserId = userService.getUserMainClass(
                 "Uni2Name",
                 "newPass2@123"
         ).getId();
@@ -284,9 +284,9 @@ public class PostTests {
         String sessionId3 = userService.logIn(new LogInDto(
                 "Uni3Name",
                 "newPass3@123"
-        ));
+        )).getId();
 
-        String followingUserId2 = userService.getUser(
+        String followingUserId2 = userService.getUserMainClass(
                 "Uni3Name",
                 "newPass3@123"
         ).getId();
@@ -296,14 +296,14 @@ public class PostTests {
                         sessionId2,
                         "new album"
                 )
-        );
+        ).getId();
 
         String albumId5 = albumService.addAlbum(
                 new AddAlbumDto(
                         sessionId2,
                         "new album 2"
                 )
-        );
+        ).getId();
         String photoId3 = photoService.addPhoto(
                 new AddPhotoDto(
                         sessionId2,
@@ -315,7 +315,7 @@ public class PostTests {
                         false
 
                 )
-        );
+        ).getId();
 
         String photoId4 = photoService.addPhoto(
                 new AddPhotoDto(
@@ -328,7 +328,7 @@ public class PostTests {
                         false
 
                 )
-        );
+        ).getId();
 
         String photoId5 = photoService.addPhoto(
                 new AddPhotoDto(
@@ -341,7 +341,7 @@ public class PostTests {
                         false
 
                 )
-        );
+        ).getId();
         photoAlbumService.addPhotoToAlbum(
                 new AddPhotoToAndRemovePhotoFromAlbum(
                         sessionId2,
@@ -373,7 +373,7 @@ public class PostTests {
                         sessionId3,
                         "new album for following user 2"
                 )
-        );
+        ).getId();
         String post3 = postService.addPost(
                 new AddPostDto(
                         sessionId3,

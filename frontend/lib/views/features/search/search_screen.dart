@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/services/session_manager.dart';
+import 'package:test_app/views/components/widgets/socket_image.dart';
 import '../../../models/photo.dart';
 import '../../../repositories/photo_repository.dart';
 import '../../components/widgets/custom_appbar.dart';
@@ -19,7 +21,7 @@ class _SearchScreenState extends State<SearchScreen> {
   bool hasSearched = false;
   final TextEditingController searchController = TextEditingController();
   final List<Photo> searchResult = [];
-  final PhotoRepository _photoRepository = InMemoryPhotoRepository();
+  final PhotoRepository _photoRepository = PhotoRepository();
 
   Future<void> _performSearch(String query) async {
     if (query.isEmpty) {
@@ -30,10 +32,11 @@ class _SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    final allPhotos = await _photoRepository.getPhotosByOwner(_currentUserId);
+    final allPhotos = await _photoRepository.getPhotosByOwnerId();
     final filtered = allPhotos.where((photo) {
       final q = query.toLowerCase();
-      return photo.photoName.toLowerCase().contains(q) ||
+      return photo.title.toLowerCase().contains(q) ||
+          photo.photoName.toLowerCase().contains(q) ||
           photo.caption.toLowerCase().contains(q) ||
           photo.tags.any((tag) => tag.toLowerCase().contains(q));
     }).toList();
@@ -52,8 +55,20 @@ class _SearchScreenState extends State<SearchScreen> {
           items: searchResult,
           initialItemId: photoId,
           idBuilder: (photo) => photo.id,
-          titleBuilder: (photo) => photo.photoName,
-          imageProviderBuilder: (photo) => const AssetImage('assets/images/Image post-cuate.png'),
+          titleBuilder: (photo) => photo.title.isNotEmpty ? photo.title : photo.photoName,
+          imageBuilder: (photo) {
+            return SocketImage(
+              photoName: photo.photoName,
+              sessionId: SessionManager.instance.sessionId!,
+              ownerId: photo.ownerId,
+              loadingPlaceholder: const Center(child: CircularProgressIndicator()),
+              errorPlaceholder: const Icon(Icons.broken_image, color: Colors.white, size: 48),
+              builder: (context, provider) => Image(
+                image: provider,
+                fit: BoxFit.contain,
+              ),
+            );
+          },
           onEyePressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(
@@ -85,19 +100,33 @@ class _SearchScreenState extends State<SearchScreen> {
           onTap: () => _openPhotoSlider(photo.id),
           child: Card(
             elevation: 3,
+            clipBehavior: Clip.antiAlias,
             child: Column(
               children: [
                 Expanded(
-                  child: Container(
-                    color: Colors.grey.shade300,
-                    child: const Center(
-                      child: Icon(Icons.image, size: 60),
+                  child: SocketImage(
+                    photoName: photo.photoName,
+                    sessionId: SessionManager.instance.sessionId!,
+                    ownerId: photo.ownerId,
+                    loadingPlaceholder: const Center(child: CircularProgressIndicator()),
+                    errorPlaceholder: Container(
+                      color: Colors.grey.shade200,
+                      child: const Icon(Icons.broken_image, size: 48, color: Colors.grey),
+                    ),
+                    builder: (context, provider) => Image(
+                      image: provider,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
                     ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(photo.photoName, overflow: TextOverflow.ellipsis),
+                  child: Text(
+                    photo.title.isNotEmpty ? photo.title : photo.photoName,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
@@ -175,7 +204,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       )
 
                     : _buildResultGrid(),
-          ),        
+          ),
         ],
       ),
     );

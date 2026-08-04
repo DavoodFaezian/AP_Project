@@ -1,18 +1,17 @@
 package Services;
 import DTO.Photo.*;
+import DTO.StringResultDto;
 import Exceptions.ActionFailedException;
 import Exceptions.ItemNotFoundException;
-import FileManager.FileServer;
 import MainClasses.Album;
 import MainClasses.Photo;
 import MainClasses.User;
-import Repositories.AlbumRepository;
-import Repositories.PhotoRepository;
-import Repositories.SessionRepository;
-import Repositories.UserRepository;
+import MainClasses.UserProfile;
+import Repositories.*;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,7 +31,7 @@ public class PhotoService {
         }
     }
 
-    public String addPhoto(AddPhotoDto data) {
+    public StringResultDto addPhoto(AddPhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         String photoName = data.getPhotoName();
@@ -48,7 +47,7 @@ public class PhotoService {
             album.getPhotoIds().add(photo.getId());
             AlbumRepository.getInstance().update(album);
         }
-        return photo.getId();
+        return new StringResultDto(photo.getId());
     }
     public void deletePhoto(DeletePhotoDto data) {
         String sessionId = data.getSessionId();
@@ -75,10 +74,21 @@ public class PhotoService {
     }
 
 
-    public String uploadPhoto(String photoData,String sessionId) {
-        byte[] bytes = Base64.getDecoder().decode(photoData);
-        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        return PhotoRepository.getInstance().uploadPhoto(user.getId(),bytes);
+    public StringResultDto uploadPhoto(UploadPhotoDto data ) {
+        byte[] bytes = Base64.getDecoder().decode(data.getPhotoData());
+        User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
+        if(data.isProfilePicture()){
+            Optional<UserProfile> profile = UserProfileRepository.getInstance().getUserProfileByUserId(user.getId());
+            if(profile.isEmpty()){
+                throw new ActionFailedException("Ops! profile was not found.");
+            }
+            UserProfile notNullProfile = profile.get();
+            String photoName = PhotoRepository.getInstance().uploadPhoto(user.getId(),bytes);
+            notNullProfile.setProfilePhotoName(photoName);
+            UserProfileRepository.getInstance().updateUserProfile(notNullProfile);
+            return new StringResultDto(photoName);
+        }
+        return new StringResultDto(PhotoRepository.getInstance().uploadPhoto(user.getId(),bytes));
     }
     public PhotoDto getPhotoById(GetPhotoDto data){
         String sessionId = data.getSessionId();
@@ -91,21 +101,24 @@ public class PhotoService {
         return new PhotoDto(res.get());
 
     }
-    public byte[] getPhotoBytes(GetPhotoDto data){
+    public PhotoBase64Dto getPhotoBytes(GetPhotoDto data){
         String sessionId = data.getSessionId();
-        SessionRepository.getInstance().validateSession(sessionId);
-        return PhotoRepository.getInstance().getPhotoBytes(data.getOwnerId(), data.getPhotoId());
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        if(data.getOwnerId() == null){
+            return new PhotoBase64Dto(PhotoRepository.getInstance().getPhotoData(user.getId(), data.getPhotoId()));
+        }
+        return new PhotoBase64Dto(PhotoRepository.getInstance().getPhotoData(data.getOwnerId(), data.getPhotoId()));
 
 
     }
 
-    public List<PhotoDto> getPhotosByOwnerId(GetAllPhotosDto data){
+    public PhotoListDto getPhotosByOwnerId(GetAllPhotosDto data){
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        return PhotoRepository.getInstance().getPhotosByOwnerId(user.getId())
+        return new PhotoListDto(PhotoRepository.getInstance().getPhotosByOwnerId(user.getId())
                 .stream()
                 .map(PhotoDto::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
 
 
     }

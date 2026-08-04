@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/services/session_manager.dart';
+import 'package:test_app/views/components/widgets/socket_image.dart';
 
 import '../../../models/photo.dart';
 import '../../../repositories/photo_repository.dart';
@@ -70,50 +72,91 @@ class _ImageDetailPageState extends State<ImageDetailPage> {
           );
         }
 
+        final displayTitle = photo.title.isNotEmpty ? photo.title : photo.photoName;
+
         return Scaffold(
           appBar: AppBar(
-            title: Text(photo.photoName),
+            title: Text(displayTitle),
             actions: [
-              Icon(
-                photo.isFavorable ? Icons.favorite : Icons.favorite_border,
-                color: photo.isFavorable ? Colors.red : null,
+              IconButton(
+                icon: Icon(
+                  photo.isFavorable ? Icons.favorite : Icons.favorite_border,
+                  color: photo.isFavorable ? Colors.red : null,
+                ),
+                onPressed: () {
+                  // TODO: Toggle favorite
+                },
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 8),
             ],
           ),
-          body: Padding(
+          body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  photo.caption,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Created: ${photo.createdAt.toString().split(' ')[0]}',
-                ),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: photo.tags.map(_buildTag).toList(),
-                ),
-                const SizedBox(height: 16),
-                Text('Shared with ${photo.sharedUserIds.length} user(s)'),
-                const Spacer(),
-                if (photo.permissionForLeavingComment)
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => _navigateToComments(
-                        context,
-                        photo.id,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: SocketImage(
+                      photoName: photo.photoName,
+                      sessionId: SessionManager.instance.sessionId!,
+                      ownerId: photo.ownerId,
+                      loadingPlaceholder: const Center(child: CircularProgressIndicator()),
+                      errorPlaceholder: Container(
+                        color: Colors.grey.shade200,
+                        child: const Icon(Icons.broken_image, size: 48, color: Colors.grey),
                       ),
-                      child: const Text('View Comments'),
+                      builder: (context, provider) => Image(
+                        image: provider,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
+                ),
+                const SizedBox(height: 24),
+                if (photo.title.isNotEmpty) ...[
+                  Text(
+                    photo.title,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+                if (photo.caption.isNotEmpty) ...[
+                  Text(
+                    photo.caption,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                Text(
+                  'Created: ${photo.createdAt.toString().split(' ')[0]}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 16),
+                if (photo.tags.isNotEmpty)
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: photo.tags.map(_buildTag).toList(),
+                  ),
+                const SizedBox(height: 16),
+                Text('Shared with ${photo.postIds.length} post(s)'),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: () => _navigateToComments(
+                      context,
+                      photo.id,
+                    ),
+                    icon: const Icon(Icons.comment),
+                    label: const Text('View Comments'),
+                  ),
+                ),
               ],
             ),
           ),
@@ -122,3 +165,4 @@ class _ImageDetailPageState extends State<ImageDetailPage> {
     );
   }
 }
+

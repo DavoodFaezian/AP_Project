@@ -1,12 +1,11 @@
-import 'dart:convert';
+import 'dart:convert'; // 👈 برای jsonEncode و jsonDecode
 import 'package:flutter/material.dart';
-
+import 'package:test_app/views/layout/screens/auth/sign_up_screen.dart';
 import '../../../../services/session_manager.dart';
-import '../../../../services/socket_service.dart';
 import '../../../components/widgets/auth_header.dart';
 import '../../../components/widgets/input_decoration.dart';
-import '../../../../repositories/user_repository.dart';
 import '../../navigation/navigator_screen.dart';
+import '../../../../services/socket_service.dart'; // 👈 اضافه کردن سرویس سوکت
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -16,57 +15,68 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
+
   final _formKey = GlobalKey<FormState>();
   final _userNameController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  // نمونه‌سازی مستقیم از ریپازیتوری بدون نیاز به provider
-  final UserRepository _userRepository = UserRepository();
-
   bool _showPassword = false;
-  bool _isLoading = false;
+  
+  // 👈 ۱. متغیر مدیریت وضعیت بارگذاری
+  bool _isLoading = false; 
 
-  String? validateUserName(String? value) {
-    if (value == null || value.trim().isEmpty) {
+  String? validateUserName(String? value){
+    if(value == null || value.isEmpty){
       return "Username is required";
     }
     return null;
   }
 
-  String? validatePassword(String? value) {
+  String? validatePassword(String? value){
     if (value == null || value.isEmpty) {
       return "Password is required";
     }
     return null;
   }
 
-  /// ورود معمولی با نام کاربری و رمز عبور
+  // 👈 ۲. اصلاح متد _logIn و اتصال به بک‌اند جاوا
   Future<void> _logIn() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        _isLoading = true;
+        _isLoading = true; // فعال‌سازی حالت لودینگ
       });
 
       try {
+        // الف) ساخت Map درخواست با اکشن LOG_IN
         final requestMap = {
-          "action": "User/logIn",
-          "userName": _userNameController.text.trim(),
-          "password": _passwordController.text,
+          "actionName": "User/logIn",
+          "payload": {
+            "userName": _userNameController.text.trim(),
+            "password": _passwordController.text,
+          }
         };
 
+        // ب) تبدیل به JSON و اضافه کردن n\ برای readLine جاوا
         String jsonRequest = jsonEncode(requestMap) + "\n";
+
+        // ج) ارسال درخواست به بک‌اند جاوا از طریق SocketService
         String rawResponse = await SocketService.sendRequest(jsonRequest);
         Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
+        // د) بررسی پاسخ سرور
         if (mounted) {
-          if (responseMap['statusCode'] == 200 || responseMap['status'] == 'SUCCESS') {
-            String sessionId = responseMap['sessionId'];
-            SessionManager.instance.saveSessionId(sessionId);
+          if (responseMap['status'] == "200") {
+
+            String sessionId = responseMap['payload']['id'];
+            SessionManager.instance.saveSessionId(
+              sessionId
+            );
 
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Welcome back!")),
             );
 
+            // هدایت به صفحه اصلی
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -74,16 +84,18 @@ class _LogInPageState extends State<LogInPage> {
               ),
             );
           } else {
+            // نمایش پیام خطا (مثلاً "Invalid username or password")
             String errorMessage = responseMap['message'] ?? "Log in failed!";
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(errorMessage),
+                content: Text(errorMessage), 
                 backgroundColor: Colors.red,
               ),
             );
           }
         }
       } catch (e) {
+        // هـ) مدیریت خطای عدم اتصال به سرور
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -95,71 +107,9 @@ class _LogInPageState extends State<LogInPage> {
       } finally {
         if (mounted) {
           setState(() {
-            _isLoading = false;
+            _isLoading = false; // غیرفعال‌سازی لودینگ
           });
         }
-      }
-    }
-  }
-
-  /// ورود با اثر انگشت (بدون نیاز به Provider)
-  Future<void> _logInWithBiometrics() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final isAuthenticated = await _userRepository.authenticateWithBiometrics();
-
-      if (isAuthenticated) {
-        final savedSessionId = SessionManager.instance.sessionId;
-
-        if (savedSessionId != null && savedSessionId.isNotEmpty) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Welcome back!")),
-            );
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const NavigatorPage(),
-              ),
-            );
-          }
-        } else {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("No active session found. Please log in with password first."),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-        }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Biometric authentication failed."),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Error: $e"),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
       }
     }
   }
@@ -173,12 +123,14 @@ class _LogInPageState extends State<LogInPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Stack(
         children: [
-          const AuthHeader(
+          AuthHeader(
             title: "Log In...",
           ),
+      
           Padding(
             padding: const EdgeInsets.all(16),
             child: Form(
@@ -187,17 +139,21 @@ class _LogInPageState extends State<LogInPage> {
                 child: Column(
                   children: [
                     const SizedBox(height: 100),
+                
                     Image.asset(
                       'assets/images/Photos-pana (1).png',
                       width: 300,
                       height: 300,
                     ),
+                
                     TextFormField(
                       controller: _userNameController,
                       decoration: buildInputDecoration("Username"),
                       validator: validateUserName,
                     ),
+                
                     const SizedBox(height: 16),
+                
                     TextFormField(
                       controller: _passwordController,
                       obscureText: !_showPassword,
@@ -218,62 +174,49 @@ class _LogInPageState extends State<LogInPage> {
                       ),
                       validator: validatePassword,
                     ),
-                    const SizedBox(height: 24),
-                    
-                    // دکمه Log In و آیکون اثر انگشت
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 60,
-                            child: ElevatedButton(
-                              onPressed: _isLoading ? null : _logIn,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF1257FA),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: _isLoading
-                                  ? const CircularProgressIndicator(
-                                      color: Colors.white,
-                                    )
-                                  : const Text(
-                                      "Log In",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                            ),
-                          ),
+
+                    const SizedBox(height: 20),
+                
+                    // 👈 ۳. تغییر دکمه Log In برای نمایش Spinner در زمان ارسال
+                    SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _logIn,
+                        style: TextButton.styleFrom(
+                          backgroundColor: const Color(0xFF1257FA),
                         ),
-                        const SizedBox(width: 12),
-                        
-                        InkWell(
-                          onTap: _isLoading ? null : _logInWithBiometrics,
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF1257FA).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: const Color(0xFF1257FA),
-                                width: 1.5,
+                        child: _isLoading
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : const Text(
+                                "Log In",
+                                style: TextStyle(color: Colors.white, fontSize: 18),
                               ),
-                            ),
-                            child: const Icon(
-                              Icons.fingerprint,
-                              color: Color(0xFF1257FA),
-                              size: 32,
-                            ),
-                          ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Don't have an account?"),
+                        const SizedBox(width: 5),
+                        TextButton(
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const SignUpPage(),
+                              ),
+                            );
+                          },
+                          child: const Text('Sign Up'),
                         ),
                       ],
                     ),
+
                   ],
                 ),
               ),

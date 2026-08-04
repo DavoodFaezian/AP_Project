@@ -10,9 +10,9 @@ class PhotoFormViewModel extends ChangeNotifier {
   }) : _repository = repository {
     if (initialPhoto != null) {
       photoName = initialPhoto!.photoName;
+      title = initialPhoto!.title;
       caption = initialPhoto!.caption;
       tagsText = initialPhoto!.tags.join(', ');
-      permissionForLeavingComment = initialPhoto!.permissionForLeavingComment;
       fileName = initialPhoto!.id;
       selectedAlbumIds = Set<String>.from(initialPhoto!.albumIds);
     } else {
@@ -25,9 +25,9 @@ class PhotoFormViewModel extends ChangeNotifier {
   final String? sourceAlbumId;
 
   String photoName = '';
+  String title = '';
   String caption = '';
   String tagsText = '';
-  bool permissionForLeavingComment = true;
   Set<String> selectedAlbumIds = <String>{};
 
   String? fileName; // می‌تواند شناسه بایت‌های آپلود شده (Base64) یا آدرس فایل باشد
@@ -36,14 +36,13 @@ class PhotoFormViewModel extends ChangeNotifier {
 
   bool get isEdit => initialPhoto != null;
 
-  void setPhotoName(String value) => photoName = value;
-  void setCaption(String value) => caption = value;
-  void setTagsText(String value) => tagsText = value;
-
-  void setPermissionForLeavingComment(bool value) {
-    permissionForLeavingComment = value;
+  void setPhotoName(String value) {
+    photoName = value;
     notifyListeners();
   }
+  void setTitle(String value) => title = value;
+  void setCaption(String value) => caption = value;
+  void setTagsText(String value) => tagsText = value;
 
   void setFileName(String value) {
     fileName = value;
@@ -84,9 +83,9 @@ class PhotoFormViewModel extends ChangeNotifier {
       if (isEdit) {
         final updatedPhoto = initialPhoto!.copyWith(
           photoName: photoName.trim(),
+          title: title.trim(),
           caption: caption.trim(),
           tags: _parseTags(),
-          permissionForLeavingComment: permissionForLeavingComment,
           lastModified: DateTime.now(),
           albumIds: Set<String>.from(selectedAlbumIds),
         );
@@ -97,8 +96,8 @@ class PhotoFormViewModel extends ChangeNotifier {
 
         await _repository.addPhoto(
           photoName: photoName.trim(),
-          title: photoName.trim(),
-          albumId: mainAlbumId,
+          title: title.trim(),
+          albumId: sourceAlbumId!,
           tags: _parseTags(),
           caption: caption.trim(),
           favorable: false,

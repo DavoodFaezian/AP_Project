@@ -72,7 +72,7 @@ public class PostService {
                 }
 
                 album.getPostIds().add(post.getId());
-                albumRepository.editAlbum(album);
+                albumRepository.editAlbum(album.getId(),album.getAlbumName(),album.getOwnerId());
             }
         }
         return post.getId();
@@ -154,7 +154,7 @@ public class PostService {
                     album.getPostIds().remove(post.getId());
                 }
 
-                albumRepository.editAlbum(album);
+                albumRepository.editAlbum(album.getId(),album.getAlbumName(),album.getOwnerId());
             }
         }
 
@@ -169,7 +169,7 @@ public class PostService {
                 }
 
                 album.getPostIds().add(post.getId());
-                albumRepository.editAlbum(album);
+                albumRepository.editAlbum(album.getId(),album.getAlbumName(),album.getOwnerId());
             }
         }
 
@@ -241,7 +241,7 @@ public class PostService {
                     album.getPostIds().remove(post.getId());
                 }
 
-                albumRepository.editAlbum(album);
+                albumRepository.editAlbum(album.getId(),album.getAlbumName(),album.getOwnerId());
             }
         }
 

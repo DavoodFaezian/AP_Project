@@ -1,8 +1,6 @@
 package Services;
 
-import DTO.Photo.AddPhotoToAndRemovePhotoFromAlbum;
-import DTO.Photo.EditPhotoByAlbumDto;
-import DTO.Photo.MovePhotoDto;
+import DTO.Photo.*;
 import Exceptions.ActionFailedException;
 import MainClasses.Album;
 import MainClasses.Photo;
@@ -13,6 +11,7 @@ import Repositories.SessionRepository;
 
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class PhotoAlbumService{
 
@@ -126,32 +125,16 @@ public class PhotoAlbumService{
         PhotoRepository.getInstance().update(photo);
     }
 
-    public void editPhotoByAlbum(EditPhotoByAlbumDto data) {
-        String sessionId = data.getSessionId();
-        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        Photo photo = PhotoRepository.getInstance().findPhotoById(data.getPhotoId() , user.getId());
 
-        for (String i : data.getAlbumIds()) {
-            if (!photo.getAlbumIds().contains(i)) {
-                addMethod(i , photo , user , photo.getId());
-            }
-        }
 
-        for (String i : photo.getAlbumIds()) {
-            if(!data.getAlbumIds().contains(i)) {
-                removeMethod(i , photo , user , photo.getId());
-            }
-        }
-    }
-
-    public ArrayList<Photo> getPhotosByAlbumId(String sessionId , String albumId){
-        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
+    public PhotoListDto getPhotosByAlbumId(GetAlbumPhotosDto data){
+        User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
+        Album album = AlbumRepository.getInstance().findAlbumById(data.getAlbumId() , user.getId());
         ArrayList<Photo> res = new ArrayList<>();
         for(var photoId : album.getPhotoIds()){
             res.add(PhotoRepository.getInstance().findPhotoById(photoId , user.getId()));
         }
-        return res;
+        return new PhotoListDto(res.stream().map(PhotoDto::new).collect(Collectors.toList()));
 
     }
 }

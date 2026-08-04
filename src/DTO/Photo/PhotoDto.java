@@ -24,13 +24,11 @@ public class PhotoDto {
     private Set<String> commentIds = new HashSet<>();
 
     private Set<String> albumIds = new HashSet<>();
-    private Set<String> postIds = new HashSet<>();
 
     private LocalDateTime createdAt;
 
     public PhotoDto(Photo photo) {
         this.id = photo.getId();
-        //complete the rest
         this.id = photo.getId();
         this.ownerId = photo.getOwnerId();
         this.title = photo.getTitle();
@@ -41,7 +39,6 @@ public class PhotoDto {
         this.lastModified = photo.getLastModified();
         this.commentIds = photo.getCommentIds() != null ? new HashSet<>(photo.getCommentIds()) : new HashSet<>();
         this.albumIds = photo.getAlbumIds() != null ? new HashSet<>(photo.getAlbumIds()) : new HashSet<>();
-        this.postIds = photo.getPostIds() != null ? new HashSet<>(photo.getPostIds()) : new HashSet<>();
         this.createdAt = photo.getCreatedAt();
     }
 
@@ -83,10 +80,6 @@ public class PhotoDto {
 
     public Set<String> getAlbumIds() {
         return albumIds;
-    }
-
-    public Set<String> getPostIds() {
-        return postIds;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -18,7 +18,7 @@ class PhotoRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] == 200 || responseMap['status'] == 'SUCCESS') {
+    if (responseMap['status'] == "200" ) {
       List<dynamic> photosJson = responseMap['data'] ?? responseMap['photos'] ?? [];
       return photosJson.map((json) => Photo.fromJson(json)).toList();
     } else {
@@ -40,7 +40,7 @@ class PhotoRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] == 200 || responseMap['status'] == 'SUCCESS') {
+    if (responseMap['status'] == "200" ) {
       return Photo.fromJson(responseMap['photo'] ?? responseMap['data']);
     } else {
       throw Exception(responseMap['message'] ?? 'Photo not found');
@@ -61,7 +61,7 @@ class PhotoRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] == 200 || responseMap['status'] == 'SUCCESS') {
+    if (responseMap['status'] == "200" ) {
       return responseMap['photoData'] ?? responseMap['data']; // رشته Base64 بایت‌ها
     } else {
       throw Exception(responseMap['message'] ?? 'Failed to fetch photo bytes');
@@ -82,7 +82,7 @@ class PhotoRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] == 200 || responseMap['status'] == 'SUCCESS') {
+    if (responseMap['status'] == "200" ) {
       return responseMap['photoId'] ?? responseMap['data']; // شناسه فایل ذخیره شده
     } else {
       throw Exception(responseMap['message'] ?? 'Failed to upload photo bytes');
@@ -93,7 +93,7 @@ class PhotoRepository {
   Future<String> addPhoto({
     required String photoName,
     required String title,
-    required String albumId,
+    required String? albumId,
     required Set<String> tags,
     required String caption,
     required bool favorable,
@@ -115,8 +115,8 @@ class PhotoRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] == 200 || responseMap['status'] == 'SUCCESS') {
-      return responseMap['photoId'] ?? responseMap['data']; // آیدی عکس ساخته شده
+    if (responseMap['status'] == "200" ) {
+      return responseMap['payload']['id'];
     } else {
       throw Exception(responseMap['message'] ?? 'Failed to add photo');
     }
@@ -136,7 +136,7 @@ class PhotoRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] != 200 && responseMap['status'] != 'SUCCESS') {
+    if (responseMap['status'] != "200" && responseMap['status'] != 'SUCCESS') {
       throw Exception(responseMap['message'] ?? 'Failed to edit photo');
     }
   }
@@ -155,7 +155,7 @@ class PhotoRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] != 200 && responseMap['status'] != 'SUCCESS') {
+    if (responseMap['status'] != "200" && responseMap['status'] != 'SUCCESS') {
       throw Exception(responseMap['message'] ?? 'Failed to delete photo');
     }
   }
@@ -174,8 +174,8 @@ class PhotoRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] == 200 || responseMap['status'] == 'SUCCESS') {
-      List<dynamic> photosJson = responseMap['photos'] ?? responseMap['data'] ?? [];
+    if (responseMap['status'] == "200") {
+      List<dynamic> photosJson = responseMap['payload']['photos'];
       return photosJson.map((json) => Photo.fromJson(json)).toList();
     } else {
       throw Exception(responseMap['message'] ?? 'Failed to fetch album photos');
@@ -197,7 +197,7 @@ class PhotoRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] != 200 && responseMap['status'] != 'SUCCESS') {
+    if (responseMap['status'] != "200" && responseMap['status'] != 'SUCCESS') {
       throw Exception(responseMap['message'] ?? 'Failed to add photo to album');
     }
   }
@@ -217,7 +217,7 @@ class PhotoRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] != 200 && responseMap['status'] != 'SUCCESS') {
+    if (responseMap['status'] != "200" && responseMap['status'] != 'SUCCESS') {
       throw Exception(responseMap['message'] ?? 'Failed to remove photo from album');
     }
   }
@@ -242,7 +242,7 @@ class PhotoRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['statusCode'] != '200' && responseMap['status'] != 'SUCCESS') {
+    if (responseMap['status'] != "200" && responseMap['status'] != 'SUCCESS') {
       throw Exception(responseMap['message'] ?? 'Failed to move photo');
     }
   }

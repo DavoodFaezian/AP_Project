@@ -87,9 +87,9 @@ class PhotoListViewModel extends ChangeNotifier {
     try {
       for (final id in _selectedPhotoIds) {
         await _repository.deletePhoto(id);
+        _photos.remove(_photos.firstWhere((photo) => photo.id == id));
       }
       clearSelection();
-      await loadPhotos();
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();

@@ -1,0 +1,113 @@
+{
+  "className": "MainClasses.Photo",
+  "items": {
+    "34357f8a-ea86-4680-a0fb-3110781481e8": {
+      "ownerId": "ee70f305-5365-4b27-bc01-e2d45ace70d3",
+      "photoName": "b361f842-6ba1-487a-b5ce-08f26449ee3d",
+      "title": "dfd",
+      "tags": [
+        "dfd"
+      ],
+      "caption": "dfd",
+      "commentIds": [],
+      "albumIds": [
+        "7338e131-a596-402f-9019-ed1e1725345f"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 3
+        },
+        "time": {
+          "hour": 22,
+          "minute": 31,
+          "second": 58,
+          "nano": 742338800
+        }
+      },
+      "id": "34357f8a-ea86-4680-a0fb-3110781481e8"
+    },
+    "08cc80ba-eddf-427e-bd8f-afa971538510": {
+      "ownerId": "ee70f305-5365-4b27-bc01-e2d45ace70d3",
+      "photoName": "a18aede7-4edb-4707-90a1-4043af2eea61",
+      "title": "dfd",
+      "tags": [
+        "dfdf"
+      ],
+      "caption": "dfdf",
+      "commentIds": [],
+      "albumIds": [
+        "7338e131-a596-402f-9019-ed1e1725345f"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 6,
+          "minute": 27,
+          "second": 55,
+          "nano": 736760400
+        }
+      },
+      "id": "08cc80ba-eddf-427e-bd8f-afa971538510"
+    },
+    "59bef0c0-c1af-436c-b0d5-970abc6a5310": {
+      "ownerId": "ee70f305-5365-4b27-bc01-e2d45ace70d3",
+      "photoName": "0a598fe2-580e-4071-9e81-406f6673dbb5",
+      "title": "",
+      "tags": [],
+      "caption": "",
+      "commentIds": [],
+      "albumIds": [
+        "7338e131-a596-402f-9019-ed1e1725345f"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 6,
+          "minute": 34,
+          "second": 4,
+          "nano": 485335100
+        }
+      },
+      "id": "59bef0c0-c1af-436c-b0d5-970abc6a5310"
+    },
+    "07bca55f-0697-4bb1-b049-ecfc4db63d76": {
+      "ownerId": "ee70f305-5365-4b27-bc01-e2d45ace70d3",
+      "photoName": "21e1930f-be79-4218-989c-5083fef21e73",
+      "title": "dfd",
+      "tags": [],
+      "caption": "dfd",
+      "commentIds": [],
+      "albumIds": [
+        "2b5b1f2d-0a51-4be3-83fe-d07685e80932"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 6,
+          "minute": 49,
+          "second": 34,
+          "nano": 370351100
+        }
+      },
+      "id": "07bca55f-0697-4bb1-b049-ecfc4db63d76"
+    }
+  }
+}

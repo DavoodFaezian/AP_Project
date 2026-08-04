@@ -1,5 +1,7 @@
 package FileManager;
 
+import MainClasses.BaseClass;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,12 +23,12 @@ public class FileServer {
     public static String savePhoto(String directory, byte[] photoData) throws IOException {
         String photoName = UUID.randomUUID().toString();
 
-        Path dirPath = CURRENT_DIR.resolve(BASE_IMAGES_FOLDER).resolve(directory).resolve(BASE_Format);
+        Path dirPath = CURRENT_DIR.resolve(BASE_IMAGES_FOLDER).resolve(directory);
         if (!Files.exists(dirPath)) {
             Files.createDirectories(dirPath);
         }
 
-        Path filePath = dirPath.resolve(photoName);
+        Path filePath = dirPath.resolve(photoName+BASE_Format);
         Files.write(
                 filePath,
                 photoData,
@@ -38,8 +40,7 @@ public class FileServer {
     }
 
     public static byte[] getPhoto(String directory, String photoName) throws IOException {
-        Path filePath = CURRENT_DIR.resolve(BASE_IMAGES_FOLDER).resolve(directory).resolve(photoName)
-                .resolve(BASE_Format);
+        Path filePath = CURRENT_DIR.resolve(BASE_IMAGES_FOLDER).resolve(directory).resolve(photoName+BASE_Format);
         if (!Files.exists(filePath)) {
             return null;
         }
@@ -47,7 +48,7 @@ public class FileServer {
     }
 
     public static boolean deletePhoto(String directory, String photoName) throws IOException {
-        Path filePath = CURRENT_DIR.resolve(BASE_IMAGES_FOLDER).resolve(directory).resolve(photoName).resolve(BASE_Format);
+        Path filePath = CURRENT_DIR.resolve(BASE_IMAGES_FOLDER).resolve(directory).resolve(photoName+ BASE_Format);
         return Files.deleteIfExists(filePath);
     }
 
