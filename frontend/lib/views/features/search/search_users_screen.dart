@@ -1,10 +1,16 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:convert';
 
-// وارد کردن کامپوننت‌های قبلی پروژه
+import 'package:flutter/material.dart';
+import '../../../services/socket_service.dart';
+import '../../../services/session_manager.dart';
 import '../../components/widgets/custom_appbar.dart';
 import '../../components/widgets/custom_drawer.dart';
 import '../../components/widgets/empty_screen.dart';
 import '../../components/widgets/input_decoration.dart';
+
+// صفحه نمایش پست‌های کاربر کلیک‌شده
+import '../post/user_posts_page.dart';
 
 class SearchUserPage extends StatefulWidget {
   const SearchUserPage({super.key});
@@ -16,24 +22,40 @@ class SearchUserPage extends StatefulWidget {
 class _SearchUserPageState extends State<SearchUserPage> {
   final TextEditingController _searchController = TextEditingController();
   
-  // لیست فرضی نتایج جستجو (در پروژه واقعی از ViewModel یا Repository پر می‌شود)
-  List<Map<String, String>> _searchResults = [];
+  // تایمر برای اعمال Debounce
+  Timer? _debounceTimer;
+
+  List<Map<String, dynamic>> _searchResults = [];
   bool _isLoading = false;
   bool _hasSearched = false;
 
   @override
   void dispose() {
+    _debounceTimer?.cancel(); // ابطال تایمر هنگام خروج از صفحه
     _searchController.dispose();
     super.dispose();
   }
 
-  // متد اجرای جستجو
+  // ۱. متد مدیریت تغییرات متن تایپ‌شده همراه با ۵۰۰ میلی‌ثانیه تاخیر هوشمند (Debounce)
+  void _onSearchChanged(String query) {
+    if (_debounceTimer?.isActive ?? false) {
+      _debounceTimer!.cancel();
+    }
+
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      _performSearch(query);
+    });
+  }
+
+  // ۲. ارسال درخواست سرچ به بک‌اند جاوا
   Future<void> _performSearch(String query) async {
     final trimmedQuery = query.trim();
+
     if (trimmedQuery.isEmpty) {
       setState(() {
         _searchResults = [];
         _hasSearched = false;
+        _isLoading = false;
       });
       return;
     }
@@ -43,19 +65,68 @@ class _SearchUserPageState extends State<SearchUserPage> {
       _hasSearched = true;
     });
 
-    // TODO: صدا زدن متد سرچ از ریپازیتوری با sessionId (مثلاً: UserRepository.searchUsers(query))
-    await Future.delayed(const Duration(milliseconds: 600)); // شبیه‌سازی ریکوئست شبکه
+    try {
+      // نمونه فرمت ارسالی به سوکت بک‌اند جاوا:
+      final requestMap = {
+        "actionName": "SEARCH_USERS",
+        "payload": {
+          "sessionId": SessionManager.instance.sessionId,
+          "query": trimmedQuery,
+        }
+      };
 
-    setState(() {
-      _isLoading = false;
-      // نمونه دیتای تستی
-      _searchResults = [
-        {'username': 'ali_dev', 'name': 'Ali Rezaei'},
-        {'username': 'sara_m', 'name': 'Sara Mohammadi'},
-      ].where((user) =>
-          user['username']!.toLowerCase().contains(trimmedQuery.toLowerCase()) ||
-          user['name']!.toLowerCase().contains(trimmedQuery.toLowerCase())).toList();
-    });
+      String jsonRequest = jsonEncode(requestMap) + "\n";
+      String rawResponse = await SocketService.sendRequest(jsonRequest);
+      Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+      if (responseMap['status'] == 'SUCCESS') {
+        setState(() {
+          _searchResults = List<Map<String, dynamic>>.from(responseMap['users'] ?? []);
+          _isLoading = false;
+        });
+      }
+
+
+      // شبیه‌سازی تاخیر پاسخ سوکت برای تست
+      await Future.delayed(const Duration(milliseconds: 400));
+
+      if (!mounted) return;
+
+      setState(() {
+        _isLoading = false;
+        // دیتای تستی فرضی دریافت شده از بک‌اند
+        _searchResults = [
+          {
+            'userId': 'user_101',
+            'username': 'ali_dev',
+            'fullName': 'Ali Rezaei',
+          },
+          {
+            'userId': 'user_102',
+            'username': 'sara_m',
+            'fullName': 'Sara Mohammadi',
+          },
+        ];
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  // ۳. رفتن به صفحه پست‌های کاربر انتخاب‌شده
+  void _navigateToUserPosts(Map<String, dynamic> user) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => UserPostsPage(
+          userId: user['userId'] as String,
+          username: user['username'] as String,
+          fullName: user['fullName'] as String,
+        ),
+      ),
+    );
   }
 
   @override
@@ -67,12 +138,12 @@ class _SearchUserPageState extends State<SearchUserPage> {
       drawer: const CustomDrawer(),
       body: Column(
         children: [
-          // فیلد جستجو در بالای صفحه
+          // فیلد سرچ
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               controller: _searchController,
-              onChanged: _performSearch,
+              onChanged: _onSearchChanged, // اتصال به Debounce
               decoration: buildInputDecoration(
                 'Search username or name...',
                 suffixIcon: _searchController.text.isNotEmpty
@@ -80,7 +151,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
                         icon: const Icon(Icons.clear),
                         onPressed: () {
                           _searchController.clear();
-                          _performSearch('');
+                          _onSearchChanged('');
                         },
                       )
                     : const Icon(Icons.search),
@@ -88,7 +159,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
             ),
           ),
 
-          // بخش نمایش نتایج یا وضعیت EmptyState
+          // بخش نتایج یا اسکرین‌های خالی
           Expanded(
             child: Builder(
               builder: (context) {
@@ -96,25 +167,22 @@ class _SearchUserPageState extends State<SearchUserPage> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                // اگر هنوز جستجویی انجام نشده است
                 if (!_hasSearched) {
                   return const EmptyState(
                     imagePath: 'assets/images/Image post-cuate.png',
                     title: 'Search for Users',
-                    subtitle: 'Type a username above to start searching.',
+                    subtitle: 'Start typing to search users in real-time.',
                   );
                 }
 
-                // اگر جستجو انجام شد ولی نتیجه‌ای نداشت
                 if (_searchResults.isEmpty) {
                   return const EmptyState(
                     imagePath: 'assets/images/Image post-cuate.png',
                     title: 'No Users Found',
-                    subtitle: 'Try searching with a different keyword.',
+                    subtitle: 'No user matches your search query.',
                   );
                 }
 
-                // نمایش لیست کاربران پیدا شده
                 return ListView.builder(
                   itemCount: _searchResults.length,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -131,19 +199,12 @@ class _SearchUserPageState extends State<SearchUserPage> {
                           child: Icon(Icons.person),
                         ),
                         title: Text(
-                          user['name']!,
+                          user['fullName'] ?? '',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text('@${user['username']}'),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.arrow_forward_ios, size: 16),
-                          onPressed: () {
-                            // رفتن به صفحه پروفایل کاربر انتخاب‌شده
-                          },
-                        ),
-                        onTap: () {
-                          // رفتن به صفحه پروفایل کاربر
-                        },
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => _navigateToUserPosts(user),
                       ),
                     );
                   },
