@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/views/components/widgets/photo_upload_input.dart';
 import 'package:test_app/views/features/album/album_selection_field.dart';
 
 import '../../../models/photo.dart';
 import '../../../repositories/album_repository.dart';
 import '../../../repositories/photo_repository.dart';
 import '../../../viewmodels/photo_form_view_model.dart';
-import '../share/share_page.dart';
+
 
 class PhotoFormPage extends StatefulWidget {
   const PhotoFormPage({
     super.key,
-    required this.currentUserId,
     required this.photoRepository,
     required this.albumRepository,
     required this.returnToAlbumTitle,
@@ -18,7 +18,6 @@ class PhotoFormPage extends StatefulWidget {
     this.initialPhoto,
   });
 
-  final String currentUserId;
   final PhotoRepository photoRepository;
   final AlbumRepository albumRepository;
   final String returnToAlbumTitle;
@@ -31,7 +30,7 @@ class PhotoFormPage extends StatefulWidget {
 
 class _PhotoFormPageState extends State<PhotoFormPage> {
   late final PhotoFormViewModel viewModel;
-  late final TextEditingController photoNameController;
+  late final TextEditingController titleController;
   late final TextEditingController captionController;
   late final TextEditingController tagsController;
 
@@ -41,12 +40,11 @@ class _PhotoFormPageState extends State<PhotoFormPage> {
 
     viewModel = PhotoFormViewModel(
       repository: widget.photoRepository,
-      currentUserId: widget.currentUserId,
       initialPhoto: widget.initialPhoto,
       sourceAlbumId: widget.sourceAlbumId,
     );
 
-    photoNameController = TextEditingController(text: viewModel.photoName);
+    titleController = TextEditingController(text: viewModel.title);
     captionController = TextEditingController(text: viewModel.caption);
     tagsController = TextEditingController(text: viewModel.tagsText);
   }
@@ -54,36 +52,20 @@ class _PhotoFormPageState extends State<PhotoFormPage> {
   @override
   void dispose() {
     viewModel.dispose();
-    photoNameController.dispose();
+    titleController.dispose();
     captionController.dispose();
     tagsController.dispose();
     super.dispose();
   }
 
-  Future<void> _pickPhoto() async {
-    viewModel.setFileName( DateTime.now().microsecondsSinceEpoch.toString());
-  }
-
   Future<void> _submitCreate() async {
-    viewModel.setPhotoName(photoNameController.text);
+    viewModel.setTitle(titleController.text);
     viewModel.setCaption(captionController.text);
     viewModel.setTagsText(tagsController.text);
 
-    final createdPhoto = await viewModel.submit();
-    if (createdPhoto == null || !mounted) {
-      return;
-    }
-
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => SharePage(
-          photoId: createdPhoto.id,
-          albumTitle: widget.returnToAlbumTitle,
-        ),
-      ),
-    );
-
-    if (!mounted) {
+    // دریافت مستقیم photoId از متد submit
+    final result = await viewModel.submit();
+    if (!result || !mounted) {
       return;
     }
 
@@ -91,12 +73,12 @@ class _PhotoFormPageState extends State<PhotoFormPage> {
   }
 
   Future<void> _submitEdit() async {
-    viewModel.setPhotoName(photoNameController.text);
+    viewModel.setTitle(titleController.text);
     viewModel.setCaption(captionController.text);
     viewModel.setTagsText(tagsController.text);
 
-    final updated = await viewModel.submit();
-    if (updated == null || !mounted) {
+    final result = await viewModel.submit();
+    if (!result || !mounted) {
       return;
     }
 
@@ -109,22 +91,11 @@ class _PhotoFormPageState extends State<PhotoFormPage> {
     Navigator.of(context).pop();
   }
 
-
-
   void _openShare() {
     final photo = widget.initialPhoto;
     if (photo == null) {
       return;
     }
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => SharePage(
-          photoId: photo.id,
-          albumTitle: widget.returnToAlbumTitle,
-        ),
-      ),
-    );
   }
 
   @override
@@ -141,18 +112,20 @@ class _PhotoFormPageState extends State<PhotoFormPage> {
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              OutlinedButton.icon(
-                onPressed: _pickPhoto,
-                icon: const Icon(Icons.image),
-                label: Text(
-                  viewModel.fileName == null ? 'Pick Photo' : viewModel.fileName!,
-                ),
+              PhotoUploadInput(
+                onPhotoUploaded: (photoName) {
+                  viewModel.setPhotoName(photoName);
+                  viewModel.setFileName(photoName);
+                },
+                initialPhotoName: viewModel.photoName,
+                title: 'Upload Photo',
+                buttonText: isEdit ? 'Change Photo' : 'Select Photo',
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               TextField(
-                controller: photoNameController,
+                controller: titleController,
                 decoration: const InputDecoration(
-                  labelText: 'Photo name',
+                  labelText: 'Title',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -174,16 +147,8 @@ class _PhotoFormPageState extends State<PhotoFormPage> {
                 ),
               ),
               const SizedBox(height: 16),
-              SwitchListTile(
-                value: viewModel.permissionForLeavingComment,
-                onChanged: viewModel.setPermissionForLeavingComment,
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Allow comments'),
-              ),
-              const SizedBox(height: 16),
               AlbumMultiSelectField(
                 albumRepository: widget.albumRepository,
-                ownerId: widget.currentUserId,
                 initialValue: viewModel.selectedAlbumIds,
                 onChanged: viewModel.setSelectedAlbumIds,
               ),
@@ -202,7 +167,6 @@ class _PhotoFormPageState extends State<PhotoFormPage> {
                 child: Text(isEdit ? 'Save Changes' : 'Create Photo'),
               ),
               if (isEdit) ...[
-
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: _openShare,

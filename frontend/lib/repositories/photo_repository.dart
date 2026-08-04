@@ -1,81 +1,249 @@
+import 'dart:convert';
 import '../models/photo.dart';
+import '../services/socket_service.dart';
+import '../services/session_manager.dart';
 
-abstract class PhotoRepository {
-  Future<List<Photo>> getPhotosByOwner(String ownerId);
-  Future<List<Photo>> getPhotosByAlbum(String albumId);
-  Future<Photo> getPhotoById(String photoId);
-  Future<Photo> createPhoto(Photo photo);
-  Future<Photo> updatePhoto(Photo photo);
-  Future<void> deletePhoto(String photoId);
-  Future<void> assignPhotoToAlbums({
-    required String photoId,
-    required Set<String> albumIds,
-  });
-}
+class PhotoRepository {
+  
+  // 1. دریافت همه عکس‌های کاربر (getPhotosByOwnerId)
+  Future<List<Photo>> getPhotosByOwnerId() async {
+    final requestMap = {
+      "actionName": "Photo/getPhotosByOwnerId",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+      }
+    };
 
-class InMemoryPhotoRepository implements PhotoRepository {
-  InMemoryPhotoRepository._internal();
-  static final InMemoryPhotoRepository _instance = InMemoryPhotoRepository._internal();
-  factory InMemoryPhotoRepository() => _instance;
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-  final List<Photo> _photos = [];
-
-  @override
-  Future<List<Photo>> getPhotosByOwner(String ownerId) async {
-    return _photos.where((photo) => photo.ownerId == ownerId).toList();
+    if (responseMap['status'] == "200" ) {
+      List<dynamic> photosJson = responseMap['data'] ?? responseMap['photos'] ?? [];
+      return photosJson.map((json) => Photo.fromJson(json)).toList();
+    } else {
+      throw Exception(responseMap['message'] ?? 'Failed to fetch user photos');
+    }
   }
 
-  @override
-  Future<List<Photo>> getPhotosByAlbum(String albumId) async {
-    return _photos.where((photo) => photo.albumIds.contains(albumId)).toList();
-  }
-
-  @override
+  // 2. دریافت عکس بر اساس ID (getPhotoById)
   Future<Photo> getPhotoById(String photoId) async {
-    final photo = _photos.where((item) => item.id == photoId).firstOrNull;
-    if (photo == null) {
-      throw Exception('Photo not found');
+    final requestMap = {
+      "actionName": "Photo/getPhotoById",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "photoId": photoId,
+      }
+    };
+
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+    if (responseMap['status'] == "200" ) {
+      return Photo.fromJson(responseMap['photo'] ?? responseMap['data']);
+    } else {
+      throw Exception(responseMap['message'] ?? 'Photo not found');
     }
-
-    return photo;
   }
 
-  @override
-  Future<Photo> createPhoto(Photo photo) async {
-    _photos.add(photo);
-    return photo;
-  }
+  // 3. دریافت بایت‌های عکس (getPhotoBytes - Base64)
+  Future<String> getPhotoBytes(String photoId) async {
+    final requestMap = {
+      "actionName": "Photo/getPhotoBytes",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "photoId": photoId,
+      }
+    };
 
-  @override
-  Future<Photo> updatePhoto(Photo photo) async {
-    final index = _photos.indexWhere((item) => item.id == photo.id);
-    if (index == -1) {
-      throw Exception('Photo not found');
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+    if (responseMap['status'] == "200" ) {
+      return responseMap['photoData'] ?? responseMap['data']; // رشته Base64 بایت‌ها
+    } else {
+      throw Exception(responseMap['message'] ?? 'Failed to fetch photo bytes');
     }
-
-    _photos[index] = photo;
-    return photo;
   }
 
-  @override
-  Future<void> deletePhoto(String photoId) async {
-    _photos.removeWhere((photo) => photo.id == photoId);
+  // 4. آپلود بایت‌های عکس به سرور (uploadPhoto)
+  Future<String> uploadPhoto(String base64PhotoData) async {
+    final requestMap = {
+      "actionName": "Photo/uploadPhoto",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "photoData": base64PhotoData,
+      }
+    };
+
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+    if (responseMap['status'] == "200" ) {
+      return responseMap['photoId'] ?? responseMap['data']; // شناسه فایل ذخیره شده
+    } else {
+      throw Exception(responseMap['message'] ?? 'Failed to upload photo bytes');
+    }
   }
 
-  @override
-  Future<void> assignPhotoToAlbums({
-    required String photoId,
-    required Set<String> albumIds,
+  // 5. ایجاد عکس جدید در دیتابیس (addPhoto)
+  Future<String> addPhoto({
+    required String photoName,
+    required String title,
+    required String? albumId,
+    required Set<String> tags,
+    required String caption,
+    required bool favorable,
   }) async {
-    final index = _photos.indexWhere((item) => item.id == photoId);
-    if (index == -1) {
-      throw Exception('Photo not found');
-    }
+    final requestMap = {
+      "actionName": "Photo/addPhoto",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "photoName": photoName,
+        "title": title,
+        "albumId": albumId,
+        "tags": tags.toList(),
+        "caption": caption,
+        "favorable": favorable,
+      }
+    };
 
-    final current = _photos[index];
-    _photos[index] = current.copyWith(
-      albumIds: albumIds,
-      lastModified: DateTime.now(),
-    );
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+    if (responseMap['status'] == "200" ) {
+      return responseMap['payload']['id'];
+    } else {
+      throw Exception(responseMap['message'] ?? 'Failed to add photo');
+    }
+  }
+
+  // 6. ویرایش اطلاعات عکس (editPhoto)
+  Future<void> editPhoto(Photo photo) async {
+    final requestMap = {
+      "actionName": "Photo/editPhoto",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "photo": photo.toJson(),
+      }
+    };
+
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+    if (responseMap['status'] != "200" && responseMap['status'] != 'SUCCESS') {
+      throw Exception(responseMap['message'] ?? 'Failed to edit photo');
+    }
+  }
+
+  // 7. حذف عکس (deletePhoto)
+  Future<void> deletePhoto(String photoId) async {
+    final requestMap = {
+      "actionName": "Photo/deletePhoto",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "photoId": photoId,
+      }
+    };
+
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+    if (responseMap['status'] != "200" && responseMap['status'] != 'SUCCESS') {
+      throw Exception(responseMap['message'] ?? 'Failed to delete photo');
+    }
+  }
+
+  // 8. دریافت عکس‌های یک آلبوم مشخص (getPhotosByAlbumId)
+  Future<List<Photo>> getPhotosByAlbumId(String albumId) async {
+    final requestMap = {
+      "actionName": "PhotoAlbum/getPhotosByAlbumId",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "albumId": albumId,
+      }
+    };
+
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+    if (responseMap['status'] == "200") {
+      List<dynamic> photosJson = responseMap['payload']['photos'];
+      return photosJson.map((json) => Photo.fromJson(json)).toList();
+    } else {
+      throw Exception(responseMap['message'] ?? 'Failed to fetch album photos');
+    }
+  }
+
+  // 9. اضافه کردن عکس به آلبوم (addPhotoToAlbum)
+  Future<void> addPhotoToAlbum(String photoId, String albumId) async {
+    final requestMap = {
+      "actionName": "PhotoAlbum/addPhotoToAlbum",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "photoId": photoId,
+        "albumId": albumId,
+      }
+    };
+
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+    if (responseMap['status'] != "200" && responseMap['status'] != 'SUCCESS') {
+      throw Exception(responseMap['message'] ?? 'Failed to add photo to album');
+    }
+  }
+
+  // 10. حذف عکس از آلبوم (removePhotoFromAlbum)
+  Future<void> removePhotoFromAlbum(String photoId, String albumId) async {
+    final requestMap = {
+      "actionName": "PhotoAlbum/removePhotoFromAlbum",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "photoId": photoId,
+        "albumId": albumId,
+      }
+    };
+
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+    if (responseMap['status'] != "200" && responseMap['status'] != 'SUCCESS') {
+      throw Exception(responseMap['message'] ?? 'Failed to remove photo from album');
+    }
+  }
+
+  // 11. جابجایی عکس بین دو آلبوم (movePhoto)
+  Future<void> movePhoto({
+    required String photoId,
+    required String fromAlbumId,
+    required String toAlbumId,
+  }) async {
+    final requestMap = {
+      "actionName": "PhotoAlbum/movePhoto",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "photoId": photoId,
+        "fromAlbumId": fromAlbumId,
+        "toAlbumId": toAlbumId,
+      }
+    };
+
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+    if (responseMap['status'] != "200" && responseMap['status'] != 'SUCCESS') {
+      throw Exception(responseMap['message'] ?? 'Failed to move photo');
+    }
   }
 }

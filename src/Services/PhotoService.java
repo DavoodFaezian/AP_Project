@@ -31,7 +31,7 @@ public class PhotoService {
         }
     }
 
-    public String addPhoto(AddPhotoDto data) {
+    public StringResultDto addPhoto(AddPhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         String photoName = data.getPhotoName();
@@ -47,7 +47,7 @@ public class PhotoService {
             album.getPhotoIds().add(photo.getId());
             AlbumRepository.getInstance().update(album);
         }
-        return photo.getId();
+        return new StringResultDto(photo.getId());
     }
     public void deletePhoto(DeletePhotoDto data) {
         String sessionId = data.getSessionId();
@@ -112,13 +112,13 @@ public class PhotoService {
 
     }
 
-    public List<PhotoDto> getPhotosByOwnerId(GetAllPhotosDto data){
+    public PhotoListDto getPhotosByOwnerId(GetAllPhotosDto data){
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        return PhotoRepository.getInstance().getPhotosByOwnerId(user.getId())
+        return new PhotoListDto(PhotoRepository.getInstance().getPhotosByOwnerId(user.getId())
                 .stream()
                 .map(PhotoDto::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
 
 
     }

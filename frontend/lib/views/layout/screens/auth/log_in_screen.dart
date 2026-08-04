@@ -68,7 +68,7 @@ class _LogInPageState extends State<LogInPage> {
           if (responseMap['status'] == "200") {
 
             String sessionId = responseMap['payload']['id'];
-            SessionManager.instance.setSession(
+            SessionManager.instance.saveSessionId(
               sessionId
             );
 

@@ -7,7 +7,7 @@ class PhotoSliderPage<T> extends StatefulWidget {
     required this.items,
     required this.initialItemId,
     required this.idBuilder,
-    required this.imageProviderBuilder,
+    required this.imageBuilder,
     this.titleBuilder,
     this.onEyePressed,
   });
@@ -15,7 +15,7 @@ class PhotoSliderPage<T> extends StatefulWidget {
   final List<T> items;
   final String initialItemId;
   final String Function(T item) idBuilder;
-  final ImageProvider Function(T item) imageProviderBuilder;
+  final Widget Function(T item) imageBuilder;
   final String Function(T item)? titleBuilder;
   final VoidCallback? onEyePressed;
 
@@ -131,10 +131,7 @@ class _PhotoSliderPageState<T> extends State<PhotoSliderPage<T>> {
                       minScale: 1,
                       maxScale: 4,
                       child: Center(
-                        child: Image(
-                          image: widget.imageProviderBuilder(item),
-                          fit: BoxFit.contain,
-                        ),
+                        child: widget.imageBuilder(item),
                       ),
                     );
                   },

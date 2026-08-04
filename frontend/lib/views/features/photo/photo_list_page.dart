@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/services/session_manager.dart';
+import 'package:test_app/views/components/widgets/socket_image.dart';
 import 'package:test_app/views/features/photo/photo_slider_page.dart';
 
 import '../../../repositories/album_repository.dart';
@@ -10,12 +12,10 @@ import '../../components/widgets/empty_screen.dart';
 import '../album/album_selection_field.dart';
 import 'image_detail_page.dart';
 import 'photo_form_page.dart';
-import '../share/share_page.dart';
 
 class PhotoListPage extends StatefulWidget {
   const PhotoListPage({
     super.key,
-    required this.currentUserId,
     required this.photoRepository,
     required this.albumRepository,
     this.albumId,
@@ -23,7 +23,6 @@ class PhotoListPage extends StatefulWidget {
     this.albumOwnerId,
   });
 
-  final String currentUserId;
   final PhotoRepository photoRepository;
   final AlbumRepository albumRepository;
   final String? albumId;
@@ -42,9 +41,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
     super.initState();
     viewModel = PhotoListViewModel(
       repository: widget.photoRepository,
-      currentUserId: widget.currentUserId,
       albumId: widget.albumId,
-      albumOwnerId: widget.albumOwnerId,
     );
     viewModel.loadPhotos();
   }
@@ -67,7 +64,6 @@ class _PhotoListPageState extends State<PhotoListPage> {
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => PhotoFormPage(
-          currentUserId: widget.currentUserId,
           photoRepository: widget.photoRepository,
           albumRepository: widget.albumRepository,
           sourceAlbumId: widget.albumId,
@@ -87,7 +83,6 @@ class _PhotoListPageState extends State<PhotoListPage> {
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => PhotoFormPage(
-          currentUserId: widget.currentUserId,
           photoRepository: widget.photoRepository,
           albumRepository: widget.albumRepository,
           sourceAlbumId: widget.albumId,
@@ -119,7 +114,6 @@ class _PhotoListPageState extends State<PhotoListPage> {
             width: double.maxFinite,
             child: AlbumMultiSelectField(
               albumRepository: widget.albumRepository,
-              ownerId: widget.currentUserId,
               initialValue: selectedAlbumIds,
               title: 'Albums',
               hintText: 'Select destination albums',
@@ -135,10 +129,17 @@ class _PhotoListPageState extends State<PhotoListPage> {
             ),
             FilledButton(
               onPressed: () async {
-                await widget.photoRepository.assignPhotoToAlbums(
-                  photoId: photo.id,
-                  albumIds: selectedAlbumIds,
-                );
+                // محاسبه آلبوم‌های اضافه‌شده و حذف‌شده
+                final addedAlbums = selectedAlbumIds.difference(initialAlbumIds);
+                final removedAlbums = initialAlbumIds.difference(selectedAlbumIds);
+
+                for (final albumId in addedAlbums) {
+                  await widget.photoRepository.addPhotoToAlbum(photo.id, albumId);
+                }
+
+                for (final albumId in removedAlbums) {
+                  await widget.photoRepository.removePhotoFromAlbum(photo.id, albumId);
+                }
 
                 if (!dialogContext.mounted) {
                   return;
@@ -158,6 +159,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
       await viewModel.loadPhotos();
     }
   }
+
   Future<void> _openPhotoSlider(String photoId) async {
     await Navigator.of(context).push(
       MaterialPageRoute(
@@ -165,46 +167,40 @@ class _PhotoListPageState extends State<PhotoListPage> {
           items: viewModel.photos,
           initialItemId: photoId,
           idBuilder: (photo) => photo.id,
-          titleBuilder: (photo) => photo.photoName,
-          imageProviderBuilder: (photo) {
-            // Replace this with your real image source.
-            // Examples:
-            // return NetworkImage(photo.imageUrl);
-            // return FileImage(File(photo.filePath));
-            // return MemoryImage(photo.bytes);
-            return const AssetImage('assets/images/Image post-cuate.png');
+          titleBuilder: (photo) => photo.title.isNotEmpty ? photo.title : photo.photoName,
+          imageBuilder: (photo) {
+            return SocketImage(
+              photoName: photo.photoName,
+              sessionId: SessionManager.instance.sessionId!,
+              ownerId: photo.ownerId,
+              loadingPlaceholder: const Center(child: CircularProgressIndicator()),
+              errorPlaceholder: const Icon(Icons.broken_image, color: Colors.white, size: 48),
+              builder: (context, provider) => Image(
+                image: provider,
+                fit: BoxFit.contain,
+              ),
+            );
           },
           onEyePressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => ImageDetailPage(
-                    photoId: photoId,
-                    photoRepository: widget.photoRepository,
-                  ),
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => ImageDetailPage(
+                  photoId: photoId,
+                  photoRepository: widget.photoRepository,
                 ),
-              );
-
+              ),
+            );
           },
         ),
       ),
     );
   }
 
-
   Future<void> _openSharePage() async {
     final photo = viewModel.selectedPhoto;
     if (photo == null) {
       return;
     }
-
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => SharePage(
-          photoId: photo.id,
-          albumTitle: widget.albumName ?? 'Photos',
-        ),
-      ),
-    );
   }
 
   PreferredSizeWidget _buildAppBar() {
@@ -216,12 +212,12 @@ class _PhotoListPageState extends State<PhotoListPage> {
           onPressed: viewModel.clearSelection,
         ),
         actions: [
-          if (viewModel.isOwnerContext && viewModel.isSingleSelection)
+          if (viewModel.isSingleSelection)
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: _openEditPage,
             ),
-          if (viewModel.isOwnerContext && viewModel.isSingleSelection)
+          if (viewModel.isSingleSelection)
             IconButton(
               icon: const Icon(Icons.drive_file_move_outline),
               onPressed: _openTransferPage,
@@ -231,11 +227,10 @@ class _PhotoListPageState extends State<PhotoListPage> {
               icon: const Icon(Icons.share),
               onPressed: _openSharePage,
             ),
-          if (viewModel.isOwnerContext)
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: viewModel.deleteSelectedPhotos,
-            ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: viewModel.deleteSelectedPhotos,
+          ),
         ],
       );
     }
@@ -248,15 +243,11 @@ class _PhotoListPageState extends State<PhotoListPage> {
       ),
       actions: [
         IconButton(
-          onPressed: () {
-            // Sort action placeholder
-          },
+          onPressed: () {},
           icon: const Icon(Icons.sort),
         ),
         IconButton(
-          onPressed: () {
-            // Filter action placeholder
-          },
+          onPressed: () {},
           icon: const Icon(Icons.filter_list),
         ),
       ],
@@ -274,8 +265,8 @@ class _PhotoListPageState extends State<PhotoListPage> {
           floatingActionButton: viewModel.selectionMode
               ? null
               : CustomFAB(
-            onPressed: _openCreatePage,
-          ),
+                  onPressed: _openCreatePage,
+                ),
           body: Builder(
             builder: (context) {
               if (viewModel.isLoading) {
@@ -288,7 +279,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
                 return const Padding(
                   padding: EdgeInsets.all(8),
                   child: EmptyState(
-                    imagePath: 'assets/images/Image post-cuate.png',
+                    imagePath: 'assets/images/Photos-pana (1).png',
                     title: 'No photos yet',
                     subtitle: 'Add your first photo.',
                   ),
@@ -347,12 +338,20 @@ class _PhotoListPageState extends State<PhotoListPage> {
                                         borderRadius: const BorderRadius.vertical(
                                           top: Radius.circular(12),
                                         ),
-                                        child: Container(
-                                          color: Colors.grey.shade200,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            photo.id,
-                                            textAlign: TextAlign.center,
+                                        child: SocketImage(
+                                          photoName: photo.photoName,
+                                          sessionId: SessionManager.instance.sessionId!,
+                                          ownerId: photo.ownerId,
+                                          loadingPlaceholder: const Center(child: CircularProgressIndicator()),
+                                          errorPlaceholder: Container(
+                                            color: Colors.grey.shade200,
+                                            child: const Icon(Icons.broken_image, color: Colors.grey),
+                                          ),
+                                          builder: (context, provider) => Image(
+                                            image: provider,
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: double.infinity,
                                           ),
                                         ),
                                       ),
@@ -360,7 +359,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
                                     Padding(
                                       padding: const EdgeInsets.all(8),
                                       child: Text(
-                                        photo.photoName,
+                                        photo.title.isNotEmpty ? photo.title : photo.photoName,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -396,23 +395,20 @@ class _PhotoListPageState extends State<PhotoListPage> {
                                         ),
                                         child: isSelected
                                             ? const Icon(
-                                          Icons.check,
-                                          size: 16,
-                                          color: Colors.white,
-                                        )
+                                                Icons.check,
+                                                size: 16,
+                                                color: Colors.white,
+                                              )
                                             : null,
                                       ),
                                     ),
                                   ),
                                 ),
-
-
                             ],
                           ),
                         ),
                       );
                     },
-
                   );
                 },
               );

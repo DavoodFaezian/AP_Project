@@ -10,7 +10,6 @@ import '../../components/widgets/custom_drawer.dart';
 import '../../components/widgets/custom_fab.dart';
 import '../../components/widgets/empty_screen.dart';
 
-
 class AlbumListPage extends StatefulWidget {
   const AlbumListPage({super.key});
 
@@ -19,12 +18,11 @@ class AlbumListPage extends StatefulWidget {
 }
 
 class _AlbumListPageState extends State<AlbumListPage> {
-  static const String _currentUserId = 'user1';
-
   late final AlbumListViewModel viewModel;
 
+  // در صورتی که ریپازیتوری‌های واقعی خود را دارید جایگزین کنید
   final AlbumRepository albumRepository = SocketAlbumRepository();
-  final PhotoRepository photoRepository = InMemoryPhotoRepository();
+  final PhotoRepository photoRepository = PhotoRepository();
 
   final Set<String> _selectedAlbumIds = {};
 
@@ -49,7 +47,7 @@ class _AlbumListPageState extends State<AlbumListPage> {
   void initState() {
     super.initState();
     viewModel = AlbumListViewModel(albumRepository: albumRepository);
-    viewModel.loadAlbums(_currentUserId);
+    viewModel.loadAlbums(); // شناسایی کاربر در بک‌اند با sessionId انجام می‌شود
   }
 
   @override
@@ -188,7 +186,6 @@ class _AlbumListPageState extends State<AlbumListPage> {
     }
 
     await viewModel.addAlbum(
-      ownerId: _currentUserId,
       albumName: trimmedName,
     );
   }
@@ -260,15 +257,11 @@ class _AlbumListPageState extends State<AlbumListPage> {
       ),
       actions: [
         IconButton(
-          onPressed: () {
-            // Sort operation placeholder
-          },
+          onPressed: () {},
           icon: const Icon(Icons.sort),
         ),
         IconButton(
-          onPressed: () {
-            // Filter operation placeholder
-          },
+          onPressed: () {},
           icon: const Icon(Icons.filter_list),
         ),
       ],
@@ -286,8 +279,8 @@ class _AlbumListPageState extends State<AlbumListPage> {
           floatingActionButton: _selectionMode
               ? null
               : CustomFAB(
-            onPressed: _showCreateDialog,
-          ),
+                  onPressed: _showCreateDialog,
+                ),
           body: Builder(
             builder: (context) {
               if (viewModel.isLoading) {
@@ -303,7 +296,6 @@ class _AlbumListPageState extends State<AlbumListPage> {
                 );
               }
 
-              // Displaying the EmptyState when the album list is empty
               if (viewModel.albums.isEmpty) {
                 return const Padding(
                   padding: EdgeInsets.all(8.0),
@@ -348,7 +340,6 @@ class _AlbumListPageState extends State<AlbumListPage> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => PhotoListPage(
-                            currentUserId: _currentUserId,
                             albumId: album.id,
                             albumName: album.albumName,
                             photoRepository: photoRepository,

@@ -77,7 +77,7 @@ public class PostTests {
                         false
 
                 )
-        );
+        ).getId();
 
         photoId2 = photoService.addPhoto(
                 new AddPhotoDto(
@@ -90,7 +90,7 @@ public class PostTests {
                         false
 
                 )
-        );
+        ).getId();
 
         photoId3 = photoService.addPhoto(
                 new AddPhotoDto(
@@ -103,7 +103,7 @@ public class PostTests {
                         false
 
                 )
-        );
+        ).getId();
         photoAlbumService.addPhotoToAlbum(
                 new AddPhotoToAndRemovePhotoFromAlbum(
                         sessionId,
@@ -315,7 +315,7 @@ public class PostTests {
                         false
 
                 )
-        );
+        ).getId();
 
         String photoId4 = photoService.addPhoto(
                 new AddPhotoDto(
@@ -328,7 +328,7 @@ public class PostTests {
                         false
 
                 )
-        );
+        ).getId();
 
         String photoId5 = photoService.addPhoto(
                 new AddPhotoDto(
@@ -341,7 +341,7 @@ public class PostTests {
                         false
 
                 )
-        );
+        ).getId();
         photoAlbumService.addPhotoToAlbum(
                 new AddPhotoToAndRemovePhotoFromAlbum(
                         sessionId2,

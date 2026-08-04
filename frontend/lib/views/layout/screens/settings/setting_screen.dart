@@ -284,7 +284,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           // -------------------- PROFILE PHOTO UI --------------------
-          
+
 
           Center(
             child: PhotoUploadInput(

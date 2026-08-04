@@ -1,7 +1,6 @@
 package Services;
 
-import DTO.Photo.AddPhotoToAndRemovePhotoFromAlbum;
-import DTO.Photo.MovePhotoDto;
+import DTO.Photo.*;
 import Exceptions.ActionFailedException;
 import MainClasses.Album;
 import MainClasses.Photo;
@@ -12,6 +11,7 @@ import Repositories.SessionRepository;
 
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class PhotoAlbumService{
 
@@ -117,14 +117,14 @@ public class PhotoAlbumService{
         PhotoRepository.getInstance().update(photo);
     }
 
-    public ArrayList<Photo> getPhotosByAlbumId(String sessionId , String albumId){
-        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        Album album = AlbumRepository.getInstance().findAlbumById(albumId , user.getId());
+    public PhotoListDto getPhotosByAlbumId(GetAlbumPhotosDto data){
+        User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
+        Album album = AlbumRepository.getInstance().findAlbumById(data.getAlbumId() , user.getId());
         ArrayList<Photo> res = new ArrayList<>();
         for(var photoId : album.getPhotoIds()){
             res.add(PhotoRepository.getInstance().findPhotoById(photoId , user.getId()));
         }
-        return res;
+        return new PhotoListDto(res.stream().map(PhotoDto::new).collect(Collectors.toList()));
 
     }
 }

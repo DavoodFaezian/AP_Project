@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../../services/session_manager.dart';
 import '../../../../repositories/photo_repository.dart';
 import '../../../../viewmodels/photo_list_view_model.dart';
 import '../../../../repositories/album_repository.dart';
+import '../../../components/widgets/socket_image.dart';
 import '../../../features/photo/photo_form_page.dart';
 import '../../../features/photo/photo_slider_page.dart';
 import '../../../features/photo/image_detail_page.dart';
@@ -19,7 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   static const String _currentUserId = 'user1';
-  final PhotoRepository _photoRepository = InMemoryPhotoRepository();
+  final PhotoRepository _photoRepository = PhotoRepository();
   final AlbumRepository _albumRepository = SocketAlbumRepository();
   
   late final PhotoListViewModel viewModel;
@@ -27,10 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    viewModel = PhotoListViewModel(
-      repository: _photoRepository,
-      currentUserId: _currentUserId,
-    );
+    viewModel = PhotoListViewModel(repository: _photoRepository);
     viewModel.loadPhotos();
   }
 
@@ -44,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => PhotoFormPage(
-          currentUserId: _currentUserId,
           photoRepository: _photoRepository,
           albumRepository: _albumRepository,
           returnToAlbumTitle: 'Home',
@@ -61,8 +59,20 @@ class _HomeScreenState extends State<HomeScreen> {
           items: viewModel.photos,
           initialItemId: photoId,
           idBuilder: (photo) => photo.id,
-          titleBuilder: (photo) => photo.photoName,
-          imageProviderBuilder: (photo) => const AssetImage('assets/images/Image post-cuate.png'),
+          titleBuilder: (photo) => photo.title.isNotEmpty ? photo.title : photo.photoName,
+          imageBuilder: (photo) {
+            return SocketImage(
+              photoName: photo.photoName,
+              sessionId: SessionManager.instance.sessionId!,
+              ownerId: photo.ownerId,
+              loadingPlaceholder: const Center(child: CircularProgressIndicator()),
+              errorPlaceholder: const Icon(Icons.broken_image, color: Colors.white, size: 48),
+              builder: (context, provider) => Image(
+                image: provider,
+                fit: BoxFit.contain,
+              ),
+            );
+          },
           onEyePressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(
@@ -150,8 +160,47 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: isSelected ? Colors.blue.withOpacity(0.3) : Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Center(
-                          child: Text(photo.photoName),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              SocketImage(
+                                photoName: photo.photoName,
+                                sessionId: SessionManager.instance.sessionId!,
+                                ownerId: photo.ownerId,
+                                loadingPlaceholder: const Center(child: CircularProgressIndicator()),
+                                errorPlaceholder: Container(
+                                  color: Colors.grey.shade200,
+                                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                                ),
+                                builder: (context, provider) => Image(
+                                  image: provider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  color: Colors.black45,
+                                  child: Text(
+                                    photo.title.isNotEmpty ? photo.title : photo.photoName,
+                                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              if (isSelected)
+                                Container(
+                                  color: Colors.blue.withOpacity(0.3),
+                                  child: const Icon(Icons.check_circle, color: Colors.white),
+                                ),
+                            ],
+                          ),
                         ),
                       ),
                     );

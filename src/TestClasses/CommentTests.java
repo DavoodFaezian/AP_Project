@@ -78,7 +78,7 @@ public class CommentTests {
                         "caption",
                         false
                 )
-        );
+        ).getId();
 
         photoId2 = photoService.addPhoto(
                 new AddPhotoDto(
@@ -90,7 +90,7 @@ public class CommentTests {
                         "caption 2",
                         false
                 )
-        );
+        ).getId();
 
         photoId3 = photoService.addPhoto(
                 new AddPhotoDto(
@@ -103,7 +103,7 @@ public class CommentTests {
                         false
 
                 )
-        );
+        ).getId();
         photoAlbumService.addPhotoToAlbum(
                 new AddPhotoToAndRemovePhotoFromAlbum(
                         sessionId,
