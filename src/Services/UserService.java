@@ -13,6 +13,7 @@ import Repositories.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class UserService {
 
@@ -222,14 +223,17 @@ public class UserService {
         userProfileRepository.updateUserProfile(followingProfile);
     }
 
-    public List<User> searchUsers(SearchUsersDto data) {
+    public List<UserDataDto> searchUsers(SearchUsersDto data) {
         String sessionId = data.getSessionId();
         SessionRepository.getInstance().findUserBySessionId(sessionId);
         String query = data.getQuery();
         String cleanQuery = query.trim().toLowerCase();
-        return UserRepository.getInstance().filterUsers(
+        List<User> users = UserRepository.getInstance().filterUsers(
                 user -> user.getUserName().contains(cleanQuery)
         );
+        List<Optional<UserProfile>> userProfiles = users.stream().map(user -> userProfileRepository.getUserProfileByUserId(user.getId())).toList();
+
+        return userProfiles.stream().filter(Optional::isPresent).map(Optional::get).map(i -> new UserDataDto(i.getUserId(), UserRepository.getInstance().findUserById(i.getUserId()).getUserName() , i.getProfilePhotoId())).toList();
     }
 
     public void changeTheme(ChangeThemeDto data) {
