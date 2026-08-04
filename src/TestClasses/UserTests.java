@@ -135,7 +135,7 @@ public class UserTests {
                 () -> {
                     userService.changePassword(new ChangePasswordDto(sessionId1,"Unique@1234","Unique_Name@100" , "Unique_Name@"));
                 });
-        assertEquals("Verify password failed." , exp10.getMessage());
+        assertEquals("Confirm password does not match password." , exp10.getMessage());
 
         assertDoesNotThrow(
                 () -> {

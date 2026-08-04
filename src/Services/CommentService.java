@@ -6,6 +6,7 @@ import Exceptions.ActionFailedException;
 import MainClasses.Comment;
 import MainClasses.Post;
 import MainClasses.User;
+import Repositories.BannedUserRepository;
 import Repositories.CommentRepository;
 import Repositories.PostRepository;
 import Repositories.SessionRepository;
@@ -26,8 +27,13 @@ public class CommentService {
         return instance;
     }
 
+    public void validateLeavingComment(User user) {
+        BannedUserRepository.getInstance().isUserAllowedToComment(user.getId());
+    }
+
     public StringResultDto addComment(AddCommentDto data) {
         User user = sessionRepository.findUserBySessionId(data.getSessionId());
+        validateLeavingComment(user);
         Comment comment = new Comment(
                 user.getId(),
                 data.getScript(),
@@ -37,17 +43,17 @@ public class CommentService {
         commentRepository.addComment(comment, comment.getPostId(),data.getPostOwnerId());
 
         Post post = postRepository.findPostById(comment.getPostId(), data.getPostOwnerId());
-        if(!post.getCommentsAllowed()){
-            throw new ActionFailedException("Comments are not allowed on post:"+post.getId());
+        validateLeavingComment(post);
+        if (post.getCommentIds() == null) {
+            post.setCommentIds(new java.util.HashSet<>());
         }
-        if (post != null) {
-            if (post.getCommentIds() == null) {
-                post.setCommentIds(new java.util.HashSet<>());
-            }
-            post.getCommentIds().add(comment.getId());
-            postRepository.editPost(post);
-        }
+        post.getCommentIds().add(comment.getId());
+        postRepository.editPost(post);
         return new StringResultDto(comment.getId());
+    }
+
+    private static void validateLeavingComment(Post post) {
+        validateComment(!post.getCommentsAllowed(), "Comments are not allowed on post:" + post.getId());
     }
 
 
@@ -55,12 +61,8 @@ public class CommentService {
         User user = sessionRepository.findUserBySessionId(data.getSessionId());
         Comment edit = commentRepository.findCommentById(data.getId(), data.getPostId());
 
-        if(!user.getId().equals(edit.getOwnerId())){
-            throw new ActionFailedException("Comment is not owned by the logged in user");
-        }
-        if(data.getScript().isEmpty()){
-            throw new ActionFailedException("script cannot be null");
-        }
+        validateComment(!user.getId().equals(edit.getOwnerId()), "Comment is not owned by the logged in user");
+        validateComment(data.getScript().isEmpty(), "script cannot be null");
         edit.setScript(data.getScript());
         commentRepository.editComment(edit,data.getPostId());
 
@@ -69,15 +71,19 @@ public class CommentService {
         User user = sessionRepository.findUserBySessionId(data.getSessionId());
         Comment del = commentRepository.findCommentById(data.getId(), data.getPostId());
 
-        if(!user.getId().equals(del.getOwnerId())){
-            throw new ActionFailedException("Comment is not owned by the logged in user");
-        }
+        validateComment(!user.getId().equals(del.getOwnerId()), "Comment is not owned by the logged in user");
         commentRepository.removeComment(data.getId(), data.getPostId());
 
         Post post = postRepository.findPostById(data.getPostId(), data.getPostOwnerId());
         if (post != null && post.getCommentIds() != null) {
             post.getCommentIds().remove(data.getId());
             postRepository.editPost(post);
+        }
+    }
+
+    private static void validateComment(boolean user, String actionName) {
+        if (user) {
+            throw new ActionFailedException(actionName);
         }
     }
 

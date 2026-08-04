@@ -24,19 +24,18 @@ public class PostService {
     public static PostService getInstance() {
         return instance;
     }
+    
+    public void validatePermission(User user) {
+        BannedUserRepository.getInstance().isUserAllowedToPost(user.getId());
+    }
 
     public String addPost(AddPostDto dto) {
 
         String sessionId = dto.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        validatePermission(user);
 
-        if (user == null) {
-            throw new IllegalStateException("User is not logged in.");
-        }
-
-        if(dto.getAlbumIds().isEmpty()&&dto.getPhotoIds().isEmpty()){
-            throw new ActionFailedException("Both photoIds and albumIds can't be null.");
-        }
+        validatePhotoIdsAndAlbumIds(dto.getAlbumIds(), dto.getPhotoIds());
         String ownerId = user.getId();
 
         Post post = new Post(
@@ -65,18 +64,28 @@ public class PostService {
         if (post.getAlbumIds() != null) {
             for (String albumId : post.getAlbumIds()) {
 
-                Album album = albumRepository.findAlbumById(albumId, ownerId);
-
-                if (album.getPostIds() == null) {
-                    album.setPostIds(new LinkedHashSet<>());
-                }
-
-                album.getPostIds().add(post.getId());
-                albumRepository.editAlbum(album.getId(),album.getAlbumName(),album.getOwnerId());
+                findAlbum(ownerId, post, albumId);
             }
         }
         return post.getId();
 
+    }
+
+    private void findAlbum(String ownerId, Post post, String albumId) {
+        Album album = albumRepository.findAlbumById(albumId, ownerId);
+
+        if (album.getPostIds() == null) {
+            album.setPostIds(new LinkedHashSet<>());
+        }
+
+        album.getPostIds().add(post.getId());
+        albumRepository.editAlbum(album.getId(),album.getAlbumName(),album.getOwnerId());
+    }
+
+    private static void validatePhotoIdsAndAlbumIds(Set<String> dto, Set<String> dto1) {
+        if (dto.isEmpty() && dto1.isEmpty()) {
+            throw new ActionFailedException("Both photoIds and albumIds can't be null.");
+        }
     }
 
     public void editPost(EditPostDto dto) {
@@ -84,34 +93,20 @@ public class PostService {
         String sessionId = dto.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
 
-        if (user == null) {
-            throw new IllegalStateException("User is not logged in.");
-        }
-        if(dto.getAlbumIds().isEmpty()&&dto.getPhotoIds().isEmpty()){
-            throw new ActionFailedException("Both photoIds and albumIds can't be null.");
-        }
+        validatePhotoIdsAndAlbumIds(dto.getAlbumIds(), dto.getPhotoIds());
 
         String ownerId = user.getId();
 
         Post post = postRepository.findPostById(dto.getId(), ownerId);
 
-        Set<String> oldPhotoIds = post.getPhotoIds() != null
-                ? new LinkedHashSet<>(post.getPhotoIds())
-                : new LinkedHashSet<>();
+        Set<String> oldPhotoIds = getIds(post.getPhotoIds());
 
-        Set<String> oldAlbumIds = post.getAlbumIds() != null
-                ? new LinkedHashSet<>(post.getAlbumIds())
-                : new LinkedHashSet<>();
+        Set<String> oldAlbumIds = getIds(post.getAlbumIds());
 
 
-        Set<String> newPhotoIds = dto.getPhotoIds() != null
-                ? new LinkedHashSet<>(dto.getPhotoIds())
-                : new LinkedHashSet<>();
+        Set<String> newPhotoIds = getIds(dto.getPhotoIds());
 
-        Set<String> newAlbumIds = dto.getAlbumIds() != null
-                ? new LinkedHashSet<>(dto.getAlbumIds())
-                : new LinkedHashSet<>();
-
+        Set<String> newAlbumIds = getIds(dto.getAlbumIds());
 
 
         for (String photoId : oldPhotoIds) {
@@ -162,21 +157,9 @@ public class PostService {
 
             if (!oldAlbumIds.contains(albumId)) {
 
-                Album album = albumRepository.findAlbumById(albumId, ownerId);
-
-                if (album.getPostIds() == null) {
-                    album.setPostIds(new LinkedHashSet<>());
-                }
-
-                album.getPostIds().add(post.getId());
-                albumRepository.editAlbum(album.getId(),album.getAlbumName(),album.getOwnerId());
+                findAlbum(ownerId, post, albumId);
             }
         }
-
-
-
-
-
 
         post.setPhotoIds(newPhotoIds);
         post.setAlbumIds(newAlbumIds);
@@ -184,6 +167,13 @@ public class PostService {
 
         postRepository.editPost(post);
     }
+
+    private static Set<String> getIds(Set<String> post) {
+        return post != null
+                ? new LinkedHashSet<>(post)
+                : new LinkedHashSet<>();
+    }
+
     public Set<PostDto> getAllPostsOfFollowings(String userId) {
         User user = userRepository.findUserById(userId);
         Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
@@ -206,10 +196,6 @@ public class PostService {
 
         String sessionId = dto.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-
-        if (user == null) {
-            throw new IllegalStateException("User is not logged in.");
-        }
 
         String ownerId = user.getId();
 
@@ -253,10 +239,6 @@ public class PostService {
         String sessionId = dto.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
 
-        if (user == null) {
-            throw new IllegalStateException("User is not logged in.");
-        }
-
         String ownerId = user.getId();
 
         Post post = postRepository.findPostById(dto.getPostId(), ownerId);
@@ -288,11 +270,7 @@ public class PostService {
 
         String sessionId = dto.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-
-        if (user == null) {
-            throw new IllegalStateException("User is not logged in.");
-        }
-
+        
         return postRepository.getPostsByOwnerId(user.getId())
                 .stream()
                 .map(PostDto::new)
