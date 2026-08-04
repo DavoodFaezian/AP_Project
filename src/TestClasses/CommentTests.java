@@ -118,7 +118,7 @@ public class CommentTests {
                         Set.of(albumId1,albumId2),
                         true
                 )
-        );
+        ).getId();
 
         postId2 = postService.addPost(
                 new AddPostDto(
@@ -127,7 +127,7 @@ public class CommentTests {
                         Set.of(),
                         true
                 )
-        );
+        ).getId();
     }
     @Test
     public void testComments(){
@@ -160,7 +160,7 @@ public class CommentTests {
         List<String> commentIds = commentService.getAllCommentsByPostId(new GetCommentsByPostDto(
                 sessionId,
                 postId1
-        )).stream().map(CommentDto::getId).toList();
+        )).getComments().stream().map(CommentDto::getId).toList();
         assertEquals(List.of(commentId1,commentId2),commentIds);
         commentService.deleteComment(new DeleteCommentDto(
                 commentId2,
@@ -171,7 +171,7 @@ public class CommentTests {
         commentIds = commentService.getAllCommentsByPostId(new GetCommentsByPostDto(
                 sessionId,
                 postId1
-        )).stream().map(CommentDto::getId).toList();
+        )).getComments().stream().map(CommentDto::getId).toList();
         assertFalse(commentIds.contains(commentId2));
         commentService.editComment(
                 new EditCommentDto(
@@ -184,7 +184,7 @@ public class CommentTests {
         List<CommentDto> commentDtos=commentService.getAllCommentsByPostId(new GetCommentsByPostDto(
                 sessionId,
                 postId2
-        ));
+        )).getComments();
         assertEquals("edited",commentDtos.getFirst().getScript());
         postService.editPost(
                 new EditPostDto(

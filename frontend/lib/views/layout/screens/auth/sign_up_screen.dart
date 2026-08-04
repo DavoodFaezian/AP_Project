@@ -29,6 +29,26 @@ class _SignUpPageState extends State<SignUpPage> {
   // 👈 ۱. متغیر برای حالت بارگذاری
   bool _isLoading = false; 
 
+  @override
+  void initState() {
+    super.initState();
+    _checkAutoLogin();
+  }
+
+  void _checkAutoLogin() {
+    if (SessionManager.instance.isLoggedIn) {
+      // استفاده از microtask یا Timer.run برای اطمینان از اینکه context آماده است
+      Future.microtask(() {
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const NavigatorPage()),
+          );
+        }
+      });
+    }
+  }
+
   String? validateUserName(String? value){
     if(value == null || value.isEmpty){
       return "Username is required";

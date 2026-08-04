@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:test_app/models/user_profile.dart';
+
 import '../models/user.dart';
 import '../services/session_manager.dart';
 import '../services/socket_service.dart';
@@ -150,7 +152,7 @@ class UserRepository {
     );
   }
 
-  /// ۹. جستجوی کاربران (searchUsers)
+  /// جستجوی کاربران (searchUsers)
   Future<List<User>> searchUsers(String query) async {
     final sessionId = SessionManager.instance.sessionId;
     final responseMap = await _sendSocketRequest(
@@ -163,6 +165,31 @@ class UserRepository {
 
     List<dynamic> usersJson = responseMap['users'] ?? responseMap['data'] ?? [];
     return usersJson.map((json) => User.fromJson(json)).toList();
+  }
+
+  Future<User> getUserProfile() async {
+    final sessionId = SessionManager.instance.sessionId;
+    final responseMap = await _sendSocketRequest(
+      actionName: "User/getUserProfile",
+      payload: {
+        "sessionId": sessionId,
+      },
+    );
+
+    return User.fromJson(responseMap['payload'] ?? responseMap['data'] ?? responseMap);
+  }
+
+  Future<UserProfile> getUserProfileById(String userId) async {
+    final sessionId = SessionManager.instance.sessionId;
+    final responseMap = await _sendSocketRequest(
+      actionName: "User/getUserProfile",
+      payload: {
+        "sessionId": sessionId,
+        "userId": userId,
+      },
+    );
+
+    return UserProfile.fromJson(responseMap['payload'] ?? responseMap['data'] ?? responseMap);
   }
 
   Future<void> changeAppTheme (AppTheme theme) async {
@@ -190,7 +217,7 @@ class UserRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['status'] == 'SUCCESS' || responseMap['statusCode'] == '200') {
+    if (responseMap['status'] == '200') {
       return responseMap;
     } else {
       throw Exception(responseMap['message'] ?? 'Action $actionName failed');

@@ -1,0 +1,50 @@
+{
+  "className": "MainClasses.UserProfile",
+  "items": {
+    "5ebc31ba-06fc-4d51-a77e-f418fa1d0db0": {
+      "userId": "ee70f305-5365-4b27-bc01-e2d45ace70d3",
+      "profilePhotoName": "bb51f916-4124-45fb-9a87-3e5e68494984",
+      "theme": "DARK",
+      "sessionIds": [
+        "08ae5179-2aa3-4ac3-9313-174953a166a5",
+        "707a7874-2a1e-4305-91d6-3a8ead10cb33",
+        "c5174402-5c40-4b8b-8647-31ca9729bcbc",
+        "eee0481d-bdc7-4c2b-8400-cb202a387370",
+        "8a0a0b9b-6e32-4acd-b8c0-d27c66ce2e1f",
+        "126e44d1-483e-458a-aed4-818d9171b0d5",
+        "4076469c-d20a-4d76-94fc-ebe8478bff96",
+        "45755c8e-e997-4c04-a49a-7c940875b640",
+        "3689233e-6dcf-4102-8b7d-efec4fa82682",
+        "2a45e6f8-7156-48f1-b810-3d3d11e72759",
+        "c83493fd-2a68-40d5-86d9-63821e4d3d17",
+        "fd2b9159-03d3-43d9-a159-33230e45c016",
+        "b8b5d923-9a97-4f4b-ae62-fb2cf78cc485",
+        "562f538f-05d9-470a-b1ba-aa9006ef6a9c",
+        "a7164776-9809-4d03-99d3-3c8990f48133",
+        "8a36cd81-4e86-415b-8a25-1cea775683fb",
+        "b0631b23-1c7c-40ce-9bc5-8738287fcb3f",
+        "5e60ec8c-153c-460d-bcdb-20edb03ddeba",
+        "63dcd64a-8935-4a14-9ea2-076155c993e6",
+        "a8de0d21-2ec9-475c-b125-f021a37604a1",
+        "33eb91f9-3a32-4cf6-b5bf-c94554396e69",
+        "97352805-caa3-4238-a105-b50aea6a4c99",
+        "3f41651f-5c34-45c6-8544-44c82bec4fa8",
+        "3204439a-e873-469b-b871-51b07b16377c",
+        "ee95b078-08a2-4aed-b068-0c6bff961efb",
+        "67596c12-5135-46bb-ad94-3c71b90b5d26",
+        "c9560de3-441b-4983-8783-eda242afe4b4",
+        "40652a13-3d34-4331-9762-416827b65cb8",
+        "38b7806f-b2a6-4801-9de8-2f43b23cdf72",
+        "fd87c788-90e4-42f6-ae7b-9ebd499ba15c",
+        "78c48e28-010a-4bb2-b895-dd2af08fe642",
+        "f93f57f5-8a54-44cc-b515-9a2da088d9e1",
+        "e02263b6-380a-4d6f-895c-6b850e4b7d3d",
+        "750c65e3-be71-443f-ac7f-7ee9930dcebe",
+        "ee254c83-c28e-427b-a76c-c68715dddc18"
+      ],
+      "followersId": [],
+      "followingsId": [],
+      "id": "5ebc31ba-06fc-4d51-a77e-f418fa1d0db0"
+    }
+  }
+}

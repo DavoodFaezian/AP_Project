@@ -29,16 +29,7 @@ class _ImageDetailPageState extends State<ImageDetailPage> {
     _photoFuture = widget.photoRepository.getPhotoById(widget.photoId);
   }
 
-  Future<void> _navigateToComments(
-      BuildContext context,
-      String photoId,
-      ) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => CommentsScreen(photoId: photoId),
-      ),
-    );
-  }
+
 
   Widget _buildTag(String tag) => Chip(label: Text(tag));
 
@@ -145,18 +136,6 @@ class _ImageDetailPageState extends State<ImageDetailPage> {
                   ),
                 const SizedBox(height: 16),
                 Text('Shared with ${photo.postIds.length} post(s)'),
-                const SizedBox(height: 32),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: () => _navigateToComments(
-                      context,
-                      photo.id,
-                    ),
-                    icon: const Icon(Icons.comment),
-                    label: const Text('View Comments'),
-                  ),
-                ),
               ],
             ),
           ),

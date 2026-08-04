@@ -1,7 +1,8 @@
 package Services;
 
-import Annotaions.ServiceAction;
+import DTO.GetIdsResultDto;
 import DTO.Post.*;
+import DTO.StringResultDto;
 import Exceptions.ActionFailedException;
 import Exceptions.ItemNotFoundException;
 import MainClasses.*;
@@ -22,17 +23,15 @@ public class PostService {
 
     private PostService() {}
 
-    @ServiceAction
     public static PostService getInstance() {
         return instance;
     }
     
-    private void validatePermission(User user) {
+    public void validatePermission(User user) {
         BannedUserRepository.getInstance().isUserAllowedToPost(user.getId());
     }
 
-    @ServiceAction
-    public String addPost(AddPostDto dto) {
+    public StringResultDto addPost(AddPostDto dto) {
 
         String sessionId = dto.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -70,7 +69,7 @@ public class PostService {
                 findAlbum(ownerId, post, albumId);
             }
         }
-        return post.getId();
+        return new StringResultDto(post.getId());
 
     }
 
@@ -91,7 +90,6 @@ public class PostService {
         }
     }
 
-    @ServiceAction
     public void editPost(EditPostDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -178,8 +176,7 @@ public class PostService {
                 : new LinkedHashSet<>();
     }
 
-    @ServiceAction
-    public Set<PostDto> getAllPostsOfFollowings(String userId) {
+    public PostSetDto getAllPostsOfFollowings(String userId) {
         User user = userRepository.findUserById(userId);
         Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
         if(profile.isEmpty()){
@@ -187,16 +184,16 @@ public class PostService {
         }
         Set<String> followingIds = profile.get().getFollowingsId();
 
-        return followingIds.parallelStream()
+        return new PostSetDto(followingIds.parallelStream()
                 .map(postRepository::getPostsByOwnerId)
                 .flatMap(Collection::stream)
                 .map(PostDto::new)
                 .collect(Collectors.toCollection(() ->
                         new TreeSet<>(Comparator.comparing(PostDto::getLastModified))
-                ));
+                )));
     }
 
-    @ServiceAction
+
     public void deletePost(DeletePostDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -239,8 +236,7 @@ public class PostService {
         postRepository.removePost(post);
     }
 
-    @ServiceAction
-    public Set<String> getPhotoIdsOfPost(GetPostRelationsDto dto) {
+    public GetIdsResultDto getPhotoIdsOfPost(GetPostRelationsDto dto) {
 
         String sessionId = dto.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -249,13 +245,12 @@ public class PostService {
 
         Post post = postRepository.findPostById(dto.getPostId(), ownerId);
 
-        return post.getPhotoIds() != null
+        return new GetIdsResultDto(post.getPhotoIds() != null
                 ? post.getPhotoIds()
-                : Collections.emptySet();
+                : Collections.emptySet());
     }
 
-    @ServiceAction
-    public Set<String> getAlbumIdsOfPost(GetPostRelationsDto dto) {
+    public GetIdsResultDto getAlbumIdsOfPost(GetPostRelationsDto dto) {
 
         String sessionId = dto.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -268,21 +263,25 @@ public class PostService {
 
         Post post = postRepository.findPostById(dto.getPostId(), ownerId);
 
-        return post.getAlbumIds() != null
+        return new GetIdsResultDto(post.getAlbumIds() != null
                 ? post.getAlbumIds()
-                : Collections.emptySet();
+                : Collections.emptySet());
     }
 
-    @ServiceAction
-    public List<PostDto> getAllPostsByOwnerId(GetPostsByOwnerDto dto) {
+    public PostListDto getAllPostsByOwnerId(GetPostsByOwnerDto dto) {
 
         String sessionId = dto.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
-        
-        return postRepository.getPostsByOwnerId(user.getId())
+
+        if (user == null) {
+            throw new IllegalStateException("User is not logged in.");
+        }
+
+
+        return new PostListDto(postRepository.getPostsByOwnerId(user.getId())
                 .stream()
                 .map(PostDto::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
     public PostDto getPostById(String postId, String ownerId){
         Post post = postRepository.findPostById(postId,ownerId);

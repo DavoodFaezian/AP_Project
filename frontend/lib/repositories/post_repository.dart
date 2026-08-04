@@ -19,7 +19,8 @@ class PostRepository {
         "commentsAllowed": commentsAllowed,
       },
     );
-    return responseMap['postId'] ?? responseMap['id'] ?? '';
+    // Based on StringResultDto return id
+    return responseMap['payload']['id'] ?? '';
   }
 
   /// ۲. ویرایش پست (editPost)
@@ -55,13 +56,20 @@ class PostRepository {
   /// ۴. دریافت تمامی پست‌های کاربر جاری (getAllPostsByOwnerId)
   Future<List<Post>> getAllPostsByOwner() async {
     final responseMap = await _sendSocketRequest(
-      actionName: "Post/getAllPostsByOwner",
+      actionName: "Post/getAllPostsByOwnerId",
       payload: {
         "sessionId": SessionManager.instance.sessionId,
       },
     );
 
-    List<dynamic> postsJson = responseMap['posts'] ?? responseMap['data'] ?? [];
+    final payload = responseMap['payload'];
+    List<dynamic> postsJson = [];
+    if (payload is Map && payload.containsKey('posts')) {
+      postsJson = payload['posts'];
+    } else if (payload is List) {
+      postsJson = payload;
+    }
+
     return postsJson.map((json) => Post.fromJson(json)).toList();
   }
 
@@ -74,36 +82,31 @@ class PostRepository {
       },
     );
 
-    List<dynamic> postsJson = responseMap['posts'] ?? responseMap['data'] ?? [];
+    final payload = responseMap['payload'];
+    List<dynamic> postsJson = [];
+    if (payload is Map && payload.containsKey('posts')) {
+      postsJson = payload['posts'];
+    } else if (payload is List) {
+      postsJson = payload;
+    }
+
     return postsJson.map((json) => Post.fromJson(json)).toList();
   }
 
-  /// دریافت پست‌های یک کاربر دیگر با ارسال targetUserId به بک‌اند
-    Future<List<Post>> getPostsByUserId(String targetUserId) async {
-      final responseMap = await _sendSocketRequest(
-        actionName: "Post/getPostsByUserId",
-        payload: {
-          "sessionId": SessionManager.instance.sessionId,
-          "targetUserId": targetUserId, // آیدی کاربری که می‌خواهیم پست‌هایش را ببینیم
-        },
-      );
-
-      List<dynamic> postsJson = responseMap['posts'] ?? responseMap['data'] ?? [];
-      return postsJson.map((json) => Post.fromJson(json)).toList();
-    }
-
   /// ۶. دریافت یک پست با شناسه (getPostById)
-  Future<Post> getPostById(String postId) async {
+  Future<Post> getPostById(String postId, String ownerId) async {
     final responseMap = await _sendSocketRequest(
       actionName: "Post/getPostById",
       payload: {
         "sessionId": SessionManager.instance.sessionId,
         "postId": postId,
+        "ownerId": ownerId,
       },
     );
 
-    return Post.fromJson(responseMap['post'] ?? responseMap);
+    return Post.fromJson(responseMap['payload'] ?? responseMap);
   }
+
 
   /// ۷. دریافت آیدی عکس‌های یک پست (getPhotoIdsOfPost)
   Future<List<String>> getPhotoIdsOfPost(String postId) async {
@@ -115,22 +118,34 @@ class PostRepository {
       },
     );
 
-    List<dynamic> photoIds = responseMap['photoIds'] ?? [];
-    return List<String>.from(photoIds);
+    final payload = responseMap['payload'];
+    List<dynamic> ids = [];
+    if (payload is Map && payload.containsKey('ids')) {
+      ids = payload['ids'];
+    } else if (payload is List) {
+      ids = payload;
+    }
+    return List<String>.from(ids);
   }
 
   /// ۸. دریافت آیدی آلبوم‌های یک پست (getAlbumIdsOfPost)
   Future<List<String>> getAlbumIdsOfPost(String postId) async {
     final responseMap = await _sendSocketRequest(
-      actionName: "Post/getAlbumIdsPost",
+      actionName: "Post/getAlbumIdsOfPost",
       payload: {
         "sessionId": SessionManager.instance.sessionId,
         "postId": postId,
       },
     );
 
-    List<dynamic> albumIds = responseMap['albumIds'] ?? [];
-    return List<String>.from(albumIds);
+    final payload = responseMap['payload'];
+    List<dynamic> ids = [];
+    if (payload is Map && payload.containsKey('ids')) {
+      ids = payload['ids'];
+    } else if (payload is List) {
+      ids = payload;
+    }
+    return List<String>.from(ids);
   }
 
   /// متد کمکی جهت کپسوله‌سازی ارسال درخواست سوکت
@@ -147,10 +162,11 @@ class PostRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['status'] == 'SUCCESS' || responseMap['statusCode'] == '200') {
+    if (responseMap['status'] == 'SUCCESS' || responseMap['status'] == '200' || responseMap['statusCode'] == '200' || responseMap['statusCode'] == 200) {
       return responseMap;
     } else {
       throw Exception(responseMap['message'] ?? 'Action $actionName failed');
     }
   }
+
 }

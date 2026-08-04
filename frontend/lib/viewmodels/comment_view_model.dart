@@ -1,96 +1,107 @@
 import 'package:flutter/foundation.dart';
-
+import 'package:test_app/models/user_profile.dart';
 import '../models/comment.dart';
+import '../models/user.dart';
 import '../repositories/comment_repository.dart';
+import '../repositories/user_repository.dart';
 
 class CommentViewModel extends ChangeNotifier {
-  CommentViewModel(this._repository);
+  final CommentRepository _commentRepository;
+  final UserRepository _userRepository = UserRepository();
+  final String postId;
+  final String postOwnerId;
 
-  final CommentRepository _repository;
+  CommentViewModel({
+    required CommentRepository commentRepository,
+    required this.postId,
+    required this.postOwnerId,
+  }) : _commentRepository = commentRepository;
 
   List<Comment> _comments = [];
-  bool _isLoading = false;
-  String? _error;
+  List<Comment> get comments => _comments;
 
-  List<Comment> get comments => List.unmodifiable(_comments);
+  final Map<String, UserProfile> _userCache = {};
+  Map<String, UserProfile> get userCache => _userCache;
+
+  bool _isLoading = false;
   bool get isLoading => _isLoading;
-  String? get error => _error;
+
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
 
   Future<void> loadComments() async {
     _isLoading = true;
-    _error = null;
+    _errorMessage = null;
     notifyListeners();
 
     try {
-      _comments = await _repository.getAllComments();
+      _comments = await _commentRepository.getAllCommentsByPostId(postId);
+      
+      // Load user profiles for each comment owner
+      for (var comment in _comments) {
+        if (!_userCache.containsKey(comment.ownerId)) {
+          try {
+            final user = await _userRepository.getUserProfileById(comment.ownerId);
+            _userCache[comment.ownerId] = user;
+          } catch (e) {
+            debugPrint("Error loading profile for ${comment.ownerId}: $e");
+          }
+        }
+      }
     } catch (e) {
-      _error = e.toString();
+      _errorMessage = e.toString();
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> loadCommentsForPhoto(String photoId) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
+  Future<bool> addComment(String script) async {
+    if (script.trim().isEmpty) return false;
 
     try {
-      _comments = await _repository.getCommentsForPhoto(photoId);
+      await _commentRepository.addComment(
+        script: script,
+        postId: postId,
+        postOwnerId: postOwnerId,
+      );
+      await loadComments();
+      return true;
     } catch (e) {
-      _error = e.toString();
-    } finally {
-      _isLoading = false;
+      _errorMessage = e.toString();
       notifyListeners();
-    }
-  }
-
-  Future<void> addComment(Comment comment) async {
-    _error = null;
-
-    try {
-      final newComment = await _repository.addComment(comment);
-      _comments = [..._comments, newComment];
-      notifyListeners();
-    } catch (e) {
-      _error = e.toString();
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateComment(Comment comment) async {
-    _error = null;
-
-    try {
-      final updatedComment = await _repository.updateComment(comment);
-      _comments = _comments
-          .map((c) => c.id == updatedComment.id ? updatedComment : c)
-          .toList();
-      notifyListeners();
-    } catch (e) {
-      _error = e.toString();
-      notifyListeners();
+      return false;
     }
   }
 
   Future<void> deleteComment(String commentId) async {
-    _error = null;
-
     try {
-      await _repository.deleteComment(commentId);
-      _comments = _comments
-          .where((comment) => comment.id != commentId)
-          .toList();
+      await _commentRepository.deleteComment(
+        commentId: commentId,
+        postId: postId,
+        postOwnerId: postOwnerId,
+      );
+      _comments.removeWhere((c) => c.id == commentId);
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _errorMessage = e.toString();
       notifyListeners();
     }
   }
 
-  void clearError() {
-    _error = null;
-    notifyListeners();
+  Future<bool> editComment(String commentId, String newScript) async {
+    try {
+      await _commentRepository.editComment(
+        commentId: commentId,
+        script: newScript,
+        postId: postId,
+      );
+      await loadComments();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return false;
+    }
   }
 }

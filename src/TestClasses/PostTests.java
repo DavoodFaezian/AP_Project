@@ -122,7 +122,7 @@ public class PostTests {
                         Set.of(albumId1,albumId2),
                         true
                 )
-        );
+        ).getId();
 
         String post2 = postService.addPost(
                 new AddPostDto(
@@ -131,10 +131,10 @@ public class PostTests {
                         Set.of(),
                         true
                 )
-        );
+        ).getId();
         List<PostDto> postDtos1 = postService.getAllPostsByOwnerId(new GetPostsByOwnerDto(
                 sessionId
-        ));
+        )).getPosts();
         List<PostDto> expectedPostDtos1 = List.of(
                 new PostDto(
                         new Post(
@@ -165,7 +165,7 @@ public class PostTests {
                     sessionId,
                     post1
             )
-        );
+        ).getIds();
         assertEquals(Set.of(albumId1,albumId2),albumIds);
 
 
@@ -174,7 +174,7 @@ public class PostTests {
                         sessionId,
                         post2
                 )
-        );
+        ).getIds();
         assertEquals(Set.of(photoId2),photoIds);
         postService.editPost(
                 new EditPostDto(
@@ -190,7 +190,7 @@ public class PostTests {
                         sessionId,
                         post1
                 )
-        );
+        ).getIds();
         assertEquals(Set.of(),photoIds2);
         postService.editPost(
                 new EditPostDto(
@@ -203,7 +203,7 @@ public class PostTests {
         );
         List<PostDto> postDtos = postService.getAllPostsByOwnerId(new GetPostsByOwnerDto(
                 sessionId
-        ));
+        )).getPosts();
         List<PostDto> expectedPostDtos = List.of(
                 new PostDto(
                         new Post(
@@ -356,7 +356,7 @@ public class PostTests {
                         Set.of(albumId4),
                         true
                 )
-        );
+        ).getId();
 
         String post2 = postService.addPost(
                 new AddPostDto(
@@ -365,7 +365,7 @@ public class PostTests {
                         Set.of(albumId4),
                         true
                 )
-        );
+        ).getId();
 
 
         String albumId6 = albumService.addAlbum(
@@ -381,7 +381,7 @@ public class PostTests {
                         Set.of(albumId6),
                         true
                 )
-        );
+        ).getId();
         userService.follow(
                 new FollowAndUnfollowDto(
                      sessionId, followingUserId
@@ -398,10 +398,10 @@ public class PostTests {
         TreeSet<PostDto> postDtos = new TreeSet<>(Comparator.comparing(PostDto::getLastModified));
         postDtos.addAll(postService.getAllPostsByOwnerId(new GetPostsByOwnerDto(
                 sessionId2
-        )));
+        )).getPosts());
         postDtos.addAll(postService.getAllPostsByOwnerId(new GetPostsByOwnerDto(
                 sessionId3
-        )));
+        )).getPosts());
 
         assertEquals(postDtos,postService.getAllPostsOfFollowings(
                 userId

@@ -248,4 +248,19 @@ public class UserService {
         );
 
     }
+    public GetUserDto getUserProfile(SessionIdDto data){
+        User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
+        Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
+        if(profile.isEmpty()){
+            throw new ActionFailedException("Ops! profile was not found.");
+        }
+        UserProfile notNullProfile = profile.get();
+        return new GetUserDto(
+                user.getId(),
+                user.getUserName(),
+                notNullProfile.getProfilePhotoName()
+        );
+
+
+    }
 }

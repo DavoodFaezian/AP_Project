@@ -19,13 +19,13 @@ class UserPostsViewModel extends ChangeNotifier {
 
   /// بارگیری پست‌های کاربر جاری
 /// بارگیری پست‌های یک کاربر مشخص
-  Future<void> loadUserPosts(String userId) async {
+  Future<void> loadUserPosts() async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final fetchedPosts = await _postRepository.getPostsByUserId(userId);
+      final fetchedPosts = await _postRepository.getAllPostsByOwner();
       _posts
         ..clear()
         ..addAll(fetchedPosts);

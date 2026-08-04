@@ -5,6 +5,8 @@ import '../services/session_manager.dart';
 
 abstract class AlbumRepository {
   Future<List<Album>> getAlbumsByOwner();
+  Future<List<Album>> getAllAlbums(); // Alias for selecting
+  Future<Album> getAlbumById(String albumId);
   Future<Album> createAlbum({
     required String albumName,
   });
@@ -29,11 +31,35 @@ class SocketAlbumRepository implements AlbumRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['status'] == "200") {
+    if (responseMap['status'] == "200" || responseMap['statusCode'] == 200) {
       List<dynamic> albumsJson = responseMap['payload']["albums"] ?? [];
       return albumsJson.map((json) => Album.fromJson(json)).toList();
     } else {
       throw Exception(responseMap['message'] ?? 'Failed to fetch albums');
+    }
+  }
+
+  @override
+  Future<List<Album>> getAllAlbums() => getAlbumsByOwner();
+
+  @override
+  Future<Album> getAlbumById(String albumId) async {
+    final requestMap = {
+      "actionName": "Album/getAlbumById",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "albumId": albumId,
+      }
+    };
+
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+    if (responseMap['status'] == "200" || responseMap['statusCode'] == 200) {
+      return Album.fromJson(responseMap['payload'] ?? responseMap['data']);
+    } else {
+      throw Exception(responseMap['message'] ?? 'Album not found');
     }
   }
 
