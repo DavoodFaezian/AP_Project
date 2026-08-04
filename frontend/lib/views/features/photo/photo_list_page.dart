@@ -42,6 +42,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
     viewModel = PhotoListViewModel(
       repository: widget.photoRepository,
       albumId: widget.albumId,
+      ownerId: widget.albumOwnerId,
     );
     viewModel.loadPhotos();
   }
@@ -186,6 +187,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
               MaterialPageRoute(
                 builder: (_) => ImageDetailPage(
                   photoId: photoId,
+                  ownerId: widget.albumOwnerId ?? SessionManager.instance.userId!,
                   photoRepository: widget.photoRepository,
                 ),
               ),

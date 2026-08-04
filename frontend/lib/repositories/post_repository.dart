@@ -169,4 +169,19 @@ class PostRepository {
     }
   }
 
+  Future<List<Post>> getPostsByUserId(String userId) async {
+    final responseMap = await _sendSocketRequest(
+      actionName: "Post/getPostsByUserId",
+      payload: {
+        "sessionId": SessionManager.instance.sessionId,
+        "userId": userId,
+      },
+    );
+    final payload = responseMap['payload'];
+    final posts = payload['posts'] as List;
+    return posts
+        .map((json) => Post.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
 }

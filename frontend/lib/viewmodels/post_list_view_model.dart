@@ -5,10 +5,12 @@ import '../repositories/post_repository.dart';
 class PostListViewModel extends ChangeNotifier {
   final PostRepository _postRepository;
   final bool isMe;
+  final String? targetUserId;
 
   PostListViewModel({
     required PostRepository postRepository,
     this.isMe = false,
+    this.targetUserId,
   }) : _postRepository = postRepository;
 
   List<Post> _posts = [];
@@ -20,30 +22,56 @@ class PostListViewModel extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  Future<void> loadPosts() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+  Future<void> loadFeedPosts({bool showLoading = true}) async {
+    await loadPosts(showLoading: showLoading);
+  }
+
+  Future<void> loadPosts({bool showLoading = true}) async {
+    if (showLoading) {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+    }
 
     try {
-      if (isMe) {
-        _posts = await _postRepository.getAllPostsByOwner();
+      List<Post> fetchedPosts;
+      if (targetUserId != null) {
+        fetchedPosts = await _postRepository.getPostsByUserId(targetUserId!);
+      } else if (isMe) {
+        fetchedPosts = await _postRepository.getAllPostsByOwner();
       } else {
-        _posts = await _postRepository.getAllPostsOfFollowings();
+        fetchedPosts = await _postRepository.getAllPostsOfFollowings();
       }
       
       // Sort by date (descending) if possible
-      _posts.sort((a, b) {
+      fetchedPosts.sort((a, b) {
         final dateA = a.lastModified ?? a.createdAt ?? DateTime(0);
         final dateB = b.lastModified ?? b.createdAt ?? DateTime(0);
         return dateB.compareTo(dateA);
       });
+
+      _posts = fetchedPosts;
       
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
-      _isLoading = false;
+      if (showLoading) {
+        _isLoading = false;
+      }
       notifyListeners();
+    }
+  }
+
+  Future<void> refreshSinglePost(String postId) async {
+    try {
+      final updatedPost = await _postRepository.getPostById(postId, ""); // ownerId might not be needed if session works
+      final index = _posts.indexWhere((p) => p.id == postId);
+      if (index != -1) {
+        _posts[index] = updatedPost;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint("Failed to refresh single post: $e");
     }
   }
 

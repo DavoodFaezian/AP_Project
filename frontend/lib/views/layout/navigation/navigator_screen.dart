@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/views/features/album/album_list_screen.dart';
 
-import '../../features/search/search_screen.dart';
+import '../../features/search/search_users_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/home/me_screen.dart';
 
@@ -21,7 +21,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
   final List<Widget> _pages = [
     const HomeScreen(),
     const AlbumListPage(),
-    const SearchScreen(),
+    const SearchUserPage(),
     const MeScreen(),
   ];
 

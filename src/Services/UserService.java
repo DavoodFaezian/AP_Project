@@ -2,6 +2,7 @@ package Services;
 
 
 import Annotaions.ServiceAction;
+import DTO.BooleanDto;
 import DTO.SessionIdDto;
 import DTO.StringResultDto;
 import DTO.User.*;
@@ -13,6 +14,8 @@ import Repositories.BannedUserRepository;
 import Repositories.SessionRepository;
 import Repositories.UserProfileRepository;
 import Repositories.UserRepository;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -248,21 +251,64 @@ public class UserService {
         );
 
     }
-    public GetUserDto getUserProfile(SessionIdDto data){
+    @ServiceAction
+    public GetUserDto getUserProfile(GetUserByIdDto data){
+        User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
+
+        Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
+        String userName = user.getUserName();
+        if(data.getUserId() != null){
+            userName = UserRepository.getInstance().findUserById(data.getUserId()).getUserName();
+        }
+        if(profile.isEmpty()){
+            throw new ActionFailedException("Ops! profile was not found.");
+        }
+        UserProfile notNullProfile = profile.get();
+        return new GetUserDto(
+                notNullProfile.getUserId(),
+                userName,
+                notNullProfile.getProfilePhotoName(),
+                notNullProfile.getFollowersId(),
+                notNullProfile.getFollowingsId()
+        );
+
+
+    }
+    @ServiceAction
+    public BooleanDto checkIsFollowing(GetUserByIdDto data){
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
         Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
         if(profile.isEmpty()){
             throw new ActionFailedException("Ops! profile was not found.");
         }
         UserProfile notNullProfile = profile.get();
-        return new GetUserDto(
-                user.getId(),
-                user.getUserName(),
-                notNullProfile.getProfilePhotoName()
+        return new BooleanDto(
+                notNullProfile.getFollowingsId().contains(data.getUserId())
         );
-
-
     }
+
+    @ServiceAction
+    public UserListDto searchUsers(SearchUserDto data) {
+        SessionRepository.getInstance().validateSession(data.getSessionId());
+
+        String query = data.getQuery().toLowerCase();
+
+        return new UserListDto(UserRepository.getInstance().getAllUsers().stream()
+                .filter(user -> user.getUserName().toLowerCase().contains(query))
+                .map(user -> {
+                    UserProfile profile = validateUserProfile(user.getId());
+
+                    return new GetUserDto(
+                            user.getId(),
+                            user.getUserName(),
+                            profile.getProfilePhotoName(),
+                            profile.getFollowersId(),
+                            profile.getFollowingsId()
+                    );
+                })
+                .toList());
+    }
+    @ServiceAction
     public void loginBySessionId(SessionIdDto data){
         SessionRepository.getInstance().validateSession(data.getSessionId());
     }

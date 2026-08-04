@@ -342,6 +342,7 @@ class _AlbumListPageState extends State<AlbumListPage> {
                           builder: (_) => PhotoListPage(
                             albumId: album.id,
                             albumName: album.albumName,
+                            albumOwnerId: album.ownerId,
                             photoRepository: photoRepository,
                             albumRepository: albumRepository,
                           ),

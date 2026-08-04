@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     viewModel = PostListViewModel(postRepository: _postRepository, isMe: false);
-    viewModel.loadPosts();
+    viewModel.loadFeedPosts();
   }
 
   @override
@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
             title: "Home",
             actions: [
               IconButton(
-                onPressed: () => viewModel.loadPosts(),
+                onPressed: () => viewModel.loadFeedPosts(),
                 icon: const Icon(Icons.refresh),
               ),
               IconButton(
@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
             albumRepository: _albumRepository,
             postRepository: _postRepository,
             showActions: false,
-            onRefresh: () => viewModel.loadPosts(),
+            onRefresh: () => viewModel.loadFeedPosts(showLoading: false),
           ),
           floatingActionButton: CustomFAB(
             onPressed: _openCreatePhotoPage,

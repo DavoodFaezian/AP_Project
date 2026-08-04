@@ -1,0 +1,41 @@
+{
+  "className": "MainClasses.Album",
+  "items": {
+    "d79fc7b3-5ebc-4a14-81c0-190afef792f3": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "albumName": "ddf",
+      "photoIds": [
+        "bd2349c4-aad7-4f44-905d-91167bac9902",
+        "91c558f3-be36-4abd-b5a2-dbde1a60db66"
+      ],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 21,
+          "minute": 48,
+          "second": 24,
+          "nano": 165307700
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 21,
+          "minute": 48,
+          "second": 0,
+          "nano": 848806000
+        }
+      },
+      "id": "d79fc7b3-5ebc-4a14-81c0-190afef792f3"
+    }
+  }
+}

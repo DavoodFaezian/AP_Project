@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../../../repositories/user_repository.dart';
 import '../../../../services/socket_service.dart';
 import '../../../components/widgets/auth_header.dart';
 import '../../../components/widgets/input_decoration.dart';
@@ -36,27 +37,19 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Future<void> _checkAutoLogin() async {
-
     if (SessionManager.instance.isLoggedIn) {
-      final requestMap = {
-        "actionName": "User/signUp",
-        "payload": {
-          "sessionId": SessionManager.instance.sessionId,
+      try {
+        await UserRepository().loginBySessionId(SessionManager.instance.sessionId!);
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const NavigatorPage()),
+          );
         }
-      };
-      String jsonRequest = jsonEncode(requestMap) + "\n";
-      String rawResponse = await SocketService.sendRequest(jsonRequest);
-      Map<String, dynamic> responseMap = jsonDecode(rawResponse);
-      if (responseMap['status'] == '200') {
-        // استفاده از microtask یا Timer.run برای اطمینان از اینکه context آماده است
-        Future.microtask(() {
-          if (mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const NavigatorPage()),
-            );
-          }
-        });
+      } catch (e) {
+        debugPrint("Auto login failed: $e");
+        // Remove sessionId from memory and storage if auto-login fails
+        await SessionManager.instance.clearSession();
       }
     }
   }

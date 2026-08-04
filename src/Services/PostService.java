@@ -3,7 +3,9 @@ package Services;
 import Annotaions.ServiceAction;
 import DTO.GetIdsResultDto;
 import DTO.Post.*;
+import DTO.SessionIdDto;
 import DTO.StringResultDto;
+import DTO.User.GetPostsByUserDto;
 import Exceptions.ActionFailedException;
 import Exceptions.ItemNotFoundException;
 import MainClasses.*;
@@ -182,11 +184,11 @@ public class PostService {
     }
 
     @ServiceAction
-    public PostSetDto getAllPostsOfFollowings(String userId) {
-        User user = userRepository.findUserById(userId);
+    public PostSetDto getAllPostsOfFollowings(SessionIdDto data) {
+        User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
         Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
         if(profile.isEmpty()){
-            throw new ItemNotFoundException("UserProfile",userId);
+            throw new ItemNotFoundException("UserProfile",user.getId());
         }
         Set<String> followingIds = profile.get().getFollowingsId();
 
@@ -292,6 +294,22 @@ public class PostService {
                 .map(PostDto::new)
                 .collect(Collectors.toList()));
     }
+    @ServiceAction
+    public PostListDto getPostsByUserId(GetPostsByUserDto dto) {
+        User user = SessionRepository.getInstance().findUserBySessionId(dto.getSessionId());
+        String userId = user.getId();
+        if(dto.getUserId() != null){
+            userId = dto.getUserId();
+        }
+
+
+
+        return new PostListDto(postRepository.getPostsByOwnerId(userId)
+                .stream()
+                .map(PostDto::new)
+                .collect(Collectors.toList()));
+    }
+
     
     public PostDto getPostById(String postId, String ownerId){
         Post post = postRepository.findPostById(postId,ownerId);

@@ -6,10 +6,12 @@ class PhotoListViewModel extends ChangeNotifier {
   PhotoListViewModel({
     required PhotoRepository repository,
     this.albumId,
+    this.ownerId,
   }) : _repository = repository;
 
   final PhotoRepository _repository;
   final String? albumId;
+  final String? ownerId;
 
   List<Photo> _photos = [];
   bool _isLoading = false;
@@ -34,7 +36,7 @@ class PhotoListViewModel extends ChangeNotifier {
 
     try {
       if (albumId != null && albumId!.isNotEmpty) {
-        _photos = await _repository.getPhotosByAlbumId(albumId!);
+        _photos = await _repository.getPhotosByAlbumId(albumId!, ownerId);
       } else {
         _photos = await _repository.getPhotosByOwnerId();
       }

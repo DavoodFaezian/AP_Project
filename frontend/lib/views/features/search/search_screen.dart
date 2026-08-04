@@ -70,10 +70,12 @@ class _SearchScreenState extends State<SearchScreen> {
             );
           },
           onEyePressed: () {
+            final photo = searchResult.firstWhere((p) => p.id == photoId);
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => ImageDetailPage(
                   photoId: photoId,
+                  ownerId: photo.ownerId,
                   photoRepository: _photoRepository,
                 ),
               ),

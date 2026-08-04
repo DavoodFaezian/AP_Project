@@ -6,7 +6,7 @@ import '../services/session_manager.dart';
 abstract class AlbumRepository {
   Future<List<Album>> getAlbumsByOwner();
   Future<List<Album>> getAllAlbums(); // Alias for selecting
-  Future<Album> getAlbumById(String albumId);
+  Future<Album> getAlbumById(String albumId,String? ownerId);
   Future<Album> createAlbum({
     required String albumName,
   });
@@ -43,12 +43,13 @@ class SocketAlbumRepository implements AlbumRepository {
   Future<List<Album>> getAllAlbums() => getAlbumsByOwner();
 
   @override
-  Future<Album> getAlbumById(String albumId) async {
+  Future<Album> getAlbumById(String albumId,String? ownerId) async {
     final requestMap = {
       "actionName": "Album/getAlbumById",
       "payload": {
         "sessionId": SessionManager.instance.sessionId,
         "albumId": albumId,
+        "ownerId":ownerId
       }
     };
 
@@ -81,7 +82,7 @@ class SocketAlbumRepository implements AlbumRepository {
 
     if (responseMap['status'] == "200") {
       String id = responseMap['payload']['id'];
-      return Album(id: id, albumName: albumName);
+      return Album(id: id, albumName: albumName, ownerId: SessionManager.instance.userId!);
     } else {
       throw Exception(responseMap['message'] ?? 'Failed to create album');
     }
@@ -106,7 +107,7 @@ class SocketAlbumRepository implements AlbumRepository {
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
     if (responseMap['status'] == "200") {
-      return Album(id: albumId, albumName: albumName);
+      return Album(id: albumId, albumName: albumName, ownerId: SessionManager.instance.userId!);
     }
     else {
       throw Exception(responseMap['message'] ?? 'Failed to update album');

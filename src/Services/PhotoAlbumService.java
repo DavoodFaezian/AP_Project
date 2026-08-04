@@ -154,10 +154,14 @@ public class PhotoAlbumService{
     @ServiceAction
     public PhotoListDto getPhotosByAlbumId(GetAlbumPhotosDto data){
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
-        Album album = AlbumRepository.getInstance().findAlbumById(data.getAlbumId() , user.getId());
+        String userId = user.getId();
+        if(data.getOwnerId() != null){
+            userId = data.getOwnerId();
+        }
+        Album album = AlbumRepository.getInstance().findAlbumById(data.getAlbumId() , userId);
         ArrayList<Photo> res = new ArrayList<>();
         for(var photoId : album.getPhotoIds()){
-            res.add(PhotoRepository.getInstance().findPhotoById(photoId , user.getId()));
+            res.add(PhotoRepository.getInstance().findPhotoById(photoId , userId));
         }
         return new PhotoListDto(res.stream().map(PhotoDto::new).collect(Collectors.toList()));
 

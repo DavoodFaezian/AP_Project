@@ -10,10 +10,12 @@ class ImageDetailPage extends StatefulWidget {
   const ImageDetailPage({
     super.key,
     required this.photoId,
+    required this.ownerId,
     required this.photoRepository,
   });
 
   final String photoId;
+  final String ownerId;
   final PhotoRepository photoRepository;
 
   @override
@@ -26,7 +28,7 @@ class _ImageDetailPageState extends State<ImageDetailPage> {
   @override
   void initState() {
     super.initState();
-    _photoFuture = widget.photoRepository.getPhotoById(widget.photoId);
+    _photoFuture = widget.photoRepository.getPhotoById(widget.photoId, widget.ownerId);
   }
 
 

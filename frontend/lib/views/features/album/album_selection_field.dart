@@ -9,7 +9,7 @@ class AlbumMultiSelectField extends FormField<Set<String>> {
     required AlbumRepository albumRepository,
     Set<String>? initialValue,
     ValueChanged<Set<String>>? onChanged,
-    String title = 'Albums',
+    String title = '',
     String hintText = 'Select albums',
     FormFieldValidator<Set<String>>? validator,
     bool enabled = true,

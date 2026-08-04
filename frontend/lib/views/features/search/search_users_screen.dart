@@ -1,16 +1,14 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import '../../../services/socket_service.dart';
-import '../../../services/session_manager.dart';
+import 'package:test_app/models/user_profile.dart';
+import 'package:test_app/repositories/user_repository.dart';
+import 'package:test_app/services/session_manager.dart';
+import 'package:test_app/views/components/widgets/socket_image.dart';
 import '../../components/widgets/custom_appbar.dart';
 import '../../components/widgets/custom_drawer.dart';
 import '../../components/widgets/empty_screen.dart';
 import '../../components/widgets/input_decoration.dart';
-
-// صفحه نمایش پست‌های کاربر کلیک‌شده
-import '../post/user_posts_page.dart';
+import '../profile/profile_screen.dart';
 
 class SearchUserPage extends StatefulWidget {
   const SearchUserPage({super.key});
@@ -21,22 +19,22 @@ class SearchUserPage extends StatefulWidget {
 
 class _SearchUserPageState extends State<SearchUserPage> {
   final TextEditingController _searchController = TextEditingController();
+  final UserRepository _userRepository = UserRepository();
   
-  // تایمر برای اعمال Debounce
+  // Timer for applying Debounce
   Timer? _debounceTimer;
 
-  List<Map<String, dynamic>> _searchResults = [];
+  List<UserProfile> _searchResults = [];
   bool _isLoading = false;
   bool _hasSearched = false;
 
   @override
   void dispose() {
-    _debounceTimer?.cancel(); // ابطال تایمر هنگام خروج از صفحه
+    _debounceTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
-  // ۱. متد مدیریت تغییرات متن تایپ‌شده همراه با ۵۰۰ میلی‌ثانیه تاخیر هوشمند (Debounce)
   void _onSearchChanged(String query) {
     if (_debounceTimer?.isActive ?? false) {
       _debounceTimer!.cancel();
@@ -47,7 +45,6 @@ class _SearchUserPageState extends State<SearchUserPage> {
     });
   }
 
-  // ۲. ارسال درخواست سرچ به بک‌اند جاوا
   Future<void> _performSearch(String query) async {
     final trimmedQuery = query.trim();
 
@@ -66,64 +63,29 @@ class _SearchUserPageState extends State<SearchUserPage> {
     });
 
     try {
-      // نمونه فرمت ارسالی به سوکت بک‌اند جاوا:
-      final requestMap = {
-        "actionName": "SEARCH_USERS",
-        "payload": {
-          "sessionId": SessionManager.instance.sessionId,
-          "query": trimmedQuery,
-        }
-      };
-
-      String jsonRequest = jsonEncode(requestMap) + "\n";
-      String rawResponse = await SocketService.sendRequest(jsonRequest);
-      Map<String, dynamic> responseMap = jsonDecode(rawResponse);
-
-      if (responseMap['status'] == 'SUCCESS') {
+      final results = await _userRepository.searchUsers(trimmedQuery);
+      
+      if (mounted) {
         setState(() {
-          _searchResults = List<Map<String, dynamic>>.from(responseMap['users'] ?? []);
+          _searchResults = results;
           _isLoading = false;
         });
       }
-
-
-      // شبیه‌سازی تاخیر پاسخ سوکت برای تست
-      await Future.delayed(const Duration(milliseconds: 400));
-
-      if (!mounted) return;
-
-      setState(() {
-        _isLoading = false;
-        // دیتای تستی فرضی دریافت شده از بک‌اند
-        _searchResults = [
-          {
-            'userId': 'user_101',
-            'username': 'ali_dev',
-            'fullName': 'Ali Rezaei',
-          },
-          {
-            'userId': 'user_102',
-            'username': 'sara_m',
-            'fullName': 'Sara Mohammadi',
-          },
-        ];
-      });
     } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-      });
+      debugPrint("Search failed: $e");
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
-  // ۳. رفتن به صفحه پست‌های کاربر انتخاب‌شده
-  void _navigateToUserPosts(Map<String, dynamic> user) {
+  void _navigateToProfile(UserProfile profile) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => UserPostsPage(
-          userId: user['userId'] as String,
-          username: user['username'] as String,
-          fullName: user['fullName'] as String,
+        builder: (_) => ProfileScreen(
+          userId: profile.userId,
         ),
       ),
     );
@@ -132,20 +94,19 @@ class _SearchUserPageState extends State<SearchUserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: const CustomAppBar(
         title: 'Search Users',
       ),
-      drawer: const CustomDrawer(),
       body: Column(
         children: [
-          // فیلد سرچ
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               controller: _searchController,
-              onChanged: _onSearchChanged, // اتصال به Debounce
+              onChanged: _onSearchChanged,
               decoration: buildInputDecoration(
-                'Search username or name...',
+                'Search username...',
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear),
@@ -159,7 +120,6 @@ class _SearchUserPageState extends State<SearchUserPage> {
             ),
           ),
 
-          // بخش نتایج یا اسکرین‌های خالی
           Expanded(
             child: Builder(
               builder: (context) {
@@ -169,17 +129,17 @@ class _SearchUserPageState extends State<SearchUserPage> {
 
                 if (!_hasSearched) {
                   return const EmptyState(
-                    imagePath: 'assets/images/Image post-cuate.png',
+                    imagePath: 'assets/images/Photos-pana (1).png',
                     title: 'Search for Users',
-                    subtitle: 'Start typing to search users in real-time.',
+                    subtitle: 'Start typing to find people.',
                   );
                 }
 
                 if (_searchResults.isEmpty) {
                   return const EmptyState(
-                    imagePath: 'assets/images/Image post-cuate.png',
+                    imagePath: 'assets/images/Photos-pana (1).png',
                     title: 'No Users Found',
-                    subtitle: 'No user matches your search query.',
+                    subtitle: 'Try another keyword.',
                   );
                 }
 
@@ -187,7 +147,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
                   itemCount: _searchResults.length,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   itemBuilder: (context, index) {
-                    final user = _searchResults[index];
+                    final profile = _searchResults[index];
                     return Card(
                       elevation: 1,
                       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
@@ -195,16 +155,31 @@ class _SearchUserPageState extends State<SearchUserPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ListTile(
-                        leading: const CircleAvatar(
-                          child: Icon(Icons.person),
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.grey.shade200,
+                          child: profile.profilePhotoName != null
+                              ? ClipOval(
+                                  child: SocketImage(
+                                    photoName: profile.profilePhotoName!,
+                                    ownerId: profile.userId,
+                                    sessionId: SessionManager.instance.sessionId!,
+                                    builder: (context, provider) => Image(
+                                      image: provider,
+                                      fit: BoxFit.cover,
+                                      width: 40,
+                                      height: 40,
+                                    ),
+                                  ),
+                                )
+                              : const Icon(Icons.person, color: Colors.grey),
                         ),
                         title: Text(
-                          user['fullName'] ?? '',
+                          profile.userName,
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        subtitle: Text('@${user['username']}'),
+                        subtitle: Text('@${profile.userId}'),
                         trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _navigateToUserPosts(user),
+                        onTap: () => _navigateToProfile(profile),
                       ),
                     );
                   },

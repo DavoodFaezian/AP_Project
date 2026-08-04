@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:test_app/models/user_profile.dart';
 import '../models/app_theme.dart';
 import '../models/user.dart';
 import '../repositories/user_repository.dart';
@@ -12,7 +13,7 @@ class UserViewModel extends ChangeNotifier {
   final UserRepository _userRepository;
 
   User? _currentUser;
-  List<User> _searchResults = [];
+  List<UserProfile> _searchResults = [];
   bool _isLoading = false;
   String? _errorMessage;
 

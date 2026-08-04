@@ -12,8 +12,10 @@ import 'package:test_app/services/session_manager.dart';
 import 'package:test_app/views/components/widgets/socket_image.dart';
 import 'package:test_app/views/features/photo/photo_slider_page.dart';
 import 'package:test_app/views/features/photo/image_detail_page.dart';
-import 'package:test_app/views/features/post/post_form_popup.dart';
+import 'package:test_app/views/features/post/post_form_page.dart';
 import 'package:test_app/views/layout/screens/home/comment_screen.dart';
+
+import '../profile/profile_screen.dart';
 
 class PostItem extends StatefulWidget {
   final Post post;
@@ -79,33 +81,54 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
     });
 
     try {
-      // Fetch owner profile
-      final owner = await UserRepository().getUserProfileById(widget.post.ownerId);
+      // Fetch owner profile (non-blocking)
+      UserRepository().getUserProfileById(widget.post.ownerId).then((owner) {
+        if (mounted) setState(() => _owner = owner);
+      }).catchError((e) => debugPrint("Error fetching owner profile: $e"));
 
-      // Fetch albums
-      final albumFutures = widget.post.albumIds.map((id) => widget.albumRepository.getAlbumById(id));
-      final albums = await Future.wait(albumFutures);
+      // Fetch albums individually to prevent total failure if one fails
+      List<Album> loadedAlbums = [];
+      for (final albumId in widget.post.albumIds) {
+        try {
+          final album = await widget.albumRepository.getAlbumById(albumId, widget.post.ownerId);
+          loadedAlbums.add(album);
+        } catch (e) {
+          debugPrint("Error fetching album $albumId: $e");
+        }
+      }
 
-      // Fetch photos from albumIds
+      // Fetch photos from albums
       List<Photo> albumPhotos = [];
-      for (var album in albums) {
-        final photos = await widget.photoRepository.getPhotosByAlbumId(album.id);
-        albumPhotos.addAll(photos);
+      for (final album in loadedAlbums) {
+        try {
+          final photos = await widget.photoRepository.getPhotosByAlbumId(album.id, widget.post.ownerId);
+          albumPhotos.addAll(photos);
+        } catch (e) {
+          debugPrint("Error fetching photos for album ${album.id}: $e");
+        }
       }
 
       // Fetch specific photoIds
-      final photoFutures = widget.post.photoIds.map((id) => widget.photoRepository.getPhotoById(id));
-      List<Photo> specificPhotos = await Future.wait(photoFutures);
+      List<Photo> specificPhotos = [];
+      for (final photoId in widget.post.photoIds) {
+        try {
+          final photo = await widget.photoRepository.getPhotoById(photoId, widget.post.ownerId);
+          specificPhotos.add(photo);
+        } catch (e) {
+          debugPrint("Error fetching specific photo $photoId: $e");
+        }
+      }
 
       // Combine and remove duplicates
       final combined = [...albumPhotos, ...specificPhotos];
       final seenIds = <String>{};
       final uniquePhotos = combined.where((p) => seenIds.add(p.id)).toList();
 
+
       if (mounted) {
         setState(() {
-          _owner = owner;
-          _albums = albums;
+          _owner = _owner;
+          _albums = loadedAlbums;
           _allPhotos = uniquePhotos;
           _currentImageIndex = 0;
           _isLoading = false;
@@ -147,6 +170,7 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
               MaterialPageRoute(
                 builder: (_) => ImageDetailPage(
                   photoId: photoId,
+                  ownerId: widget.post.ownerId,
                   photoRepository: widget.photoRepository,
                 ),
               ),
@@ -158,13 +182,15 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
   }
 
   void _editPost() async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => PostFormPopup(
-        photoRepository: widget.photoRepository,
-        albumRepository: widget.albumRepository,
-        postRepository: widget.postRepository,
-        initialPost: widget.post,
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PostFormPage(
+          photoRepository: widget.photoRepository,
+          albumRepository: widget.albumRepository,
+          postRepository: widget.postRepository,
+          initialPost: widget.post,
+        ),
       ),
     );
 
@@ -228,29 +254,41 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.grey.shade300,
-                  child: _owner?.profilePhotoName != null
-                      ? ClipOval(
-                    child: SizedBox.expand(
-                      child: SocketImage(
-                        photoName: _owner!.profilePhotoName!,
-                        sessionId: SessionManager.instance.sessionId!,
-                        builder: (context, provider) => Image(
-                          image: provider,
-                          fit: BoxFit.cover,
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => ProfileScreen(userId: widget.post.ownerId)),
+                  ),
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.grey.shade300,
+                    child: _owner?.profilePhotoName != null
+                        ? ClipOval(
+                      child: SizedBox.expand(
+                        child: SocketImage(
+                          photoName: _owner!.profilePhotoName!,
+                          sessionId: SessionManager.instance.sessionId!,
+                          builder: (context, provider) => Image(
+                            image: provider,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                      : const Icon(Icons.person),
+                    )
+                        : const Icon(Icons.person),
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Text(
-                    _owner?.userName ?? widget.post.ownerId,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  child: GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => ProfileScreen(userId: widget.post.ownerId)),
+                    ),
+                    child: Text(
+                      _owner?.userName ?? widget.post.ownerId,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
                   ),
                 ),
                 if (widget.showActions)

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../repositories/user_repository.dart';
 import '../../../../services/session_manager.dart';
 import '../../../../services/socket_service.dart';
 import '../../../components/widgets/photo_upload_input.dart';
@@ -237,18 +238,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // -------------------- LOGOUT --------------------
   Future<void> _handleLogout() async {
     try {
-      final requestMap = {
-        "actionName": "User/logOut",
-        "payload": {
-          "sessionId": SessionManager.instance.sessionId,
-        }
-      };
-
-      final jsonRequest = jsonEncode(requestMap) + "\n";
-      await SocketService.sendRequest(jsonRequest);
-    } catch (_) {}
-
-    SessionManager.instance.clearSession();
+      // Use the repository method to clear session everywhere
+      await UserRepository().logOut();
+    } catch (_) {
+      // Even if server request fails, local session is cleared by the repo method
+    }
 
     if (!mounted) return;
 

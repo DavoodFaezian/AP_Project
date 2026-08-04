@@ -28,7 +28,7 @@ class PostList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    if (isLoading && posts.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
 

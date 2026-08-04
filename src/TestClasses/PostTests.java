@@ -2,6 +2,7 @@ import DTO.Album.AddAlbumDto;
 import DTO.Photo.AddPhotoDto;
 import DTO.Photo.AddPhotoToAndRemovePhotoFromAlbum;
 import DTO.Post.*;
+import DTO.SessionIdDto;
 import DTO.User.FollowAndUnfollowDto;
 import DTO.User.LogInDto;
 import DTO.User.SignUpDto;
@@ -404,7 +405,7 @@ public class PostTests {
         )).getPosts());
 
         assertEquals(postDtos,postService.getAllPostsOfFollowings(
-                userId
+                new SessionIdDto(sessionId)
         ));
     }
 }

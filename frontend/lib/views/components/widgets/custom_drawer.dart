@@ -14,8 +14,8 @@ class CustomDrawer extends StatelessWidget {
       listenable: SessionManager.instance,
       builder: (context, _) {
         final user = SessionManager.instance.currentUser;
-        final username = user?.username ?? "Guest";
-        final profilePhoto = user?.profilePhotoId;
+        final username = user?.userName ?? "Guest";
+        final profilePhoto = user?.profilePhotoName;
 
         return Drawer(
           child: ListView(

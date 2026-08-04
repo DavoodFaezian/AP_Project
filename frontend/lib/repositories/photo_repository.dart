@@ -27,12 +27,13 @@ class PhotoRepository {
   }
 
   // 2. دریافت عکس بر اساس ID (getPhotoById)
-  Future<Photo> getPhotoById(String photoId) async {
+  Future<Photo> getPhotoById(String photoId,String ownerId) async {
     final requestMap = {
       "actionName": "Photo/getPhotoById",
       "payload": {
         "sessionId": SessionManager.instance.sessionId,
         "photoId": photoId,
+        "ownerId":ownerId
       }
     };
 
@@ -161,12 +162,13 @@ class PhotoRepository {
   }
 
   // 8. دریافت عکس‌های یک آلبوم مشخص (getPhotosByAlbumId)
-  Future<List<Photo>> getPhotosByAlbumId(String albumId) async {
+  Future<List<Photo>> getPhotosByAlbumId(String albumId,String? ownerId) async {
     final requestMap = {
       "actionName": "PhotoAlbum/getPhotosByAlbumId",
       "payload": {
         "sessionId": SessionManager.instance.sessionId,
         "albumId": albumId,
+        "ownerId":ownerId
       }
     };
 

@@ -8,16 +8,18 @@ import java.util.Set;
 public class AlbumDto {
     private final String id;
     private final String albumName;
+    private final String ownerId;
     private final Set<String> photoIds;
 
     public AlbumDto(Album album) {
         this.id = album.getId();
         this.albumName = album.getAlbumName();
+        this.ownerId = album.getOwnerId();
         this.photoIds = album.getPhotoIds();
     }
 
     public String getOwnerId() {
-        return id;
+        return ownerId;
     }
 
     public String getAlbumName() {
@@ -28,6 +30,9 @@ public class AlbumDto {
         return photoIds;
     }
 
+    public String getId() {
+        return id;
+    }
 
     @Override
     public boolean equals(Object obj) {

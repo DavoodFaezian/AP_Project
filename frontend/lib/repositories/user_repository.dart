@@ -1,7 +1,6 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:test_app/models/user_profile.dart';
-
-import '../models/user.dart';
 import '../services/session_manager.dart';
 import '../services/socket_service.dart';
 import '../models/app_theme.dart';
@@ -10,6 +9,7 @@ import 'package:local_auth/local_auth.dart';
 class UserRepository {
 
   final LocalAuthentication _localAuth = LocalAuthentication();
+  
   /// ۱. ثبت نام کاربر (signUp) -> خروجی: sessionId
   Future<String> signUp({
     required String userName,
@@ -25,9 +25,9 @@ class UserRepository {
       },
     );
 
-    final sessionId = responseMap['sessionId'] ?? responseMap['id'] ?? '';
+    final sessionId = responseMap['payload']?['id'] ?? responseMap['sessionId'] ?? responseMap['id'] ?? '';
     if (sessionId.isNotEmpty) {
-      SessionManager.instance.saveSessionId(sessionId);
+      await SessionManager.instance.saveSessionId(sessionId);
     }
     return sessionId;
   }
@@ -68,23 +68,36 @@ class UserRepository {
       },
     );
 
-    final sessionId = responseMap['sessionId'] ?? responseMap['id'] ?? '';
+    final sessionId = responseMap['payload']?['id'] ?? responseMap['sessionId'] ?? responseMap['id'] ?? '';
     if (sessionId.isNotEmpty) {
-      SessionManager.instance.saveSessionId(sessionId);
+      await SessionManager.instance.saveSessionId(sessionId);
     }
     return sessionId;
+  }
+
+  Future<void> loginBySessionId(String sessionId) async {
+    await _sendSocketRequest(
+      actionName: "User/loginBySessionId",
+      payload: {
+        "sessionId": sessionId,
+      },
+    );
+    await SessionManager.instance.refreshProfile();
   }
 
   /// ۳. خروج از حساب کاربری (logOut)
   Future<void> logOut() async {
     final sessionId = SessionManager.instance.sessionId;
-    await _sendSocketRequest(
-      actionName: "User/logOut",
-      payload: {
-        "sessionId": sessionId,
-      },
-    );
-    SessionManager.instance.clearSession();
+    try {
+      await _sendSocketRequest(
+        actionName: "User/logOut",
+        payload: {
+          "sessionId": sessionId,
+        },
+      );
+    } finally {
+      await SessionManager.instance.clearSession();
+    }
   }
 
   /// ۴. تغییر رمز عبور (changePassword)
@@ -115,6 +128,7 @@ class UserRepository {
         "profilePhotoId": profilePhotoId,
       },
     );
+    await SessionManager.instance.refreshProfile();
   }
 
   /// ۶. حذف عکس پروفایل (removeProfilePhoto)
@@ -126,6 +140,7 @@ class UserRepository {
         "sessionId": sessionId,
       },
     );
+    await SessionManager.instance.refreshProfile();
   }
 
   /// ۷. دنبال کردن کاربر دیگر (follow)
@@ -138,6 +153,7 @@ class UserRepository {
         "followingUserId": followingUserId,
       },
     );
+    await SessionManager.instance.refreshProfile();
   }
 
   /// ۸. لغو دنبال کردن کاربر دیگر (unfollow)
@@ -150,10 +166,29 @@ class UserRepository {
         "followingUserId": followingUserId,
       },
     );
+    await SessionManager.instance.refreshProfile();
+  }
+
+  Future<bool> checkIsFollowing(String userId) async {
+    final sessionId = SessionManager.instance.sessionId;
+    final responseMap = await _sendSocketRequest(
+      actionName: "User/checkIsFollowing",
+      payload: {
+        "sessionId": sessionId,
+        "userId": userId,
+      },
+    );
+
+    // Based on BooleanDto { boolean value; }
+    final payload = responseMap['payload'];
+    if (payload is Map) {
+      return payload['value'] ?? false;
+    }
+    return payload ?? false;
   }
 
   /// جستجوی کاربران (searchUsers)
-  Future<List<User>> searchUsers(String query) async {
+  Future<List<UserProfile>> searchUsers(String query) async {
     final sessionId = SessionManager.instance.sessionId;
     final responseMap = await _sendSocketRequest(
       actionName: "User/searchUsers",
@@ -163,11 +198,11 @@ class UserRepository {
       },
     );
 
-    List<dynamic> usersJson = responseMap['users'] ?? responseMap['data'] ?? [];
-    return usersJson.map((json) => User.fromJson(json)).toList();
+    List<dynamic> usersJson = responseMap['payload']?['users'] ?? responseMap['users'] ?? responseMap['data'] ?? [];
+    return usersJson.map((json) => UserProfile.fromJson(json)).toList();
   }
 
-  Future<User> getUserProfile() async {
+  Future<UserProfile> getUserProfile() async {
     final sessionId = SessionManager.instance.sessionId;
     final responseMap = await _sendSocketRequest(
       actionName: "User/getUserProfile",
@@ -176,7 +211,7 @@ class UserRepository {
       },
     );
 
-    return User.fromJson(responseMap['payload'] ?? responseMap['data'] ?? responseMap);
+    return UserProfile.fromJson(responseMap['payload'] ?? responseMap['data'] ?? responseMap);
   }
 
   Future<UserProfile> getUserProfileById(String userId) async {
@@ -200,6 +235,7 @@ class UserRepository {
         "sessionId": sessionId,
         "appTheme": theme.name
     });
+    await SessionManager.instance.refreshProfile();
   }
   
 
@@ -217,7 +253,7 @@ class UserRepository {
     String rawResponse = await SocketService.sendRequest(jsonRequest);
     Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-    if (responseMap['status'] == '200') {
+    if (responseMap['status'] == 'SUCCESS' || responseMap['status'] == '200' || responseMap['statusCode'] == 200 || responseMap['statusCode'] == '200') {
       return responseMap;
     } else {
       throw Exception(responseMap['message'] ?? 'Action $actionName failed');
