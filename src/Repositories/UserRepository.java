@@ -78,6 +78,10 @@ public class UserRepository {
         return user;
     }
 
+    public List<User> filterUsers (Predicate<User> condition) {
+        return userFileManager.filterItems(condition);
+    }
+
     public boolean isUserIdValid(String userId){
         return userFileManager.exists(u->u.getId().equals(userId));
     }

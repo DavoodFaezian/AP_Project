@@ -10,6 +10,7 @@ import Repositories.SessionRepository;
 import Repositories.UserProfileRepository;
 import Repositories.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -109,6 +110,10 @@ public class UserService {
         User user = UserRepository.getInstance().create(userName, password);
         userProfileRepository.createUserProfile(user.getId());
 
+        return getString(user);
+    }
+
+    private String getString(User user) {
         Session session = SessionRepository.getInstance().createSession(user.getId());
 
         UserProfile profile = userProfileRepository.getUserProfileByUserId(user.getId())
@@ -122,15 +127,7 @@ public class UserService {
 
     public String logIn(LogInDto data) {
         User user = validateLogIn(data.getUserName(), data.getPassword());
-        Session session = SessionRepository.getInstance().createSession(user.getId());
-
-        UserProfile profile = userProfileRepository.getUserProfileByUserId(user.getId())
-                .orElseThrow(() -> new ItemNotFoundException("user profile", user.getId()));
-
-        profile.getSessionIds().add(session.getId());
-        userProfileRepository.updateUserProfile(profile);
-
-        return session.getId();
+        return getString(user);
     }
 
     public void logOut(LogOutAndRemoveProfilePhotoDto data) {
@@ -225,6 +222,25 @@ public class UserService {
         userProfileRepository.updateUserProfile(followingProfile);
     }
 
+    public List<User> searchUsers(SearchUsersDto data) {
+        String sessionId = data.getSessionId();
+        SessionRepository.getInstance().findUserBySessionId(sessionId);
+        String query = data.getQuery();
+        String cleanQuery = query.trim().toLowerCase();
+        return UserRepository.getInstance().filterUsers(
+                user -> user.getUserName().contains(cleanQuery)
+        );
+    }
+
+    public void changeTheme(ChangeThemeDto data) {
+        String sessionId  = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        UserProfile userProfile = userProfileRepository.getUserProfileByUserId(user.getId()).orElseThrow(
+                () -> new ItemNotFoundException("user profile", user.getId())
+        );
+        userProfile.setTheme(data.getTheme());
+
+    }
 
     public User getUser(String userName , String password) {
         return UserRepository.getInstance().findUserByUserNameAndPassword(userName , password);
