@@ -1,5 +1,6 @@
 package Services;
 
+import Annotaions.ServiceAction;
 import DTO.Photo.*;
 import Exceptions.ActionFailedException;
 import MainClasses.Album;
@@ -19,16 +20,19 @@ public class PhotoAlbumService{
 
     private PhotoAlbumService(){}
 
+    @ServiceAction
     public static PhotoAlbumService getInstance() {
         return instance;
     }
 
-    public void validatePhoto(String photoId) {
+    @ServiceAction
+    private void validatePhoto(String photoId) {
         if (photoId == null) {
             throw new ActionFailedException("Photo must not be null");
         }
     }
 
+    @ServiceAction
     public void addPhotoToAlbum(AddPhotoToAndRemovePhotoFromAlbum data) {
         String sessionId = data.getSessionId();
         String photoId = data.getPhotoId();
@@ -53,6 +57,7 @@ public class PhotoAlbumService{
         PhotoRepository.getInstance().update(photo);
     }
 
+    @ServiceAction
     public void removePhotoFromAlbum(AddPhotoToAndRemovePhotoFromAlbum data){
         String sessionId = data.getSessionId();
         String photoId = data.getPhotoId();
@@ -76,7 +81,7 @@ public class PhotoAlbumService{
         PhotoRepository.getInstance().update(photo);
     }
 
-    public void validateToRemove(String photoId , Album album){
+    private void validateToRemove(String photoId , Album album){
         if(!album.getPhotoIds().contains(photoId)){
             throw new ActionFailedException("Photo was not found.");
         }
@@ -88,6 +93,7 @@ public class PhotoAlbumService{
         }
     }
 
+    @ServiceAction
     public void movePhoto(MovePhotoDto data) {
         String sessionId = data.getSessionId();
         String photoId = data.getPhotoId();
@@ -125,6 +131,7 @@ public class PhotoAlbumService{
         PhotoRepository.getInstance().update(photo);
     }
 
+    @ServiceAction
     public void editPhotoByAlbum(EditPhotoByAlbumDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -144,6 +151,7 @@ public class PhotoAlbumService{
 
     }
 
+    @ServiceAction
     public PhotoListDto getPhotosByAlbumId(GetAlbumPhotosDto data){
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
         Album album = AlbumRepository.getInstance().findAlbumById(data.getAlbumId() , user.getId());

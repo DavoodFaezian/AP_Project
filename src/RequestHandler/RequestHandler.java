@@ -2,6 +2,7 @@ package RequestHandler;
 
 import APIServer.Request;
 import APIServer.Response;
+import Annotaions.ServiceAction;
 import com.google.gson.*;
 
 import java.io.File;
@@ -50,10 +51,12 @@ public class RequestHandler {
                 Class<?> service = Class.forName("Services."+serviceName);
                 Object serviceInstance = service.getMethod("getInstance").invoke(null);
                 for(var method : service.getDeclaredMethods()){
-                    String actionName = serviceName.split("Service")[0]
-                            +'/'
-                            +method.getName();
-                    actions.put(actionName,new ActionHandler(serviceInstance,method));
+                    if (method.isAnnotationPresent(ServiceAction.class)) {
+                        String actionName = serviceName.split("Service")[0]
+                                +'/'
+                                +method.getName();
+                        actions.put(actionName,new ActionHandler(serviceInstance,method));
+                    }
                 }
 
             } catch (ClassNotFoundException e) {

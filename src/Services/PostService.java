@@ -1,5 +1,6 @@
 package Services;
 
+import Annotaions.ServiceAction;
 import DTO.Post.*;
 import Exceptions.ActionFailedException;
 import Exceptions.ItemNotFoundException;
@@ -21,14 +22,16 @@ public class PostService {
 
     private PostService() {}
 
+    @ServiceAction
     public static PostService getInstance() {
         return instance;
     }
     
-    public void validatePermission(User user) {
+    private void validatePermission(User user) {
         BannedUserRepository.getInstance().isUserAllowedToPost(user.getId());
     }
 
+    @ServiceAction
     public String addPost(AddPostDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -88,6 +91,7 @@ public class PostService {
         }
     }
 
+    @ServiceAction
     public void editPost(EditPostDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -174,6 +178,7 @@ public class PostService {
                 : new LinkedHashSet<>();
     }
 
+    @ServiceAction
     public Set<PostDto> getAllPostsOfFollowings(String userId) {
         User user = userRepository.findUserById(userId);
         Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
@@ -191,7 +196,7 @@ public class PostService {
                 ));
     }
 
-
+    @ServiceAction
     public void deletePost(DeletePostDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -234,6 +239,7 @@ public class PostService {
         postRepository.removePost(post);
     }
 
+    @ServiceAction
     public Set<String> getPhotoIdsOfPost(GetPostRelationsDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -248,6 +254,7 @@ public class PostService {
                 : Collections.emptySet();
     }
 
+    @ServiceAction
     public Set<String> getAlbumIdsOfPost(GetPostRelationsDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -266,6 +273,7 @@ public class PostService {
                 : Collections.emptySet();
     }
 
+    @ServiceAction
     public List<PostDto> getAllPostsByOwnerId(GetPostsByOwnerDto dto) {
 
         String sessionId = dto.getSessionId();
