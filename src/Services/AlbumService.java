@@ -1,4 +1,5 @@
 package Services;
+import Annotaions.ServiceAction;
 import DTO.StringResultDto;
 import DTO.Album.*;
 import Exceptions.ActionFailedException;
@@ -20,15 +21,18 @@ public class AlbumService {
 
     private AlbumService() {}
 
+    @ServiceAction
     public static AlbumService getInstance() {
         return instance;
     }
 
-    public void validateAlbumName(String albumName) {
+    private void validateAlbumName(String albumName) {
         if (albumName.isEmpty()) {
            throw new ActionFailedException("Album name must not be empty.");
         }
     }
+
+    @ServiceAction
     public StringResultDto addAlbum(AddAlbumDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -37,6 +41,7 @@ public class AlbumService {
         return new StringResultDto(album.getId());
     }
 
+    @ServiceAction
     public void deleteAlbum(DeleteAlbumDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -54,6 +59,7 @@ public class AlbumService {
         AlbumRepository.getInstance().removeAlbum(album);
     }
 
+    @ServiceAction
     public void editAlbum(EditAlbumDto data) {
         if(data.getAlbumName().isEmpty()){
             throw new ActionFailedException("album name can't be empty");
@@ -62,6 +68,8 @@ public class AlbumService {
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         albumRepository.editAlbum(data.getAlbumId(),data.getAlbumName(),user.getId());
     }
+
+    @ServiceAction
     public Set<String> getPhotoIdsOfAlbum(GetAlbumDto data) {
         SessionRepository.getInstance().validateSession(data.getSessionId());
         Album album = albumRepository.findAlbumById(data.getAlbumId(), data.getOwnerId());
@@ -77,6 +85,7 @@ public class AlbumService {
     }
 
 
+    @ServiceAction
     public AlbumListDto getAllAlbumsByOwnerId(GetAllAlbumsDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -89,6 +98,7 @@ public class AlbumService {
     }
 
 
+    @ServiceAction
     public AlbumDto getAlbum(GetAlbumDto data) {
         SessionRepository.getInstance().validateSession(data.getSessionId());
         return new AlbumDto(albumRepository.findAlbumById(data.getAlbumId(),data.getOwnerId()));

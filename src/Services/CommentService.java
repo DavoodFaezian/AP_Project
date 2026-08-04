@@ -1,5 +1,6 @@
 package Services;
 
+import Annotaions.ServiceAction;
 import DTO.StringResultDto;
 import DTO.Comment.*;
 import Exceptions.ActionFailedException;
@@ -23,14 +24,16 @@ public class CommentService {
 
     private CommentService() {}
 
+    @ServiceAction
     public static CommentService getInstance() {
         return instance;
     }
 
-    public void validateLeavingComment(User user) {
+    private void validateLeavingComment(User user) {
         BannedUserRepository.getInstance().isUserAllowedToComment(user.getId());
     }
 
+    @ServiceAction
     public StringResultDto addComment(AddCommentDto data) {
         User user = sessionRepository.findUserBySessionId(data.getSessionId());
         validateLeavingComment(user);
@@ -56,7 +59,7 @@ public class CommentService {
         validateComment(!post.getCommentsAllowed(), "Comments are not allowed on post:" + post.getId());
     }
 
-
+    @ServiceAction
     public void editComment(EditCommentDto data) {
         User user = sessionRepository.findUserBySessionId(data.getSessionId());
         Comment edit = commentRepository.findCommentById(data.getId(), data.getPostId());
@@ -67,6 +70,8 @@ public class CommentService {
         commentRepository.editComment(edit,data.getPostId());
 
     }
+
+    @ServiceAction
     public void deleteComment(DeleteCommentDto data) {
         User user = sessionRepository.findUserBySessionId(data.getSessionId());
         Comment del = commentRepository.findCommentById(data.getId(), data.getPostId());
@@ -87,6 +92,7 @@ public class CommentService {
         }
     }
 
+    @ServiceAction
     public CommentListDto getAllCommentsByPostId(GetCommentsByPostDto data) {
         sessionRepository.validateSession(data.getSessionId());
 

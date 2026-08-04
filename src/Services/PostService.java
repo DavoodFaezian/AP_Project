@@ -1,5 +1,6 @@
 package Services;
 
+import Annotaions.ServiceAction;
 import DTO.GetIdsResultDto;
 import DTO.Post.*;
 import DTO.StringResultDto;
@@ -23,14 +24,17 @@ public class PostService {
 
     private PostService() {}
 
+    @ServiceAction
     public static PostService getInstance() {
         return instance;
     }
-    
-    public void validatePermission(User user) {
+
+    @ServiceAction
+    private void validatePermission(User user) {
         BannedUserRepository.getInstance().isUserAllowedToPost(user.getId());
     }
 
+    @ServiceAction
     public StringResultDto addPost(AddPostDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -90,6 +94,7 @@ public class PostService {
         }
     }
 
+    @ServiceAction
     public void editPost(EditPostDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -176,6 +181,7 @@ public class PostService {
                 : new LinkedHashSet<>();
     }
 
+    @ServiceAction
     public PostSetDto getAllPostsOfFollowings(String userId) {
         User user = userRepository.findUserById(userId);
         Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
@@ -193,7 +199,7 @@ public class PostService {
                 )));
     }
 
-
+    @ServiceAction
     public void deletePost(DeletePostDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -236,6 +242,7 @@ public class PostService {
         postRepository.removePost(post);
     }
 
+    @ServiceAction
     public GetIdsResultDto getPhotoIdsOfPost(GetPostRelationsDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -250,6 +257,7 @@ public class PostService {
                 : Collections.emptySet());
     }
 
+    @ServiceAction
     public GetIdsResultDto getAlbumIdsOfPost(GetPostRelationsDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -268,6 +276,7 @@ public class PostService {
                 : Collections.emptySet());
     }
 
+    @ServiceAction
     public PostListDto getAllPostsByOwnerId(GetPostsByOwnerDto dto) {
 
         String sessionId = dto.getSessionId();
@@ -283,6 +292,7 @@ public class PostService {
                 .map(PostDto::new)
                 .collect(Collectors.toList()));
     }
+    
     public PostDto getPostById(String postId, String ownerId){
         Post post = postRepository.findPostById(postId,ownerId);
         return new PostDto(post);

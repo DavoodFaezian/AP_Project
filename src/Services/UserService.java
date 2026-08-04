@@ -1,6 +1,7 @@
 package Services;
 
 
+import Annotaions.ServiceAction;
 import DTO.SessionIdDto;
 import DTO.StringResultDto;
 import DTO.User.*;
@@ -20,6 +21,7 @@ public class UserService {
     private static final UserService instance = new UserService();
     private final UserProfileRepository userProfileRepository = UserProfileRepository.getInstance();
 
+    @ServiceAction
     public static UserService getInstance() {
         return instance;
     }
@@ -48,12 +50,12 @@ public class UserService {
         validateAction(password.contains(userName), "Password must not contain user name.");
     }
 
-    public void validateConfirmPassword(String password , String confirmPassword) {
+    private void validateConfirmPassword(String password , String confirmPassword) {
         validateAction(confirmPassword == null, "Confirm password cannot be null.");
         validateAction(!password.equals(confirmPassword), "Confirm password does not match password.");
     }
 
-    public void validatePassword(String userName , String password , String confirmPassword) {
+    private void validatePassword(String userName , String password , String confirmPassword) {
         validateNotEmpty(password);
         validateLength(password);
         validateStrength(password);
@@ -61,30 +63,30 @@ public class UserService {
         validateConfirmPassword(password, confirmPassword);
     }
 
-    public void validateSignUp(String userName , String password , String confirmPassword) {
+    private void validateSignUp(String userName , String password , String confirmPassword) {
         validateUserName(userName);
         validatePassword(userName , password , confirmPassword);
         UserRepository.getInstance().checkUserNameAndPassword(userName , password);
     }
 
-    public User validateLogIn(String userName , String password) {
+    private User validateLogIn(String userName , String password) {
         return UserRepository.getInstance().findUserByUserNameAndPassword(userName , password);
     }
 
-    public void validatePermission(User user) {
+    private void validatePermission(User user) {
         BannedUserRepository.getInstance().isUserAllowedToLogin(user.getId());
     }
 
-    public void validateOldPassword(User user , String oldPassword) {
+    private void validateOldPassword(User user , String oldPassword) {
         validateAction(!user.getPassword().equals(oldPassword), "Old password is incorrect.");
     }
 
-
+    @ServiceAction
     public StringResultDto signUp(SignUpDto data) {
         String userName = data.getUserName();
         String password = data.getPassword();
-        String reapetedPassword = data.getRepeatedPassword();
-        validateSignUp(userName, password, reapetedPassword);
+        String repeatedPassword = data.getRepeatedPassword();
+        validateSignUp(userName, password, repeatedPassword);
 
         User user = UserRepository.getInstance().create(userName, password);
         userProfileRepository.createUserProfile(user.getId());
@@ -92,7 +94,7 @@ public class UserService {
         return getResult(user);
     }
 
-
+    @ServiceAction
     public StringResultDto logIn(LogInDto data) {
         User user = validateLogIn(data.getUserName(), data.getPassword());
         validatePermission(user);
@@ -110,6 +112,7 @@ public class UserService {
         return new StringResultDto(session.getId());
     }
 
+    @ServiceAction
     public void changeUserName(ChangeUserNameDto data){
         validateUserName(data.getNewUserName());
         String sessionId = data.getSessionId();
@@ -118,6 +121,7 @@ public class UserService {
         UserRepository.getInstance().editUser(user);
     }
 
+    @ServiceAction
     public void logOut(LogOutAndRemoveProfilePhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -131,6 +135,7 @@ public class UserService {
         });
     }
 
+    @ServiceAction
     public void changePassword(ChangePasswordDto data) {
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
 
@@ -141,7 +146,7 @@ public class UserService {
         UserRepository.getInstance().update();
     }
 
-
+    @ServiceAction
     public void addProfilePhoto(AddProfilePhotoDto data) {
         String sessionId = data.getSessionId();
         String profilePhotoId = data.getProfilePhotoId();
@@ -153,6 +158,7 @@ public class UserService {
        }
     }
 
+    @ServiceAction
     public void removeProfilePhoto(LogOutAndRemoveProfilePhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -163,6 +169,7 @@ public class UserService {
         }
     }
 
+    @ServiceAction
     public void follow(FollowAndUnfollowDto data) {
         User follower = SessionRepository.getInstance()
                 .findUserBySessionId(data.getFollowerSessionId());
@@ -194,6 +201,7 @@ public class UserService {
         }
     }
 
+    @ServiceAction
     public void unfollow(FollowAndUnfollowDto data) {
         User follower = SessionRepository.getInstance()
                 .findUserBySessionId(data.getFollowerSessionId());
@@ -215,15 +223,19 @@ public class UserService {
     public User getUserMainClass(String userName , String password) {
         return UserRepository.getInstance().findUserByUserNameAndPassword(userName , password);
     }
+
+    @ServiceAction
     public void changeTheme(ChangeThemeDto data){
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
         Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
-        validateAction(profile.isEmpty(), "Ops! profile was not found.");
+        validateAction(profile.isEmpty(), "Oops! profile was not found.");
         UserProfile notNullProfile = profile.get();
         notNullProfile.setTheme(data.getTheme());
         userProfileRepository.updateUserProfile(notNullProfile);
 
     }
+
+    @ServiceAction
     public UserProfileDto getUser(SessionIdDto data){
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
         Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
@@ -234,7 +246,6 @@ public class UserService {
                 notNullProfile.getProfilePhotoName(),
                 notNullProfile.getTheme()
         );
-
 
     }
     public GetUserDto getUserProfile(SessionIdDto data){

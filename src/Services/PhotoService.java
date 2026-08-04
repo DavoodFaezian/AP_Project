@@ -1,4 +1,5 @@
 package Services;
+import Annotaions.ServiceAction;
 import DTO.Photo.*;
 import DTO.StringResultDto;
 import Exceptions.ActionFailedException;
@@ -20,16 +21,18 @@ public class PhotoService {
 
     private PhotoService(){}
 
+    @ServiceAction
     public static PhotoService getInstance() {
         return instance;
     }
 
-    public void validatePhotoName(String photoName) {
+    private void validatePhotoName(String photoName) {
         if (photoName.isEmpty()) {
            throw new ActionFailedException("Photo name must not be empty.");
         }
     }
 
+    @ServiceAction
     public StringResultDto addPhoto(AddPhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -50,6 +53,8 @@ public class PhotoService {
         }
         return new StringResultDto(photo.getId());
     }
+
+    @ServiceAction
     public void deletePhoto(DeletePhotoDto data) {
         String sessionId = data.getSessionId();
         String photoId = data.getPhotoId();
@@ -67,6 +72,7 @@ public class PhotoService {
 
     }
 
+    @ServiceAction
     public void editPhoto(EditPhotoDto data) {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -89,7 +95,7 @@ public class PhotoService {
         PhotoRepository.getInstance().editPhoto(edit);
     }
 
-
+    @ServiceAction
     public StringResultDto uploadPhoto(UploadPhotoDto data ) {
         byte[] bytes = Base64.getDecoder().decode(data.getPhotoData());
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
@@ -106,6 +112,8 @@ public class PhotoService {
         }
         return new StringResultDto(PhotoRepository.getInstance().uploadPhoto(user.getId(),bytes));
     }
+
+    @ServiceAction
     public PhotoDto getPhotoById(GetPhotoDto data){
         String sessionId = data.getSessionId();
         String ownerId = SessionRepository.getInstance().findUserBySessionId(sessionId).getId();
@@ -120,6 +128,8 @@ public class PhotoService {
         return new PhotoDto(res.get());
 
     }
+
+    @ServiceAction
     public PhotoBase64Dto getPhotoBytes(GetPhotoDto data){
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
@@ -131,6 +141,7 @@ public class PhotoService {
 
     }
 
+    @ServiceAction
     public PhotoListDto getPhotosByOwnerId(GetAllPhotosDto data){
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
