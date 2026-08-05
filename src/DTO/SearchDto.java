@@ -1,10 +1,10 @@
-package DTO.User;
+package DTO;
 
-public class SearchUserDto {
+public class SearchDto {
     private String sessionId;
     private String query;
 
-    public SearchUserDto(String sessionId, String query) {
+    public SearchDto(String sessionId, String query) {
         this.sessionId = sessionId;
         this.query = query;
     }
