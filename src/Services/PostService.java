@@ -3,9 +3,7 @@ package Services;
 import Annotaions.ServiceAction;
 import DTO.GetIdsResultDto;
 import DTO.Post.*;
-import DTO.SessionIdDto;
 import DTO.StringResultDto;
-import DTO.User.GetPostsByUserDto;
 import Exceptions.ActionFailedException;
 import Exceptions.ItemNotFoundException;
 import MainClasses.*;
@@ -310,7 +308,7 @@ public class PostService {
                 .collect(Collectors.toList()));
     }
 
-    
+
     public PostDto getPostById(String postId, String ownerId){
         Post post = postRepository.findPostById(postId,ownerId);
         return new PostDto(post);
