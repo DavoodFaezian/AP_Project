@@ -239,7 +239,7 @@ public class UserService {
     }
 
     @ServiceAction
-    public UserProfileDto getUser(SessionIdDto data){
+    public UserProfileDto getUser(SessionIdDto data) {
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
         Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
         validateAction(profile.isEmpty(), "Ops! profile was not found.");
@@ -260,9 +260,7 @@ public class UserService {
         if(data.getUserId() != null){
             userName = UserRepository.getInstance().findUserById(data.getUserId()).getUserName();
         }
-        if(profile.isEmpty()){
-            throw new ActionFailedException("Ops! profile was not found.");
-        }
+        checkProfilePhoto(profile);
         UserProfile notNullProfile = profile.get();
         return new GetUserDto(
                 notNullProfile.getUserId(),
@@ -274,13 +272,18 @@ public class UserService {
 
 
     }
+
+    private static void checkProfilePhoto(Optional<UserProfile> profile) {
+        if(profile.isEmpty()){
+            throw new ActionFailedException("Ops! profile was not found.");
+        }
+    }
+
     @ServiceAction
     public BooleanDto checkIsFollowing(GetUserByIdDto data){
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
         Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
-        if(profile.isEmpty()){
-            throw new ActionFailedException("Ops! profile was not found.");
-        }
+        checkProfilePhoto(profile);
         UserProfile notNullProfile = profile.get();
         return new BooleanDto(
                 notNullProfile.getFollowingsId().contains(data.getUserId())
@@ -288,7 +291,7 @@ public class UserService {
     }
 
     @ServiceAction
-    public UserListDto searchUsers(SearchUserDto data) {
+    public UserListDto searchUsers(SearchUsersDto data) {
         SessionRepository.getInstance().validateSession(data.getSessionId());
 
         String query = data.getQuery().toLowerCase();
