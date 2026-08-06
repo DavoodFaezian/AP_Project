@@ -38,6 +38,14 @@ public class PhotoTests {
 
         ));
 
+        assertEquals(
+                1 , PhotoService.getInstance().getPhotosByOwnerId(
+                        new GetAllPhotosDto(
+                                sessionId
+                        )
+                ).getPhotos().size()
+        );
+
         PhotoDto photo = photoService.getPhotoById(new GetPhotoDto(sessionId,photoId , user1.getId()));
 
         assertEquals(2 , photo.getAlbumIds().size());
@@ -100,6 +108,14 @@ public class PhotoTests {
           sessionId , "photo2" ,"photo 2",Set.of("") , new HashSet<>() ,
           "caption" , false)).getId();
 
+        assertEquals(
+                2 , PhotoService.getInstance().getPhotosByOwnerId(
+                        new GetAllPhotosDto(
+                                sessionId
+                        )
+                ).getPhotos().size()
+        );
+
        PhotoDto photo2 = photoService.getPhotoById(new GetPhotoDto(sessionId,photoId2 , user1.getId()));
 
        assertEquals(1 , photo2.getAlbumIds().size());
@@ -145,6 +161,14 @@ public class PhotoTests {
        photoService.deletePhoto(new DeletePhotoDto(
                sessionId , photoId2
        ));
+
+        assertEquals(
+                1 , PhotoService.getInstance().getPhotosByOwnerId(
+                        new GetAllPhotosDto(
+                                sessionId
+                        )
+                ).getPhotos().size()
+        );
 
        album1 = albumService.getAlbum(new GetAlbumDto(sessionId,albumId1,user1.getId()));
 
