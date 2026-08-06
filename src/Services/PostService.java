@@ -3,7 +3,9 @@ package Services;
 import Annotaions.ServiceAction;
 import DTO.GetIdsResultDto;
 import DTO.Post.*;
+import DTO.SessionIdDto;
 import DTO.StringResultDto;
+import DTO.User.GetPostsByUserDto;
 import Exceptions.ActionFailedException;
 import Exceptions.ItemNotFoundException;
 import MainClasses.*;
@@ -290,6 +292,7 @@ public class PostService {
         return new PostListDto(postRepository.getPostsByOwnerId(user.getId())
                 .stream()
                 .map(PostDto::new)
+
                 .collect(Collectors.toList()));
     }
     @ServiceAction
@@ -308,9 +311,13 @@ public class PostService {
                 .collect(Collectors.toList()));
     }
 
-
-    public PostDto getPostById(String postId, String ownerId){
-        Post post = postRepository.findPostById(postId,ownerId);
+    @ServiceAction
+    public PostDto getPostById(GetPostByIdDto data){
+        String userId = SessionRepository.getInstance().findUserBySessionId(data.getSessionId()).getId();
+        if(data.getOwnerId() != null){
+            userId = data.getOwnerId();
+        }
+        Post post = postRepository.findPostById(data.getPostId(),userId);
         return new PostDto(post);
     }
 }

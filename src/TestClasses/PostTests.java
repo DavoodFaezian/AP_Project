@@ -251,8 +251,8 @@ public class PostTests {
                         post1
                 )
         );
-        assertThrows(ItemNotFoundException.class,()->postService.getPostById(post1,userId));
-        assertEquals(Set.of(photoId3),postService.getPostById(post2,userId).getPhotoIds());
+        assertThrows(ItemNotFoundException.class,()->postService.getPostById(new GetPostByIdDto(post1,sessionId,userId)));
+        assertEquals(Set.of(photoId3),postService.getPostById(new GetPostByIdDto(post2,sessionId,userId)).getPhotoIds());
 
 
     }

@@ -18,6 +18,22 @@ class AlbumListViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
+  void sortByName({required bool ascending}) {
+    _albums.sort((a, b) {
+      final cmp = a.albumName.toLowerCase().compareTo(b.albumName.toLowerCase());
+      return ascending ? cmp : -cmp;
+    });
+    notifyListeners();
+  }
+
+  void sortByPhotoCount({required bool ascending}) {
+    _albums.sort((a, b) {
+      final cmp = a.photoIds.length.compareTo(b.photoIds.length);
+      return ascending ? cmp : -cmp;
+    });
+    notifyListeners();
+  }
+
   Future<void> loadAlbums() async {
     _isLoading = true;
     _errorMessage = null;

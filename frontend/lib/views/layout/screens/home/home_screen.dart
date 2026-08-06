@@ -78,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
             postRepository: _postRepository,
             showActions: false,
             onRefresh: () => viewModel.loadFeedPosts(showLoading: false),
+            onPostUpdated: (postId, ownerId) => viewModel.refreshSinglePost(postId, ownerId),
           ),
           floatingActionButton: CustomFAB(
             onPressed: _openCreatePhotoPage,

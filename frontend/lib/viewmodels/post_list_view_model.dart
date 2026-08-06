@@ -44,11 +44,7 @@ class PostListViewModel extends ChangeNotifier {
       }
       
       // Sort by date (descending) if possible
-      fetchedPosts.sort((a, b) {
-        final dateA = a.lastModified ?? a.createdAt ?? DateTime(0);
-        final dateB = b.lastModified ?? b.createdAt ?? DateTime(0);
-        return dateB.compareTo(dateA);
-      });
+
 
       _posts = fetchedPosts;
       
@@ -62,9 +58,9 @@ class PostListViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> refreshSinglePost(String postId) async {
+  Future<void> refreshSinglePost(String postId, String ownerId) async {
     try {
-      final updatedPost = await _postRepository.getPostById(postId, ""); // ownerId might not be needed if session works
+      final updatedPost = await _postRepository.getPostById(postId, ownerId);
       final index = _posts.indexWhere((p) => p.id == postId);
       if (index != -1) {
         _posts[index] = updatedPost;

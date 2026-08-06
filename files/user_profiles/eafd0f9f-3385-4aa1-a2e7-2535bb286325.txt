@@ -10,7 +10,8 @@
         "066eb907-abc7-4b49-8746-7d26ba37820a"
       ],
       "followersId": [
-        "8bd8dfdc-c67c-4e64-99bb-8313117899f4"
+        "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
+        "4804eec9-6627-4552-89a1-c5bcac7c877d"
       ],
       "followingsId": [],
       "id": "f32e0a7c-e01e-4b20-b20f-8f41d284e39f"

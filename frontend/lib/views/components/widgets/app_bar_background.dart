@@ -8,9 +8,11 @@ class AppBarBackground extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
             Color(0xFF5B21B6),
-            Color(0xFFA855F7),
+            Color(0xFF7C3AED),
           ],
         ),
       ),

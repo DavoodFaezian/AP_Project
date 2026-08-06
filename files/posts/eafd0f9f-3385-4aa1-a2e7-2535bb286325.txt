@@ -46,7 +46,9 @@
         "bd2349c4-aad7-4f44-905d-91167bac9902"
       ],
       "albumIds": [],
-      "commentIds": [],
+      "commentIds": [
+        "efce6a5b-6bea-4a0c-8a13-bf9688491015"
+      ],
       "commentsAllowed": true,
       "createdAt": {
         "date": {

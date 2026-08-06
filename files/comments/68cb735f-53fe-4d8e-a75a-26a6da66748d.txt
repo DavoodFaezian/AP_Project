@@ -1,0 +1,17 @@
+{
+  "className": "MainClasses.Comment",
+  "items": {
+    "fca26d12-70ce-4f7a-b2b1-c5c988400992": {
+      "ownerId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
+      "script": "dd",
+      "postId": "68cb735f-53fe-4d8e-a75a-26a6da66748d",
+      "id": "fca26d12-70ce-4f7a-b2b1-c5c988400992"
+    },
+    "b81deddb-e41b-4d41-a573-9a70c436e420": {
+      "ownerId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
+      "script": "erer",
+      "postId": "68cb735f-53fe-4d8e-a75a-26a6da66748d",
+      "id": "b81deddb-e41b-4d41-a573-9a70c436e420"
+    }
+  }
+}

@@ -28,9 +28,44 @@ class MyApp extends StatelessWidget {
         },
       ),
       theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF5B21B6),
+          primary: const Color(0xFF5B21B6),
+          secondary: const Color(0xFFA855F7),
+          surface: const Color(0xFFF9F9F9),
+        ),
         textTheme: GoogleFonts.poppinsTextTheme(),
+        cardTheme: CardThemeData(
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          color: Colors.white,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade200),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade200),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF5B21B6), width: 2),
+          ),
+        ),
       ),
-      home: SignUpPage()
+      home: const SignUpPage(),
     );
   }
 }

@@ -4,12 +4,14 @@
     "7c5a24c3-1e5b-441a-8097-6954f96c6b84": {
       "userId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
       "profilePhotoName": "c2cd2e4e-d4ed-42ad-8b1c-1ad6dc03a108",
-      "theme": "SYSTEM",
+      "theme": "DARK",
       "sessionIds": [
-        "dc087a8d-7273-46c0-9660-da8c4e75b71b",
-        "ae5b4e63-7d28-4d17-9106-067ef190893b"
+        "cee09ca4-392b-45ba-bdc4-5a42291d17b0",
+        "0d71ac61-e4f5-4887-a26a-efd968245946"
       ],
-      "followersId": [],
+      "followersId": [
+        "4804eec9-6627-4552-89a1-c5bcac7c877d"
+      ],
       "followingsId": [
         "eafd0f9f-3385-4aa1-a2e7-2535bb286325"
       ],

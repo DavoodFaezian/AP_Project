@@ -91,20 +91,19 @@ public class GenericFileManager<T extends BaseClass> {
             writeLock.unlock();
         }
     }
-
+    //or between each Predicate
     @SafeVarargs
     public final List<T> filterItems(Predicate<T>... conditions) {
         readLock.lock();
         try {
             List<T> result = new ArrayList<>();
-            outer:
             for (T item : map.values()) {
                 for (Predicate<T> condition : conditions) {
-                    if (!condition.test(item)) {
-                        continue outer;
+                    if (condition.test(item)) {
+                        result.add(item);
+                        break;
                     }
                 }
-                result.add(item);
             }
             return List.copyOf(result);
         } finally {

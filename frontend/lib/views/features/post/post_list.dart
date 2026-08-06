@@ -14,6 +14,7 @@ class PostList extends StatelessWidget {
   final PostRepository postRepository;
   final bool showActions;
   final VoidCallback? onRefresh;
+  final Function(String postId, String ownerId)? onPostUpdated;
 
   const PostList({
     super.key,
@@ -24,6 +25,7 @@ class PostList extends StatelessWidget {
     required this.postRepository,
     this.showActions = false,
     this.onRefresh,
+    this.onPostUpdated,
   });
 
   @override
@@ -48,13 +50,14 @@ class PostList extends StatelessWidget {
       itemBuilder: (context, index) {
         final post = posts[index];
         return PostItem(
-          key: ValueKey(post.id), // Stable key to prevent recreation on reorder/refresh
+          key: ValueKey("${post.id}_${post.lastModified?.millisecondsSinceEpoch ?? 0}"), // Dynamic key to force refresh
           post: post,
           photoRepository: photoRepository,
           albumRepository: albumRepository,
           postRepository: postRepository,
           showActions: showActions,
           onRefresh: onRefresh,
+          onPostUpdated: onPostUpdated,
         );
       },
     );

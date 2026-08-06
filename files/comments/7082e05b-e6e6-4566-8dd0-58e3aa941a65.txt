@@ -1,0 +1,11 @@
+{
+  "className": "MainClasses.Comment",
+  "items": {
+    "efce6a5b-6bea-4a0c-8a13-bf9688491015": {
+      "ownerId": "4804eec9-6627-4552-89a1-c5bcac7c877d",
+      "script": "hi dany",
+      "postId": "7082e05b-e6e6-4566-8dd0-58e3aa941a65",
+      "id": "efce6a5b-6bea-4a0c-8a13-bf9688491015"
+    }
+  }
+}
