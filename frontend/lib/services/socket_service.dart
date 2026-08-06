@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 class SocketService {
-  static const String _host = 'localhost'; // '10.0.2.2' for Android Emulator
+  static const String _host = '192.168.56.1'; // '10.0.2.2' for Android Emulator
   static const int _port = 1234;
   static const Duration _timeout = Duration(seconds: 30);
 
