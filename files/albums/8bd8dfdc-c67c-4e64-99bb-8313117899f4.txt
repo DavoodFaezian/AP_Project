@@ -43,7 +43,6 @@
       "albumName": "dfe",
       "photoIds": [
         "c2b5b270-9252-4d90-aa12-708baa74ea34",
-        "6a501672-c3d5-4ade-9f46-0807a664ef16",
         "a64a8644-7aed-44cc-b1ee-1f891473f6fe"
       ],
       "postIds": [],
@@ -51,13 +50,13 @@
         "date": {
           "year": 2026,
           "month": 8,
-          "day": 5
+          "day": 6
         },
         "time": {
-          "hour": 19,
-          "minute": 12,
-          "second": 9,
-          "nano": 747638200
+          "hour": 16,
+          "minute": 25,
+          "second": 10,
+          "nano": 501816300
         }
       },
       "createdAt": {
@@ -77,25 +76,23 @@
     },
     "cff50350-8b55-4d8a-8b14-2bdf24e46a07": {
       "ownerId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
-      "albumName": "der",
+      "albumName": "nature",
       "photoIds": [
-        "23de32f6-5680-47ea-bc32-6b0bd82e007a",
-        "146c4f1c-e693-4010-afab-07ce072fc1f5",
         "c2b5b270-9252-4d90-aa12-708baa74ea34",
-        "6a501672-c3d5-4ade-9f46-0807a664ef16"
+        "d87259b6-799e-493f-ae7a-5fa88976cf13"
       ],
       "postIds": [],
       "lastModified": {
         "date": {
           "year": 2026,
           "month": 8,
-          "day": 5
+          "day": 6
         },
         "time": {
-          "hour": 14,
-          "minute": 54,
-          "second": 51,
-          "nano": 969677700
+          "hour": 16,
+          "minute": 25,
+          "second": 10,
+          "nano": 499478500
         }
       },
       "createdAt": {
@@ -112,6 +109,127 @@
         }
       },
       "id": "cff50350-8b55-4d8a-8b14-2bdf24e46a07"
+    },
+    "4e522973-f036-4c7e-a818-fd3760ca138a": {
+      "ownerId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
+      "albumName": "gd",
+      "photoIds": [],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 14,
+          "minute": 57,
+          "second": 2,
+          "nano": 839921100
+        }
+      },
+      "id": "4e522973-f036-4c7e-a818-fd3760ca138a"
+    },
+    "c9bced1c-4d62-45a4-a90d-deb3908beb4d": {
+      "ownerId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
+      "albumName": "portraits",
+      "photoIds": [
+        "b2621ec3-67d3-4068-a2d8-a0cffb6dbdb5"
+      ],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 21,
+          "second": 23,
+          "nano": 715786100
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 15,
+          "minute": 1,
+          "second": 33,
+          "nano": 125568000
+        }
+      },
+      "id": "c9bced1c-4d62-45a4-a90d-deb3908beb4d"
+    },
+    "bdd2a402-bcbb-434d-9fbe-8d9d13518b40": {
+      "ownerId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
+      "albumName": "new albums",
+      "photoIds": [],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 16,
+          "second": 41,
+          "nano": 692404400
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 15,
+          "minute": 1,
+          "second": 52,
+          "nano": 28961400
+        }
+      },
+      "id": "bdd2a402-bcbb-434d-9fbe-8d9d13518b40"
+    },
+    "b55834a6-1477-4bf5-af5d-73094dcdb877": {
+      "ownerId": "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
+      "albumName": "new albums",
+      "photoIds": [],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 35,
+          "second": 46,
+          "nano": 459938600
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 16,
+          "second": 26,
+          "nano": 981843300
+        }
+      },
+      "id": "b55834a6-1477-4bf5-af5d-73094dcdb877"
     }
   }
 }

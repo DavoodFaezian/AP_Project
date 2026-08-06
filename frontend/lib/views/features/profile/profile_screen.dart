@@ -167,71 +167,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Photo
-              Hero(
-                tag: 'profile_avatar_${_profile!.userId}',
-                child: Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [const Color(0xFF5B21B6), const Color(0xFF5B21B6).withOpacity(0.5)],
-                    ),
-                  ),
-                  child: CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(2),
-                      child: ClipOval(
-                        child: _profile!.profilePhotoName != null
-                            ? SocketImage(
-                                photoName: _profile!.profilePhotoName!,
-                                ownerId: _profile!.userId,
-                                sessionId: SessionManager.instance.sessionId!,
-                                builder: (context, provider) => Image(
-                                  image: provider,
-                                  fit: BoxFit.cover,
-                                  width: 80,
-                                  height: 80,
-                                ),
-                              )
-                            : const Icon(Icons.person, size: 40, color: Colors.grey),
+              // Profile Photo & Name Column
+              Column(
+                children: [
+                  Hero(
+                    tag: 'profile_avatar_${_profile!.userId}',
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          colors: [const Color(0xFF5B21B6), const Color(0xFF5B21B6).withOpacity(0.5)],
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: ClipOval(
+                            child: _profile!.profilePhotoName != null
+                                ? SocketImage(
+                                    photoName: _profile!.profilePhotoName!,
+                                    ownerId: _profile!.userId,
+                                    sessionId: SessionManager.instance.sessionId!,
+                                    builder: (context, provider) => Image(
+                                      image: provider,
+                                      fit: BoxFit.cover,
+                                      width: 80,
+                                      height: 80,
+                                    ),
+                                  )
+                                : const Icon(Icons.person, size: 40, color: Colors.grey),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: 90, // Match avatar width roughly
+                    child: Text(
+                      _profile!.userName,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(width: 24),
               // Stats
               Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildStatColumn(_postViewModel.posts.length.toString(), "Posts").animate().fadeIn(delay: 200.ms).scale(),
-                    _buildStatColumn(_profile!.followerIds.length.toString(), "Followers").animate().fadeIn(delay: 300.ms).scale(),
-                    _buildStatColumn(_profile!.followingIds.length.toString(), "Following").animate().fadeIn(delay: 400.ms).scale(),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20), // Align stats with avatar center
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildStatColumn(_postViewModel.posts.length.toString(), "Posts").animate().fadeIn(delay: 200.ms).scale(),
+                      _buildStatColumn(_profile!.followerIds.length.toString(), "Followers").animate().fadeIn(delay: 300.ms).scale(),
+                      _buildStatColumn(_profile!.followingIds.length.toString(), "Following").animate().fadeIn(delay: 400.ms).scale(),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _profile!.userName,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-
             ],
           ),
         ),

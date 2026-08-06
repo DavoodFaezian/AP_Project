@@ -64,10 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () => viewModel.loadFeedPosts(),
                 icon: const Icon(Icons.refresh),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.filter_list),
-              ),
             ],
           ),
           body: PostList(

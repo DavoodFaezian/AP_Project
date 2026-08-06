@@ -8,7 +8,9 @@
       "sessionIds": [
         "7d80cb24-8eee-4834-91d3-c643c59575b9"
       ],
-      "followersId": [],
+      "followersId": [
+        "eafd0f9f-3385-4aa1-a2e7-2535bb286325"
+      ],
       "followingsId": [
         "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
         "eafd0f9f-3385-4aa1-a2e7-2535bb286325"

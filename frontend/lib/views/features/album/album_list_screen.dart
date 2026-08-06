@@ -81,103 +81,38 @@ class _AlbumListPageState extends State<AlbumListPage> {
   }
 
   Future<void> _showCreateDialog() async {
-    final controller = TextEditingController();
-
-    await showDialog<void>(
+    final String? albumName = await showDialog<String>(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Create Album'),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            decoration: const InputDecoration(
-              labelText: 'Album name',
-              border: OutlineInputBorder(),
-            ),
-            onSubmitted: (_) async {
-              await _createAlbum(controller.text);
-
-              if (!context.mounted) {
-                return;
-              }
-
-              Navigator.of(context).pop();
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () async {
-                await _createAlbum(controller.text);
-
-                if (!context.mounted) {
-                  return;
-                }
-
-                Navigator.of(context).pop();
-              },
-              child: const Text('Create'),
-            ),
-          ],
-        );
-      },
+      builder: (context) => const NameInputDialog(
+        title: 'Create Album',
+        label: 'Album name',
+        actionLabel: 'Create',
+      ),
     );
 
-    controller.dispose();
+    if (albumName != null && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (mounted) await _createAlbum(albumName);
+      });
+    }
   }
 
   Future<void> _showEditDialog(Album album) async {
-    final controller = TextEditingController(text: album.albumName);
-
-    await showDialog<void>(
+    final String? newName = await showDialog<String>(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Edit Album Name'),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            decoration: const InputDecoration(
-              labelText: 'Album name',
-              border: OutlineInputBorder(),
-            ),
-            onSubmitted: (_) async {
-              await _updateAlbumName(album.id, controller.text);
-
-              if (!context.mounted) {
-                return;
-              }
-
-              Navigator.of(context).pop();
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () async {
-                await _updateAlbumName(album.id, controller.text);
-
-                if (!context.mounted) {
-                  return;
-                }
-
-                Navigator.of(context).pop();
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
+      builder: (context) => NameInputDialog(
+        title: 'Edit Album Name',
+        label: 'Album name',
+        actionLabel: 'Save',
+        initialValue: album.albumName,
+      ),
     );
 
-    controller.dispose();
+    if (newName != null && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (mounted) await _updateAlbumName(album.id, newName);
+      });
+    }
   }
 
   Future<void> _createAlbum(String albumName) async {
@@ -227,7 +162,7 @@ class _AlbumListPageState extends State<AlbumListPage> {
     _clearSelection();
   }
 
-  PreferredSizeWidget _buildAppBar() {
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
     if (_selectionMode) {
       return CustomAppBar(
         title: '${_selectedAlbumIds.length} Selected',
@@ -283,7 +218,6 @@ class _AlbumListPageState extends State<AlbumListPage> {
             const PopupMenuItem(value: 'count_desc', child: Text('Photos (Most)')),
           ],
         ),
-
       ],
     );
   }
@@ -295,120 +229,180 @@ class _AlbumListPageState extends State<AlbumListPage> {
       builder: (context, _) {
         return Scaffold(
           drawer: const CustomDrawer(),
-          appBar: _buildAppBar(),
+          appBar: _buildAppBar(context),
           floatingActionButton: _selectionMode
               ? null
               : CustomFAB(
                   onPressed: _showCreateDialog,
                 ),
-          body: Builder(
-            builder: (context) {
-              if (viewModel.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (viewModel.errorMessage != null) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(viewModel.errorMessage!),
-                  ),
-                );
-              }
-
-              if (viewModel.albums.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: EmptyState(
-                    imagePath: "assets/images/Image post-cuate.png",
-                    title: "No albums",
-                    subtitle: "Create your first album.",
-                  ),
-                );
-              }
-
-              return GridView.builder(
-                padding: const EdgeInsets.all(16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 1.1,
-                ),
-                itemCount: viewModel.albums.length,
-                itemBuilder: (context, index) {
-                  final album = viewModel.albums[index];
-                  final isSelected = _selectedAlbumIds.contains(album.id);
-
-                  return GestureDetector(
-                    onLongPress: () => _enterSelection(album.id),
-                    onTap: () {
-                      if (_selectionMode) {
-                        _toggleSelection(album.id);
-                        return;
-                      }
-
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => PhotoListPage(
-                            albumId: album.id,
-                            albumName: album.albumName,
-                            albumOwnerId: album.ownerId,
-                            photoRepository: photoRepository,
-                            albumRepository: albumRepository,
-                          ),
-                        ),
-                      );
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: isSelected
-                            ? Border.all(color: const Color(0xFF5B21B6), width: 2)
-                            : Border.all(color: Colors.grey.shade100),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            isSelected ? Icons.check_circle : Icons.folder_rounded,
-                            size: 48,
-                            color: isSelected ? const Color(0xFF5B21B6) : Colors.blueAccent.shade400,
-                          ),
-                          const SizedBox(height: 12),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Text(
-                              album.albumName,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Text(
-                            '${album.photoIds.length} Photos',
-                            style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ).animate().fadeIn(delay: (index * 50).ms).scale(delay: (index * 50).ms),
-                  );
-                },
-              );
-            },
-          ),
+          body: _buildBody(context),
         );
       },
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    if (viewModel.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (viewModel.errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text(viewModel.errorMessage!),
+        ),
+      );
+    }
+
+    if (viewModel.albums.isEmpty) {
+      return const EmptyState(
+        key: ValueKey('empty_albums'),
+        imagePath: "assets/images/Image post-cuate.png",
+        title: "No albums",
+        subtitle: "Create your first album.",
+      );
+    }
+
+    return GridView.builder(
+      key: const ValueKey('album_grid'),
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.1,
+      ),
+      itemCount: viewModel.albums.length,
+      itemBuilder: (context, index) {
+        final album = viewModel.albums[index];
+        final isSelected = _selectedAlbumIds.contains(album.id);
+
+        return GestureDetector(
+          key: ValueKey(album.id),
+          onLongPress: () => _enterSelection(album.id),
+          onTap: () {
+            if (_selectionMode) {
+              _toggleSelection(album.id);
+              return;
+            }
+
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => PhotoListPage(
+                  albumId: album.id,
+                  albumName: album.albumName,
+                  albumOwnerId: album.ownerId,
+                  photoRepository: photoRepository,
+                  albumRepository: albumRepository,
+                ),
+              ),
+            );
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: isSelected
+                  ? Border.all(color: const Color(0xFF5B21B6), width: 2)
+                  : Border.all(color: Colors.grey.shade100),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  isSelected ? Icons.check_circle : Icons.folder_rounded,
+                  size: 48,
+                  color: isSelected ? const Color(0xFF5B21B6) : Colors.blueAccent.shade400,
+                ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    album.albumName,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Text(
+                  '${album.photoIds.length} Photos',
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                ),
+              ],
+            ),
+          ).animate().fadeIn(delay: (index * 50).ms).scale(delay: (index * 50).ms),
+        );
+      },
+    );
+  }
+}
+
+class NameInputDialog extends StatefulWidget {
+  final String title;
+  final String label;
+  final String actionLabel;
+  final String? initialValue;
+
+  const NameInputDialog({
+    super.key,
+    required this.title,
+    required this.label,
+    required this.actionLabel,
+    this.initialValue,
+  });
+
+  @override
+  State<NameInputDialog> createState() => _NameInputDialogState();
+}
+
+class _NameInputDialogState extends State<NameInputDialog> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        decoration: InputDecoration(
+          labelText: widget.label,
+          border: const OutlineInputBorder(),
+        ),
+        onSubmitted: (value) => Navigator.of(context).pop(value),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop(_controller.text),
+          child: Text(widget.actionLabel),
+        ),
+      ],
     );
   }
 }

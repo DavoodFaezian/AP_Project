@@ -173,7 +173,7 @@ class _PostFormPageState extends State<PostFormPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: SizedBox(
+                      child: SafeArea(child:SizedBox(
                         width: double.infinity,
                         child: FilledButton(
                           onPressed: () => Navigator.pop(context),
@@ -186,6 +186,7 @@ class _PostFormPageState extends State<PostFormPage> {
                         ),
                       ),
                     ),
+                    )
                   ],
                 );
               },

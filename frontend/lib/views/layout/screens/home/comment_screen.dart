@@ -78,7 +78,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
       ),
-      body: Column(
+      body:SafeArea(child:Column(
         children: [
           Expanded(
             child: AnimatedBuilder(
@@ -177,7 +177,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
             ),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 16 + MediaQuery.of(context).viewInsets.bottom),
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -229,6 +229,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
           ),
         ],
       ),
+      )
     );
   }
 }

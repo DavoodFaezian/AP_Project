@@ -3,17 +3,17 @@
   "items": {
     "f32e0a7c-e01e-4b20-b20f-8f41d284e39f": {
       "userId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "profilePhotoName": "f7b71499-1750-45aa-955e-607d2f502f78",
       "theme": "SYSTEM",
-      "sessionIds": [
-        "6ff00ab6-f4d1-43fa-ada7-882ec165feaf",
-        "aeeba5c0-4e01-40c0-9ec6-f19e05abd5aa",
-        "066eb907-abc7-4b49-8746-7d26ba37820a"
-      ],
+      "sessionIds": [],
       "followersId": [
         "8bd8dfdc-c67c-4e64-99bb-8313117899f4",
         "4804eec9-6627-4552-89a1-c5bcac7c877d"
       ],
-      "followingsId": [],
+      "followingsId": [
+        "4804eec9-6627-4552-89a1-c5bcac7c877d",
+        "8bd8dfdc-c67c-4e64-99bb-8313117899f4"
+      ],
       "id": "f32e0a7c-e01e-4b20-b20f-8f41d284e39f"
     }
   }

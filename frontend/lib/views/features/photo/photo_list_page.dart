@@ -272,7 +272,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
         borderRadius: BorderRadius.circular(16),
         border: isSelected ? Border.all(color: selectedColor, width: 2) : null,
       ),
-      child: Stack(
+      child: SafeArea(child:Stack(
         children: [
           DecoratedBox(
             decoration: BoxDecoration(
@@ -379,6 +379,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
             ),
         ],
       ),
+      )
     );
   }
 

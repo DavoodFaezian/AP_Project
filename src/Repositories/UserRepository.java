@@ -55,7 +55,7 @@ public class UserRepository {
     }
 
     public void checkUserNameAndPassword(String userName , String password) {
-        Predicate<User> condition = s -> s.getUserName().equals(userName) || s.getPassword().equals(password);
+        Predicate<User> condition = s -> s.getUserName().equals(userName);
         List<User> users = userFileManager.filterItems(condition);
         if(!users.isEmpty()) {
             throw new ActionFailedException("UserName already exists.");

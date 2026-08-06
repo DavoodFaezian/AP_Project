@@ -6,14 +6,15 @@
       "profilePhotoName": "c2cd2e4e-d4ed-42ad-8b1c-1ad6dc03a108",
       "theme": "DARK",
       "sessionIds": [
-        "cee09ca4-392b-45ba-bdc4-5a42291d17b0",
-        "0d71ac61-e4f5-4887-a26a-efd968245946"
+        "4781d490-614d-404c-bc84-ab1c2cff1f75"
       ],
       "followersId": [
-        "4804eec9-6627-4552-89a1-c5bcac7c877d"
+        "4804eec9-6627-4552-89a1-c5bcac7c877d",
+        "eafd0f9f-3385-4aa1-a2e7-2535bb286325"
       ],
       "followingsId": [
-        "eafd0f9f-3385-4aa1-a2e7-2535bb286325"
+        "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+        "13a0d339-1635-4113-9693-5efb523ceea2"
       ],
       "id": "7c5a24c3-1e5b-441a-8097-6954f96c6b84"
     }

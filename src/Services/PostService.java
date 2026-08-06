@@ -197,7 +197,7 @@ public class PostService {
                 .flatMap(Collection::stream)
                 .map(PostDto::new)
                 .collect(Collectors.toCollection(() ->
-                        new TreeSet<>(Comparator.comparing(PostDto::getLastModified))
+                        new TreeSet<>(Comparator.comparing(PostDto::getLastModified).reversed())
                 )));
     }
 
@@ -293,7 +293,7 @@ public class PostService {
                 .stream()
                 .map(PostDto::new)
 
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()).reversed());
     }
     @ServiceAction
     public PostListDto getPostsByUserId(GetPostsByUserDto dto) {
@@ -308,7 +308,7 @@ public class PostService {
         return new PostListDto(postRepository.getPostsByOwnerId(userId)
                 .stream()
                 .map(PostDto::new)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()).reversed());
     }
 
     @ServiceAction

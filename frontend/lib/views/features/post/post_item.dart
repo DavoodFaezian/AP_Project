@@ -458,9 +458,10 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
           // Albums Section
           if (_albums.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Wrap(
-                spacing: 6,
+                spacing: 8,
+                runSpacing: 8,
                 children: _albums.map((album) => GestureDetector(
                   onTap: () {
                     final albumPhotos = _allPhotos.where((p) => album.photoIds.contains(p.id)).toList();
@@ -468,12 +469,20 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
                       _openPhotoSlider(albumPhotos.first.id, items: albumPhotos);
                     }
                   },
-                  child: Text(
-                    "#${album.albumName}",
-                    style: const TextStyle(
-                      color: Colors.blue, 
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF3E8FF),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: const Color(0xFF5B21B6).withOpacity(0.1)),
+                    ),
+                    child: Text(
+                      album.albumName,
+                      style: const TextStyle(
+                        color: Color(0xFF5B21B6), 
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 )).toList(),
