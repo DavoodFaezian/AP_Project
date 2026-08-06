@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
+//changed socket service to accept large data.
 class SocketService {
-  static const String _host = '192.168.56.1'; // '10.0.2.2' for Android Emulator
+
+  static const String _host = '127.0.0.1'; // '10.0.2.2' for Android Emulator
   static const int _port = 1234;
   static const Duration _timeout = Duration(seconds: 30);
 

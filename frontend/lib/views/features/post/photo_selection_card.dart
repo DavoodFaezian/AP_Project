@@ -7,14 +7,14 @@ class PhotoSelectionCard extends StatelessWidget {
   final Photo photo;
   final bool isSelected;
   final VoidCallback onTap;
-  final Color brandPurple;
+  final Color selectionColor;
 
   const PhotoSelectionCard({
     super.key,
     required this.photo,
     required this.isSelected,
     required this.onTap,
-    required this.brandPurple,
+    required this.selectionColor,
   });
 
   @override
@@ -27,12 +27,12 @@ class PhotoSelectionCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: isSelected
-              ? Border.all(color: brandPurple, width: 2.5)
+              ? Border.all(color: selectionColor, width: 2.5)
               : Border.all(color: Colors.grey.shade200, width: 1),
           boxShadow: [
             if (isSelected)
               BoxShadow(
-                color: brandPurple.withOpacity(0.2),
+                color: selectionColor.withOpacity(0.2),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -63,10 +63,10 @@ class PhotoSelectionCard extends StatelessWidget {
                       width: 22,
                       height: 22,
                       decoration: BoxDecoration(
-                        color: isSelected ? brandPurple : Colors.white.withOpacity(0.8),
+                        color: isSelected ? selectionColor : Colors.white.withOpacity(0.8),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isSelected ? brandPurple : Colors.grey.shade400,
+                          color: isSelected ? selectionColor : Colors.grey.shade400,
                           width: 1.5,
                         ),
                       ),

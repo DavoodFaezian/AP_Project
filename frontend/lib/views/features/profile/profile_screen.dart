@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:test_app/models/user_profile.dart';
 import 'package:test_app/repositories/album_repository.dart';
 import 'package:test_app/repositories/photo_repository.dart';
@@ -15,12 +16,11 @@ import 'package:test_app/views/layout/screens/settings/setting_screen.dart';
 
 import '../../components/widgets/custom_fab.dart';
 
-
 class ProfileScreen extends StatefulWidget {
   final String? userId;
   final bool isMePage;
 
-  const ProfileScreen({super.key, this.userId,this.isMePage = false});
+  const ProfileScreen({super.key, this.userId, this.isMePage = false});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -94,12 +94,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _openAddPost() async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => PostFormPage(
-        photoRepository: _photoRepository,
-        albumRepository: _albumRepository,
-        postRepository: _postRepository,
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PostFormPage(
+          photoRepository: _photoRepository,
+          albumRepository: _albumRepository,
+          postRepository: _postRepository,
+        ),
       ),
     );
 
@@ -122,88 +124,130 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     return Scaffold(
-    drawer: CustomDrawer(),
-      appBar:widget.isMePage? CustomAppBar(
-          title: _profile!.userName
-      ):CustomAppBar(
-        title: _profile!.userName,
-        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context)),
-      ),
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverToBoxAdapter(
-            child: _buildProfileHeader(),
-          ),
-        ],
-        body: PostList(
-          posts: _postViewModel.posts,
-          isLoading: _postViewModel.isLoading,
-          photoRepository: _photoRepository,
-          albumRepository: _albumRepository,
-          postRepository: _postRepository,
-          showActions: isMe,
-          onRefresh: () => _postViewModel.loadPosts(showLoading: false),
-        ),
+      drawer: const CustomDrawer(),
+      appBar: widget.isMePage
+          ? CustomAppBar(title: _profile!.userName)
+          : CustomAppBar(
+              title: _profile!.userName,
+              leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.pop(context)),
+            ),
+      body: AnimatedBuilder(
+        animation: _postViewModel,
+        builder: (context, _) {
+          return NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              SliverToBoxAdapter(
+                child: _buildProfileHeader(),
+              ),
+            ],
+            body: PostList(
+              posts: _postViewModel.posts,
+              isLoading: _postViewModel.isLoading,
+              photoRepository: _photoRepository,
+              albumRepository: _albumRepository,
+              postRepository: _postRepository,
+              showActions: isMe,
+              onRefresh: () => _postViewModel.loadPosts(showLoading: false),
+              onPostUpdated: (postId, ownerId) =>
+                  _postViewModel.refreshSinglePost(postId, ownerId),
+            ),
+          );
+        },
       ),
       floatingActionButton: isMe ? CustomFAB(onPressed: _openAddPost) : null,
     );
   }
 
   Widget _buildProfileHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Avatar
-              CircleAvatar(
-                radius: 44,
-                backgroundColor: Colors.grey.shade300,
-                child: ClipOval(
-                    child: _profile!.profilePhotoName != null
-                        ? SocketImage(
-                            photoName: _profile!.profilePhotoName!,
-                            sessionId: SessionManager.instance.sessionId!,
-                            builder: (context, provider) => Image(
-                              image: provider,
-                              fit: BoxFit.cover,
-                              width: 84,
-                              height: 84,
-                            ),
-                          )
-                        : const Icon(Icons.person, size: 50, color: Colors.grey),
+              // Profile Photo & Name Column
+              Column(
+                children: [
+                  Hero(
+                    tag: 'profile_avatar_${_profile!.userId}',
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          colors: [const Color(0xFF5B21B6), const Color(0xFF5B21B6).withOpacity(0.5)],
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: ClipOval(
+                            child: _profile!.profilePhotoName != null
+                                ? SocketImage(
+                                    photoName: _profile!.profilePhotoName!,
+                                    ownerId: _profile!.userId,
+                                    sessionId: SessionManager.instance.sessionId!,
+                                    builder: (context, provider) => Image(
+                                      image: provider,
+                                      fit: BoxFit.cover,
+                                      width: 80,
+                                      height: 80,
+                                    ),
+                                  )
+                                : const Icon(Icons.person, size: 40, color: Colors.grey),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: 90, // Match avatar width roughly
+                    child: Text(
+                      _profile!.userName,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(width: 24),
               // Stats
               Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildStatColumn(_postViewModel.posts.length.toString(), "Posts"),
-                    _buildStatColumn(_profile!.followerIds.length.toString(), "Followers"),
-                    _buildStatColumn(_profile!.followingIds.length.toString(), "Following"),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20), // Align stats with avatar center
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildStatColumn(_postViewModel.posts.length.toString(), "Posts").animate().fadeIn(delay: 200.ms).scale(),
+                      _buildStatColumn(_profile!.followerIds.length.toString(), "Followers").animate().fadeIn(delay: 300.ms).scale(),
+                      _buildStatColumn(_profile!.followingIds.length.toString(), "Following").animate().fadeIn(delay: 400.ms).scale(),
+                    ],
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          // Name and Bio
-          Text(
-            _profile!.userName,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-
-          const SizedBox(height: 16),
-          // Action Buttons
-          Row(
+        ),
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
             children: [
               Expanded(
                 child: isMe
-                    ? OutlinedButton(
+                    ? ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
@@ -211,16 +255,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           );
                         },
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFF3E8FF),
+                          foregroundColor: const Color(0xFF5B21B6),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
-                        child: const Text("Edit Profile", style: TextStyle(color: Colors.black)),
+                        child: const Text("Edit Profile", style: TextStyle(fontWeight: FontWeight.bold)),
                       )
-                    : FilledButton(
+                    : ElevatedButton(
                         onPressed: _toggleFollow,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFF5B21B6), // Purple
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _isFollowing ? Colors.grey.shade200 : const Color(0xFF5B21B6),
+                          foregroundColor: _isFollowing ? Colors.black87 : Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         child: _isProcessingFollow
                             ? const SizedBox(
@@ -228,7 +277,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 width: 16,
                                 child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                               )
-                            : Text(_isFollowing ? "Unfollow" : "Follow"),
+                            : Text(_isFollowing ? "Following" : "Follow", style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
               ),
               if (!isMe) ...[
@@ -237,19 +286,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: OutlinedButton(
                     onPressed: () {},
                     style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      side: BorderSide(color: Colors.grey.shade300),
                     ),
-                    child: const Text("Message", style: TextStyle(color: Colors.black)),
+                    child: const Text("Message", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
             ],
           ),
-          const SizedBox(height: 20),
-          const Divider(height: 1),
-        ],
-      ),
-    );
+        ),
+        const SizedBox(height: 20),
+        const Divider(height: 1, thickness: 0.5),
+      ],
+    ).animate().fadeIn().slideY(begin: 0.05, end: 0);
   }
 
   Widget _buildStatColumn(String count, String label) {

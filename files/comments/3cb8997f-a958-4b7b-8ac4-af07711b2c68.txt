@@ -1,0 +1,17 @@
+{
+  "className": "MainClasses.Comment",
+  "items": {
+    "6d7acd39-d458-4a99-8e10-eaa06498dbdb": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "script": "comment",
+      "postId": "3cb8997f-a958-4b7b-8ac4-af07711b2c68",
+      "id": "6d7acd39-d458-4a99-8e10-eaa06498dbdb"
+    },
+    "0aab5253-5f07-49f1-8a2f-588b6cfb27ba": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "script": "new comments",
+      "postId": "3cb8997f-a958-4b7b-8ac4-af07711b2c68",
+      "id": "0aab5253-5f07-49f1-8a2f-588b6cfb27ba"
+    }
+  }
+}

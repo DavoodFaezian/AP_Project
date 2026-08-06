@@ -2,6 +2,7 @@ package Services;
 import Annotaions.ServiceAction;
 import DTO.Photo.*;
 import DTO.StringResultDto;
+import DTO.SearchDto;
 import Exceptions.ActionFailedException;
 import Exceptions.ItemNotFoundException;
 import MainClasses.Album;
@@ -146,6 +147,20 @@ public class PhotoService {
         String sessionId = data.getSessionId();
         User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
         return new PhotoListDto(PhotoRepository.getInstance().getPhotosByOwnerId(user.getId())
+                .stream()
+                .map(PhotoDto::new)
+                .collect(Collectors.toList()));
+
+
+    }
+    @ServiceAction
+    public PhotoListDto searchPhotos(SearchDto data){
+        String sessionId = data.getSessionId();
+        User user = SessionRepository.getInstance().findUserBySessionId(sessionId);
+        if(data.getQuery() == null){
+            return getPhotosByOwnerId(new GetAllPhotosDto(sessionId));
+        }
+        return new PhotoListDto(PhotoRepository.getInstance().filterPhotos(data.getQuery(),user.getId())
                 .stream()
                 .map(PhotoDto::new)
                 .collect(Collectors.toList()));

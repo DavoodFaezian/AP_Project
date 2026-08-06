@@ -64,10 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () => viewModel.loadFeedPosts(),
                 icon: const Icon(Icons.refresh),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.filter_list),
-              ),
             ],
           ),
           body: PostList(
@@ -78,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
             postRepository: _postRepository,
             showActions: false,
             onRefresh: () => viewModel.loadFeedPosts(showLoading: false),
+            onPostUpdated: (postId, ownerId) => viewModel.refreshSinglePost(postId, ownerId),
           ),
           floatingActionButton: CustomFAB(
             onPressed: _openCreatePhotoPage,

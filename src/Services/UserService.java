@@ -3,6 +3,7 @@ package Services;
 
 import Annotaions.ServiceAction;
 import DTO.BooleanDto;
+import DTO.SearchDto;
 import DTO.SessionIdDto;
 import DTO.StringResultDto;
 import DTO.User.*;
@@ -15,7 +16,6 @@ import Repositories.SessionRepository;
 import Repositories.UserProfileRepository;
 import Repositories.UserRepository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -255,16 +255,16 @@ public class UserService {
     public GetUserDto getUserProfile(GetUserByIdDto data){
         User user = SessionRepository.getInstance().findUserBySessionId(data.getSessionId());
 
-        Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
-        String userName = user.getUserName();
         if(data.getUserId() != null){
-            userName = UserRepository.getInstance().findUserById(data.getUserId()).getUserName();
+            user = UserRepository.getInstance().findUserById(data.getUserId());
+
         }
+        Optional<UserProfile> profile = userProfileRepository.getUserProfileByUserId(user.getId());
         checkProfilePhoto(profile);
         UserProfile notNullProfile = profile.get();
         return new GetUserDto(
                 notNullProfile.getUserId(),
-                userName,
+                user.getUserName(),
                 notNullProfile.getProfilePhotoName(),
                 notNullProfile.getFollowersId(),
                 notNullProfile.getFollowingsId()
@@ -291,7 +291,7 @@ public class UserService {
     }
 
     @ServiceAction
-    public UserListDto searchUsers(SearchUsersDto data) {
+    public UserListDto searchUsers(SearchDto data) {
         SessionRepository.getInstance().validateSession(data.getSessionId());
 
         String query = data.getQuery().toLowerCase();

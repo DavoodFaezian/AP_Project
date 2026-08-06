@@ -76,10 +76,43 @@ class _PhotoUploadInputState extends State<PhotoUploadInput> {
     );
   }
 
-  Future<void> _pickAndUploadPhoto() async {
+  Future<void> _showSourceSelection() async {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickAndUploadPhoto(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Camera'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickAndUploadPhoto(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickAndUploadPhoto(ImageSource source) async {
     try {
       final XFile? selectedImage = await _picker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         imageQuality: 80,
       );
 
@@ -223,7 +256,7 @@ class _PhotoUploadInputState extends State<PhotoUploadInput> {
           width: double.infinity,
           height: 50,
           child: ElevatedButton.icon(
-            onPressed: _isUploading ? null : _pickAndUploadPhoto,
+            onPressed: _isUploading ? null : _showSourceSelection,
             icon: _isUploading
                 ? const SizedBox(
               width: 20,

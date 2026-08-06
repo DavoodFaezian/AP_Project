@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:test_app/models/comment.dart';
 import 'package:test_app/repositories/comment_repository.dart';
 import 'package:test_app/services/session_manager.dart';
@@ -70,10 +71,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Comments"),
+        title: const Text("Comments", style: TextStyle(fontWeight: FontWeight.bold)),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
       ),
-      body: Column(
+      body:SafeArea(child:Column(
         children: [
           Expanded(
             child: AnimatedBuilder(
@@ -84,89 +89,147 @@ class _CommentsScreenState extends State<CommentsScreen> {
                 }
 
                 if (_viewModel.comments.isEmpty) {
-                  return const Center(child: Text("No comments yet. Be the first to comment!"));
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.chat_bubble_outline, size: 80, color: Colors.grey.shade300),
+                        const SizedBox(height: 16),
+                        Text("No comments yet", style: TextStyle(color: Colors.grey.shade500)),
+                        Text("Be the first to share your thoughts!", style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+                      ],
+                    ),
+                  ).animate().fadeIn();
                 }
 
-                return ListView.builder(
+                return ListView.separated(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   itemCount: _viewModel.comments.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 16),
                   itemBuilder: (context, index) {
                     final comment = _viewModel.comments[index];
                     final user = _viewModel.userCache[comment.ownerId];
                     final isMyComment = comment.ownerId == SessionManager.instance.userId;
 
-                    return ListTile(
-                      leading: CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Colors.grey.shade300,
-                        child: user?.profilePhotoName != null
-                            ? ClipOval(
-                          child: SizedBox.expand(
-                            child: SocketImage(
-                              photoName: user!.profilePhotoName!,
-                              sessionId: SessionManager.instance.sessionId!,
-                              builder: (context, provider) => Image(
-                                image: provider,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        )
-                            : const Icon(Icons.person),
-                      ),
-                      title: Text(
-                        user?.userName ?? "Loading...",
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                      ),
-                      subtitle: Text(comment.script),
-                      trailing: isMyComment
-                          ? Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit, size: 18),
-                                  onPressed: () => _showEditDialog(comment),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 18,
+                            backgroundColor: const Color(0xFFF3E8FF),
+                            child: user?.profilePhotoName != null
+                                ? ClipOval(
+                              child: SizedBox.expand(
+                                child: SocketImage(
+                                  photoName: user!.profilePhotoName!,
+                                  sessionId: SessionManager.instance.sessionId!,
+                                  ownerId: user!.userId,
+                                  builder: (context, provider) => Image(
+                                    image: provider,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete, size: 18, color: Colors.red),
-                                  onPressed: () => _viewModel.deleteComment(comment.id),
+                              ),
+                            )
+                                : const Icon(Icons.person, size: 20, color: Color(0xFF5B21B6)),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      user?.userName ?? "Loading...",
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                    ),
+                                    const Spacer(),
+                                    if (isMyComment) ...[
+                                      GestureDetector(
+                                        onTap: () => _showEditDialog(comment),
+                                        child: Icon(Icons.edit, size: 14, color: Colors.grey.shade400),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      GestureDetector(
+                                        onTap: () => _viewModel.deleteComment(comment.id),
+                                        child: Icon(Icons.delete_outline, size: 14, color: Colors.red.shade300),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  comment.script,
+                                  style: const TextStyle(fontSize: 14, color: Colors.black87),
                                 ),
                               ],
-                            )
-                          : null,
-                    );
+                            ),
+                          ),
+                        ],
+                      ),
+                    ).animate().fadeIn(delay: (index * 50).ms).slideX(begin: 0.05, end: 0);
                   },
                 );
               },
             ),
           ),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Container(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
+            ),
             child: Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _commentController,
-                    decoration: const InputDecoration(
-                      hintText: "Add a comment...",
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: TextField(
+                      controller: _commentController,
+                      decoration: const InputDecoration(
+                        hintText: "Add a comment...",
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      ),
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.send, color: Colors.blue),
-                  onPressed: () async {
+                const SizedBox(width: 12),
+                GestureDetector(
+                  onTap: () async {
                     if (await _viewModel.addComment(_commentController.text)) {
                       _commentController.clear();
                     }
                   },
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF5B21B6),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.send, color: Colors.white, size: 20),
+                  ),
                 ),
               ],
             ),
           ),
         ],
       ),
+      )
     );
   }
 }

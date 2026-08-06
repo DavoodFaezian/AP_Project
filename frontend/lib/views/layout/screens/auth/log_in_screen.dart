@@ -1,12 +1,13 @@
-import 'dart:convert'; // 👈 برای jsonEncode و jsonDecode
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:local_auth/local_auth.dart'; // 👈 اضافه شدن پکیج اثر انگشت
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:test_app/views/layout/screens/auth/sign_up_screen.dart';
 import '../../../../services/session_manager.dart';
 import '../../../components/widgets/auth_header.dart';
 import '../../../components/widgets/input_decoration.dart';
 import '../../navigation/navigator_screen.dart';
-import '../../../../services/socket_service.dart'; // 👈 اضافه کردن سرویس سوکت
+import '../../../../services/socket_service.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -20,11 +21,9 @@ class _LogInPageState extends State<LogInPage> {
   final _formKey = GlobalKey<FormState>();
   final _userNameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final LocalAuthentication _localAuth = LocalAuthentication(); // 👈 تعریف نمونه اثر انگشت
+  final LocalAuthentication _localAuth = LocalAuthentication();
 
   bool _showPassword = false;
-  
-  // 👈 ۱. متغیر مدیریت وضعیت بارگذاری
   bool _isLoading = false; 
 
   String? validateUserName(String? value){
@@ -41,7 +40,6 @@ class _LogInPageState extends State<LogInPage> {
     return null;
   }
 
-  // 👈 متد ورود با اثر انگشت
   Future<void> _logInWithBiometrics() async {
     setState(() {
       _isLoading = true;
@@ -94,15 +92,6 @@ class _LogInPageState extends State<LogInPage> {
             );
           }
         }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Biometric authentication failed."),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
       }
     } catch (e) {
       if (mounted) {
@@ -122,15 +111,13 @@ class _LogInPageState extends State<LogInPage> {
     }
   }
 
-  // 👈 ۲. اصلاح متد _logIn و اتصال به بک‌اند جاوا
   Future<void> _logIn() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        _isLoading = true; // فعال‌سازی حالت لودینگ
+        _isLoading = true;
       });
 
       try {
-        // الف) ساخت Map درخواست با اکشن LOG_IN
         final requestMap = {
           "actionName": "User/logIn",
           "payload": {
@@ -139,35 +126,29 @@ class _LogInPageState extends State<LogInPage> {
           }
         };
 
-        // ب) تبدیل به JSON و اضافه کردن n\ برای readLine جاوا
         String jsonRequest = jsonEncode(requestMap) + "\n";
 
-        // ج) ارسال درخواست به بک‌اند جاوا از طریق SocketService
         String rawResponse = await SocketService.sendRequest(jsonRequest);
         Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-        // د) بررسی پاسخ سرور
         if (mounted) {
           if (responseMap['status'] == "200") {
-
             String sessionId = responseMap['payload']['id'];
-            SessionManager.instance.saveSessionId(
-              sessionId
-            );
+            await SessionManager.instance.saveSessionId(sessionId);
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Welcome back!")),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Welcome back!")),
+              );
 
-            // هدایت به صفحه اصلی
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const NavigatorPage(),
-              ),
-            );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NavigatorPage(),
+                ),
+              );
+            }
           } else {
-            // نمایش پیام خطا (مثلاً "Invalid username or password")
             String errorMessage = responseMap['message'] ?? "Log in failed!";
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -178,7 +159,6 @@ class _LogInPageState extends State<LogInPage> {
           }
         }
       } catch (e) {
-        // هـ) مدیریت خطای عدم اتصال به سرور
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -190,7 +170,7 @@ class _LogInPageState extends State<LogInPage> {
       } finally {
         if (mounted) {
           setState(() {
-            _isLoading = false; // غیرفعال‌سازی لودینگ
+            _isLoading = false;
           });
         }
       }
@@ -206,42 +186,46 @@ class _LogInPageState extends State<LogInPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
 
     return Scaffold(
-      body: Stack(
-        children: [
-          AuthHeader(
-            title: "Log In...",
-          ),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            AuthHeader(
+              title: "Welcome\nBack",
+            ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0),
       
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Form(
+                key: _formKey,
                 child: Column(
                   children: [
-                    const SizedBox(height: 100),
-                
                     Image.asset(
                       'assets/images/Photos-pana (1).png',
-                      width: 300,
-                      height: 300,
-                    ),
+                      width: 200,
+                      height: 200,
+                    ).animate().fadeIn(delay: 200.ms).scale(),
+                
+                    const SizedBox(height: 24),
                 
                     TextFormField(
                       controller: _userNameController,
-                      decoration: buildInputDecoration("Username"),
+                      decoration: buildInputDecoration("Username").copyWith(
+                        prefixIcon: const Icon(Icons.person_outline),
+                      ),
                       validator: validateUserName,
-                    ),
+                    ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.1, end: 0),
                 
                     const SizedBox(height: 16),
                 
                     TextFormField(
                       controller: _passwordController,
                       obscureText: !_showPassword,
-                      decoration: buildInputDecoration(
-                        "Password",
+                      decoration: buildInputDecoration("Password").copyWith(
+                        prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _showPassword
@@ -256,63 +240,55 @@ class _LogInPageState extends State<LogInPage> {
                         ),
                       ),
                       validator: validatePassword,
-                    ),
+                    ).animate().fadeIn(delay: 500.ms).slideX(begin: 0.1, end: 0),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 32),
                 
-                    // 👈 ۳. ترکیب دکمه Log In و دکمه اثر انگشت در یک Row
                     Row(
                       children: [
                         Expanded(
                           child: SizedBox(
-                            height: 60,
+                            height: 56,
                             child: ElevatedButton(
                               onPressed: _isLoading ? null : _logIn,
-                              style: TextButton.styleFrom(
-                                backgroundColor: const Color(0xFF1257FA),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF5B21B6),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                               ),
                               child: _isLoading
                                   ? const CircularProgressIndicator(color: Colors.white)
                                   : const Text(
                                       "Log In",
-                                      style: TextStyle(color: Colors.white, fontSize: 18),
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                     ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 12),
-                        InkWell(
-                          onTap: _isLoading ? null : _logInWithBiometrics,
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF1257FA).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: const Color(0xFF1257FA),
-                                width: 1.5,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.fingerprint,
-                              color: Color(0xFF1257FA),
-                              size: 32,
-                            ),
+                        Container(
+                          height: 56,
+                          width: 56,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF3E8FF),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: IconButton(
+                            onPressed: _isLoading ? null : _logInWithBiometrics,
+                            icon: const Icon(Icons.fingerprint, color: Color(0xFF5B21B6), size: 28),
                           ),
                         ),
                       ],
-                    ),
-                    const SizedBox(height: 16),
+                    ).animate().fadeIn(delay: 700.ms).scale(),
+                    
+                    const SizedBox(height: 24),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Don't have an account?"),
-                        const SizedBox(width: 5),
-                        TextButton(
-                          onPressed: _isLoading
+                        const Text("Don't have an account? ", style: TextStyle(color: Colors.grey)),
+                        GestureDetector(
+                          onTap: _isLoading
                               ? null
                               : () {
                             Navigator.push(
@@ -322,17 +298,23 @@ class _LogInPageState extends State<LogInPage> {
                               ),
                             );
                           },
-                          child: const Text('Sign Up'),
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              color: theme.primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ],
-                    ),
+                    ).animate().fadeIn(delay: 900.ms),
 
                   ],
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

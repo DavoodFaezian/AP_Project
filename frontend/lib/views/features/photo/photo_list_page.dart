@@ -3,6 +3,7 @@ import 'package:test_app/services/session_manager.dart';
 import 'package:test_app/views/components/widgets/socket_image.dart';
 import 'package:test_app/views/features/photo/photo_slider_page.dart';
 
+import '../../../models/photo.dart';
 import '../../../repositories/album_repository.dart';
 import '../../../repositories/photo_repository.dart';
 import '../../../viewmodels/photo_list_view_model.dart';
@@ -130,7 +131,6 @@ class _PhotoListPageState extends State<PhotoListPage> {
             ),
             FilledButton(
               onPressed: () async {
-                // محاسبه آلبوم‌های اضافه‌شده و حذف‌شده
                 final addedAlbums = selectedAlbumIds.difference(initialAlbumIds);
                 final removedAlbums = initialAlbumIds.difference(selectedAlbumIds);
 
@@ -198,13 +198,6 @@ class _PhotoListPageState extends State<PhotoListPage> {
     );
   }
 
-  Future<void> _openSharePage() async {
-    final photo = viewModel.selectedPhoto;
-    if (photo == null) {
-      return;
-    }
-  }
-
   PreferredSizeWidget _buildAppBar() {
     if (viewModel.selectionMode) {
       return CustomAppBar(
@@ -224,11 +217,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
               icon: const Icon(Icons.drive_file_move_outline),
               onPressed: _openTransferPage,
             ),
-          if (viewModel.isSingleSelection)
-            IconButton(
-              icon: const Icon(Icons.share),
-              onPressed: _openSharePage,
-            ),
+
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: viewModel.deleteSelectedPhotos,
@@ -244,15 +233,153 @@ class _PhotoListPageState extends State<PhotoListPage> {
         onPressed: () => Navigator.of(context).pop(),
       ),
       actions: [
-        IconButton(
-          onPressed: () {},
+        PopupMenuButton<String>(
           icon: const Icon(Icons.sort),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.filter_list),
+          onSelected: (value) {
+            switch (value) {
+              case 'title_asc':
+                viewModel.sortByTitle(ascending: true);
+                break;
+              case 'title_desc':
+                viewModel.sortByTitle(ascending: false);
+                break;
+              case 'date_newest':
+                viewModel.sortByDate(newestFirst: true);
+                break;
+              case 'date_oldest':
+                viewModel.sortByDate(newestFirst: false);
+                break;
+            }
+          },
+          itemBuilder: (context) => [
+            const PopupMenuItem(value: 'title_asc', child: Text('Title (A-Z)')),
+            const PopupMenuItem(value: 'title_desc', child: Text('Title (Z-A)')),
+            const PopupMenuItem(value: 'date_newest', child: Text('Date (Newest)')),
+            const PopupMenuItem(value: 'date_oldest', child: Text('Date (Oldest)')),
+          ],
         ),
       ],
+    );
+  }
+
+  Widget _buildPhotoCard(Photo photo, bool isSelected, Color selectedColor) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
+      padding: EdgeInsets.all(isSelected ? 4 : 0),
+      decoration: BoxDecoration(
+        color: isSelected ? selectedColor.withOpacity(0.12) : Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        border: isSelected ? Border.all(color: selectedColor, width: 2) : null,
+      ),
+      child: SafeArea(child:Stack(
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.grey.shade300,
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                    child: SocketImage(
+                      photoName: photo.photoName,
+                      sessionId: SessionManager.instance.sessionId!,
+                      ownerId: photo.ownerId,
+                      loadingPlaceholder: const Center(child: CircularProgressIndicator()),
+                      errorPlaceholder: Container(
+                        color: Colors.grey.shade200,
+                        child: const Icon(Icons.broken_image, color: Colors.grey),
+                      ),
+                      builder: (context, provider) => Image(
+                        image: provider,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        photo.title.isNotEmpty ? photo.title : photo.photoName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      if (photo.tags.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Wrap(
+                          spacing: 4,
+                          children: photo.tags
+                              .take(3)
+                              .map((tag) => Text(
+                                    '#$tag',
+                                    style: const TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (viewModel.hasSelection)
+            Positioned(
+              top: 10,
+              left: 10,
+              child: Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: isSelected ? selectedColor : Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isSelected ? selectedColor : Colors.grey.shade400,
+                    width: 2,
+                  ),
+                ),
+                child: isSelected
+                    ? const Icon(
+                        Icons.check,
+                        size: 16,
+                        color: Colors.white,
+                      )
+                    : null,
+              ),
+            ),
+        ],
+      ),
+      )
     );
   }
 
@@ -262,7 +389,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
       animation: viewModel,
       builder: (context, _) {
         return Scaffold(
-          backgroundColor: const Color(0xFFFCF9FC),
+          backgroundColor: const Color(0xFFF9F9F9),
           appBar: _buildAppBar(),
           floatingActionButton: viewModel.selectionMode
               ? null
@@ -272,32 +399,27 @@ class _PhotoListPageState extends State<PhotoListPage> {
           body: Builder(
             builder: (context) {
               if (viewModel.isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: CircularProgressIndicator());
               }
 
               if (viewModel.photos.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.all(8),
-                  child: EmptyState(
-                    imagePath: 'assets/images/Photos-pana (1).png',
-                    title: 'No photos yet',
-                    subtitle: 'Add your first photo.',
-                  ),
+                return const EmptyState(
+                  imagePath: 'assets/images/Photos-pana (1).png',
+                  title: 'No photos yet',
+                  subtitle: 'Add your first photo to this collection.',
                 );
               }
 
               return LayoutBuilder(
                 builder: (context, constraints) {
                   return GridView.builder(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(16),
                     itemCount: viewModel.photos.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: _crossAxisCount(constraints.maxWidth),
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 0.82,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 0.75,
                     ),
                     itemBuilder: (context, index) {
                       final photo = viewModel.photos[index];
@@ -313,102 +435,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
                           }
                           _openPhotoSlider(photo.id);
                         },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 180),
-                          curve: Curves.easeOut,
-                          padding: EdgeInsets.all(isSelected ? 4 : 0),
-                          decoration: BoxDecoration(
-                            color: isSelected ? selectedColor.withOpacity(0.12) : Colors.transparent,
-                            borderRadius: BorderRadius.circular(16),
-                            border: isSelected ? Border.all(color: selectedColor, width: 2) : null,
-                          ),
-                          child: Stack(
-                            children: [
-                              DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.vertical(
-                                          top: Radius.circular(12),
-                                        ),
-                                        child: SocketImage(
-                                          photoName: photo.photoName,
-                                          sessionId: SessionManager.instance.sessionId!,
-                                          ownerId: photo.ownerId,
-                                          loadingPlaceholder: const Center(child: CircularProgressIndicator()),
-                                          errorPlaceholder: Container(
-                                            color: Colors.grey.shade200,
-                                            child: const Icon(Icons.broken_image, color: Colors.grey),
-                                          ),
-                                          builder: (context, provider) => Image(
-                                            image: provider,
-                                            fit: BoxFit.cover,
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Text(
-                                        photo.title.isNotEmpty ? photo.title : photo.photoName,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (viewModel.hasSelection)
-                                Positioned(
-                                  top: 10,
-                                  left: 10,
-                                  child: AnimatedScale(
-                                    duration: const Duration(milliseconds: 180),
-                                    scale: 1,
-                                    child: IgnorePointer(
-                                      child: Container(
-                                        width: 24,
-                                        height: 24,
-                                        decoration: BoxDecoration(
-                                          color: isSelected ? selectedColor : Colors.white,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: isSelected ? selectedColor : Colors.grey.shade400,
-                                            width: 2,
-                                          ),
-                                          boxShadow: const [
-                                            BoxShadow(
-                                              color: Color(0x22000000),
-                                              blurRadius: 4,
-                                              offset: Offset(0, 1),
-                                            ),
-                                          ],
-                                        ),
-                                        child: isSelected
-                                            ? const Icon(
-                                                Icons.check,
-                                                size: 16,
-                                                color: Colors.white,
-                                              )
-                                            : null,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
+                        child: _buildPhotoCard(photo, isSelected, selectedColor),
                       );
                     },
                   );

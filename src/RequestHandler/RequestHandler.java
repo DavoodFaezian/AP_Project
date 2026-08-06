@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,7 +73,14 @@ public class RequestHandler {
         }
     }
     public Response handle() {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class,
+                        (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) ->
+                                new JsonPrimitive(src.toString()))
+                .registerTypeAdapter(LocalDateTime.class,
+                        (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) ->
+                                LocalDateTime.parse(json.getAsString()))
+                .create();;
         try {
             if(!actions.containsKey(request.getActionName())){
                 return new Response(NOT_FOUND,"Service was not found:"+request.getActionName(),new JsonObject());

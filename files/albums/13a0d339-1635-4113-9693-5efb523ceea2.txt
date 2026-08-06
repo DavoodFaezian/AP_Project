@@ -1,0 +1,71 @@
+{
+  "className": "MainClasses.Album",
+  "items": {
+    "1f342c49-6447-4a8a-b110-6d4797efb954": {
+      "ownerId": "13a0d339-1635-4113-9693-5efb523ceea2",
+      "albumName": "new album of ali",
+      "photoIds": [],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 26,
+          "second": 42,
+          "nano": 85824300
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 26,
+          "second": 21,
+          "nano": 694213300
+        }
+      },
+      "id": "1f342c49-6447-4a8a-b110-6d4797efb954"
+    },
+    "058c0c85-647e-4214-9786-168bfb8d17d6": {
+      "ownerId": "13a0d339-1635-4113-9693-5efb523ceea2",
+      "albumName": "my photosl",
+      "photoIds": [],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 28,
+          "second": 45,
+          "nano": 426522300
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 26,
+          "second": 34,
+          "nano": 697951100
+        }
+      },
+      "id": "058c0c85-647e-4214-9786-168bfb8d17d6"
+    }
+  }
+}

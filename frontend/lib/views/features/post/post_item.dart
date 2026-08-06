@@ -1,8 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:test_app/models/album.dart';
 import 'package:test_app/models/photo.dart';
 import 'package:test_app/models/post.dart';
-import 'package:test_app/models/user.dart';
 import 'package:test_app/models/user_profile.dart';
 import 'package:test_app/repositories/album_repository.dart';
 import 'package:test_app/repositories/photo_repository.dart';
@@ -24,6 +25,7 @@ class PostItem extends StatefulWidget {
   final PostRepository postRepository;
   final bool showActions;
   final VoidCallback? onRefresh;
+  final Function(String postId, String ownerId)? onPostUpdated;
 
   const PostItem({
     super.key,
@@ -33,6 +35,7 @@ class PostItem extends StatefulWidget {
     required this.postRepository,
     this.showActions = false,
     this.onRefresh,
+    this.onPostUpdated,
   });
 
   @override
@@ -59,10 +62,16 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
   @override
   void didUpdateWidget(covariant PostItem oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.post.id != widget.post.id || 
-        oldWidget.post.lastModified != widget.post.lastModified ||
-        oldWidget.post.photoIds.length != widget.post.photoIds.length ||
-        oldWidget.post.albumIds.length != widget.post.albumIds.length) {
+    
+    final bool idChanged = oldWidget.post.id != widget.post.id;
+    final bool modifiedChanged = oldWidget.post.lastModified != widget.post.lastModified;
+    final bool photosChanged = !setEquals(oldWidget.post.photoIds, widget.post.photoIds);
+    final bool albumsChanged = !setEquals(oldWidget.post.albumIds, widget.post.albumIds);
+    final bool commentsChanged = oldWidget.post.commentsAllowed != widget.post.commentsAllowed ||
+                                !setEquals(oldWidget.post.commentIds, widget.post.commentIds);
+
+    if (idChanged || modifiedChanged || photosChanged || albumsChanged || commentsChanged) {
+      debugPrint("PostItem: Refreshing data for post ${widget.post.id}");
       _fetchData();
     }
   }
@@ -86,7 +95,7 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
         if (mounted) setState(() => _owner = owner);
       }).catchError((e) => debugPrint("Error fetching owner profile: $e"));
 
-      // Fetch albums individually to prevent total failure if one fails
+      // Fetch albums individually
       List<Album> loadedAlbums = [];
       for (final albumId in widget.post.albumIds) {
         try {
@@ -124,10 +133,8 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
       final seenIds = <String>{};
       final uniquePhotos = combined.where((p) => seenIds.add(p.id)).toList();
 
-
       if (mounted) {
         setState(() {
-          _owner = _owner;
           _albums = loadedAlbums;
           _allPhotos = uniquePhotos;
           _currentImageIndex = 0;
@@ -144,11 +151,11 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
     }
   }
 
-  void _openPhotoSlider(String photoId) {
+  void _openPhotoSlider(String photoId, {List<Photo>? items}) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => PhotoSliderPage(
-          items: _allPhotos,
+          items: items ?? _allPhotos,
           initialItemId: photoId,
           idBuilder: (photo) => photo.id,
           titleBuilder: (photo) => photo.title.isNotEmpty ? photo.title : photo.photoName,
@@ -194,8 +201,12 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
       ),
     );
 
-    if (result == true && widget.onRefresh != null) {
-      widget.onRefresh!();
+    if (result == true) {
+      if (widget.onPostUpdated != null) {
+        widget.onPostUpdated!(widget.post.id, widget.post.ownerId);
+      } else if (widget.onRefresh != null) {
+        widget.onRefresh!();
+      }
     }
   }
 
@@ -237,12 +248,12 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20), // More rounded corners
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -251,7 +262,7 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
                 GestureDetector(
@@ -260,14 +271,15 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
                     MaterialPageRoute(builder: (_) => ProfileScreen(userId: widget.post.ownerId)),
                   ),
                   child: CircleAvatar(
-                    radius: 16,
-                    backgroundColor: Colors.grey.shade300,
+                    radius: 20,
+                    backgroundColor: const Color(0xFFF3E8FF),
                     child: _owner?.profilePhotoName != null
                         ? ClipOval(
                       child: SizedBox.expand(
                         child: SocketImage(
                           photoName: _owner!.profilePhotoName!,
                           sessionId: SessionManager.instance.sessionId!,
+                          ownerId: _owner!.userId,
                           builder: (context, provider) => Image(
                             image: provider,
                             fit: BoxFit.cover,
@@ -275,26 +287,37 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
                         ),
                       ),
                     )
-                        : const Icon(Icons.person),
+                        : const Icon(Icons.person, size: 24, color: Color(0xFF5B21B6)),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 Expanded(
                   child: GestureDetector(
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => ProfileScreen(userId: widget.post.ownerId)),
                     ),
-                    child: Text(
-                      _owner?.userName ?? widget.post.ownerId,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _owner?.userName ?? widget.post.ownerId,
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                        ),
+                        if (widget.post.createdAt != null)
+                          Text(
+                            widget.post.createdAt!.toString().split(' ')[0],
+                            style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                          ),
+                      ],
                     ),
                   ),
                 ),
                 if (widget.showActions)
                   IconButton(
-                    icon: const Icon(Icons.more_vert, size: 20),
+                    icon: const Icon(Icons.more_horiz, size: 22),
                     onPressed: () {
+// ...
                        showModalBottomSheet(
                          context: context, 
                          builder: (ctx) => SafeArea(
@@ -362,7 +385,7 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
                             ),
                             builder: (context, provider) => Image(
                               image: provider,
-                              fit: BoxFit.contain, // Fit to see full width and height
+                              fit: BoxFit.contain, // Show full width and height
                               width: double.infinity,
                             ),
                           ),
@@ -435,41 +458,38 @@ class _PostItemState extends State<PostItem> with AutomaticKeepAliveClientMixin 
           // Albums Section
           if (_albums.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Wrap(
-                spacing: 6,
+                spacing: 8,
+                runSpacing: 8,
                 children: _albums.map((album) => GestureDetector(
                   onTap: () {
-                    if (_allPhotos.isNotEmpty) {
-                      final albumPhoto = _allPhotos.firstWhere(
-                        (p) => album.photoIds.contains(p.id),
-                        orElse: () => _allPhotos.first,
-                      );
-                      _openPhotoSlider(albumPhoto.id);
+                    final albumPhotos = _allPhotos.where((p) => album.photoIds.contains(p.id)).toList();
+                    if (albumPhotos.isNotEmpty) {
+                      _openPhotoSlider(albumPhotos.first.id, items: albumPhotos);
                     }
                   },
-                  child: Text(
-                    "#${album.albumName}",
-                    style: const TextStyle(
-                      color: Colors.blue, 
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF3E8FF),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: const Color(0xFF5B21B6).withOpacity(0.1)),
+                    ),
+                    child: Text(
+                      album.albumName,
+                      style: const TextStyle(
+                        color: Color(0xFF5B21B6), 
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 )).toList(),
               ),
             ),
 
-          // Date
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            child: Text(
-              widget.post.createdAt != null 
-                ? widget.post.createdAt!.toString().split(' ')[0] 
-                : "",
-              style: const TextStyle(color: Colors.grey, fontSize: 11),
-            ),
-          ),
+          // Date removed from bottom since it's now in the header
         ],
       ),
     );

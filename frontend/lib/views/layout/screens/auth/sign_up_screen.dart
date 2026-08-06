@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../repositories/user_repository.dart';
 import '../../../../services/socket_service.dart';
 import '../../../components/widgets/auth_header.dart';
@@ -27,7 +28,6 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _showPassword = false;
   bool _showConfirmPassword = false;
   
-  // 👈 ۱. متغیر برای حالت بارگذاری
   bool _isLoading = false; 
 
   @override
@@ -48,7 +48,6 @@ class _SignUpPageState extends State<SignUpPage> {
         }
       } catch (e) {
         debugPrint("Auto login failed: $e");
-        // Remove sessionId from memory and storage if auto-login fails
         await SessionManager.instance.clearSession();
       }
     }
@@ -84,15 +83,13 @@ class _SignUpPageState extends State<SignUpPage> {
     return null;
   }
 
-  // 👈 ۲. اصلاح اصلی: اتصال متد _signUp به بک‌اند سوکت
   Future<void> _signUp() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        _isLoading = true; // فعال‌سازی حالت لودینگ
+        _isLoading = true;
       });
 
       try {
-        // الف) ساخت شیء Request مطابق با نیازمندی‌های بک‌اند جاوا
         final requestMap = {
           "actionName": "User/signUp",
           "payload": {
@@ -102,39 +99,30 @@ class _SignUpPageState extends State<SignUpPage> {
           }
         };
 
-        // ب) تبدیل به JSON و اضافه کردن \n الزامی برای readLine بک‌اند
         String jsonRequest = jsonEncode(requestMap) + "\n";
 
-        // ج) ارسال از طریق سوکت و دریافت Response (با فرض وجود SocketService)
-        // اگر SocketService داری متد ارسال آن را صدا بزن:
-        String rawResponse = await  SocketService.sendRequest(jsonRequest);
+        String rawResponse = await SocketService.sendRequest(jsonRequest);
         Map<String, dynamic> responseMap = jsonDecode(rawResponse);
 
-        // د) بررسی وضعیت پاسخ بک‌اند
         if (mounted) {
-          // اگر کد پاسخ موفقیت‌آمیز بود (مثلاً 200 یا status == SUCCESS)
           if (responseMap['status'] == '200') {
-            
-
             String sessionId = responseMap["payload"]["id"];
 
-            SessionManager.instance.saveSessionId(
-              sessionId
-            );
+            await SessionManager.instance.saveSessionId(sessionId);
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Account created successfully!")),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Account created successfully!")),
+              );
 
-            // هدایت به صفحه اصلی
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const NavigatorPage(),
-              ),
-            );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NavigatorPage(),
+                ),
+              );
+            }
           } else {
-            // اگر بک‌اند خطایی برگرداند (مثلاً "User already exists")
             String errorMessage = responseMap['message'] ?? "Sign up failed!";
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
@@ -142,7 +130,6 @@ class _SignUpPageState extends State<SignUpPage> {
           }
         }
       } catch (e) {
-        // هـ) مدیریت خطاهای عدم اتصال به شبکه یا قطع بودن سوکت
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -154,7 +141,7 @@ class _SignUpPageState extends State<SignUpPage> {
       } finally {
         if (mounted) {
           setState(() {
-            _isLoading = false; // غیرفعال‌سازی لودینگ در هر شرایطی
+            _isLoading = false;
           });
         }
       }
@@ -171,41 +158,50 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      body: Stack(
-        children: [
-          AuthHeader(
-            title: "Sign Up...",
-          ),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                AuthHeader(
+                  title: "Create\nAccount",
+                ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0),
+              ],
+            ),
       
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Form(
+                key: _formKey,
                 child: Column(
                   children: [
-                    const SizedBox(height: 100),
-                
                     Image.asset(
                       'assets/images/Photos-pana (1).png',
-                      width: 300,
-                      height: 300,
-                    ),
+                      width: 200,
+                      height: 200,
+                    ).animate().fadeIn(delay: 200.ms).scale(),
+                
+                    const SizedBox(height: 24),
                 
                     TextFormField(
                       controller: _userNameController,
-                      decoration: buildInputDecoration("Username"),
+                      decoration: buildInputDecoration("Username").copyWith(
+                        prefixIcon: const Icon(Icons.person_outline),
+                      ),
                       validator: validateUserName,
-                    ),
+                    ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.1, end: 0),
                 
                     const SizedBox(height: 16),
                 
                     TextFormField(
                       controller: _passwordController,
                       obscureText: !_showPassword,
-                      decoration: buildInputDecoration(
-                        "Password",
+                      decoration: buildInputDecoration("Password").copyWith(
+                        prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _showPassword
@@ -220,15 +216,15 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                       validator: validatePassword,
-                    ),
+                    ).animate().fadeIn(delay: 500.ms).slideX(begin: 0.1, end: 0),
                 
                     const SizedBox(height: 16),
                 
                     TextFormField(
                       controller: _confirmPasswordController,
                       obscureText: !_showConfirmPassword,
-                      decoration: buildInputDecoration(
-                        "Confirm Password",
+                      decoration: buildInputDecoration("Confirm Password").copyWith(
+                        prefixIcon: const Icon(Icons.lock_reset),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _showConfirmPassword
@@ -243,36 +239,37 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                       validator: validateConfirmPassword,
-                    ),
+                    ).animate().fadeIn(delay: 600.ms).slideX(begin: 0.1, end: 0),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 32),
                 
-                    // 👈 ۳. تغییر دکمه Sign Up برای پشتیبانی از حالت Loading
                     SizedBox(
                       width: double.infinity,
-                      height: 60,
+                      height: 56,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : _signUp, // در زمان لودینگ کلیک نمی‌شود
-                        style: TextButton.styleFrom(
-                          backgroundColor: const Color(0xFF1257FA),
+                        onPressed: _isLoading ? null : _signUp,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF5B21B6),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         ),
                         child: _isLoading
                             ? const CircularProgressIndicator(color: Colors.white)
                             : const Text(
                                 "Sign Up",
-                                style: TextStyle(color: Colors.white, fontSize: 18),
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
+                    ).animate().fadeIn(delay: 800.ms).scale(),
+                    
+                    const SizedBox(height: 24),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Already have an account?'),
-                        const SizedBox(width: 5),
-                        TextButton(
-                          onPressed: _isLoading
+                        const Text('Already have an account? ', style: TextStyle(color: Colors.grey)),
+                        GestureDetector(
+                          onTap: _isLoading
                               ? null
                               : () {
                             Navigator.push(
@@ -282,17 +279,23 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                             );
                           },
-                          child: const Text('Log In'),
+                          child: Text(
+                            'Log In',
+                            style: TextStyle(
+                              color: theme.primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ],
-                    ),
+                    ).animate().fadeIn(delay: 1000.ms),
 
                   ],
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

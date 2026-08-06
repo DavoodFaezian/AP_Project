@@ -31,7 +31,7 @@ class UserProfile {
     return {
       'userId': userId,
       'userName': userName,
-      if (profilePhotoName != null) 'profilePhotoName': profilePhotoName,
+      if (profilePhotoName != null && profilePhotoName!.isNotEmpty) 'profilePhotoName': profilePhotoName,
       'followerIds': followerIds.toList(),
       'followingIds': followingIds.toList(),
     };

@@ -102,4 +102,11 @@ public class PhotoRepository extends BaseRepository<Photo>{
             throw new ActionFailedException("Couldn't upload photo.");
         }
     }
+    public List<Photo> filterPhotos(String query,String ownerId){
+        return getFileManager(ownerId).filterItems(p->p.getTitle().toLowerCase().contains(query),
+                p->p.getTags().stream().anyMatch(t->t.toLowerCase().contains(query)),
+                p->p.getCaption().toLowerCase().contains(query));
+
+    }
+
 }

@@ -26,6 +26,24 @@ class PhotoListViewModel extends ChangeNotifier {
   bool get selectionMode => _selectionMode;
   Set<String> get selectedPhotoIds => Set.unmodifiable(_selectedPhotoIds);
 
+  void sortByTitle({required bool ascending}) {
+    _photos.sort((a, b) {
+      final titleA = a.title.isNotEmpty ? a.title : a.photoName;
+      final titleB = b.title.isNotEmpty ? b.title : b.photoName;
+      final cmp = titleA.toLowerCase().compareTo(titleB.toLowerCase());
+      return ascending ? cmp : -cmp;
+    });
+    notifyListeners();
+  }
+
+  void sortByDate({required bool newestFirst}) {
+    _photos.sort((a, b) {
+      final cmp = a.createdAt.compareTo(b.createdAt);
+      return newestFirst ? -cmp : cmp;
+    });
+    notifyListeners();
+  }
+
   bool get isSingleSelection => _selectedPhotoIds.length == 1;
   bool get hasSelection => _selectedPhotoIds.isNotEmpty;
 

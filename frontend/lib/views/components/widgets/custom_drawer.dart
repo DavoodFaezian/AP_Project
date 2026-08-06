@@ -87,11 +87,7 @@ class CustomDrawer extends StatelessWidget {
               ),
               Column(
                 children: [
-                  ListTile(
-                    leading: const Icon(Icons.person),
-                    title: const Text("Profile"),
-                    onTap: () {},
-                  ),
+
                   ListTile(
                     leading: const Icon(Icons.settings),
                     title: const Text("Settings"),

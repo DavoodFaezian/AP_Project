@@ -197,7 +197,7 @@ public class PostService {
                 .flatMap(Collection::stream)
                 .map(PostDto::new)
                 .collect(Collectors.toCollection(() ->
-                        new TreeSet<>(Comparator.comparing(PostDto::getLastModified))
+                        new TreeSet<>(Comparator.comparing(PostDto::getLastModified).reversed())
                 )));
     }
 
@@ -292,7 +292,8 @@ public class PostService {
         return new PostListDto(postRepository.getPostsByOwnerId(user.getId())
                 .stream()
                 .map(PostDto::new)
-                .collect(Collectors.toList()));
+
+                .collect(Collectors.toList()).reversed());
     }
     @ServiceAction
     public PostListDto getPostsByUserId(GetPostsByUserDto dto) {
@@ -307,12 +308,16 @@ public class PostService {
         return new PostListDto(postRepository.getPostsByOwnerId(userId)
                 .stream()
                 .map(PostDto::new)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()).reversed());
     }
 
-
-    public PostDto getPostById(String postId, String ownerId){
-        Post post = postRepository.findPostById(postId,ownerId);
+    @ServiceAction
+    public PostDto getPostById(GetPostByIdDto data){
+        String userId = SessionRepository.getInstance().findUserBySessionId(data.getSessionId()).getId();
+        if(data.getOwnerId() != null){
+            userId = data.getOwnerId();
+        }
+        Post post = postRepository.findPostById(data.getPostId(),userId);
         return new PostDto(post);
     }
 }

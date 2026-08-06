@@ -248,4 +248,26 @@ class PhotoRepository {
       throw Exception(responseMap['message'] ?? 'Failed to move photo');
     }
   }
+
+  // 12. جستجوی عکس‌ها (searchPhotos)
+  Future<List<Photo>> searchPhotos(String query) async {
+    final requestMap = {
+      "actionName": "Photo/searchPhotos",
+      "payload": {
+        "sessionId": SessionManager.instance.sessionId,
+        "query": query.toLowerCase(),
+      }
+    };
+
+    String jsonRequest = jsonEncode(requestMap) + "\n";
+    String rawResponse = await SocketService.sendRequest(jsonRequest);
+    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
+
+    if (responseMap['status'] == "200" || responseMap['status'] == "SUCCESS") {
+      List<dynamic> photosJson = responseMap['payload']?['photos'] ?? responseMap['data'] ?? [];
+      return photosJson.map((json) => Photo.fromJson(json)).toList();
+    } else {
+      throw Exception(responseMap['message'] ?? 'Failed to search photos');
+    }
+  }
 }

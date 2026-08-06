@@ -1,0 +1,268 @@
+{
+  "className": "MainClasses.Album",
+  "items": {
+    "d79fc7b3-5ebc-4a14-81c0-190afef792f3": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "albumName": "ddf",
+      "photoIds": [
+        "bd2349c4-aad7-4f44-905d-91167bac9902",
+        "21209168-cc19-45bc-b5cd-23eb5e67d19d"
+      ],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 10,
+          "second": 38,
+          "nano": 907180100
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 4
+        },
+        "time": {
+          "hour": 21,
+          "minute": 48,
+          "second": 0,
+          "nano": 848806000
+        }
+      },
+      "id": "d79fc7b3-5ebc-4a14-81c0-190afef792f3"
+    },
+    "20134684-89ad-419c-be7e-c3a9407f5e54": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "albumName": "ygg",
+      "photoIds": [
+        "e66f587f-4d0b-481b-878f-32574486241d"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 15,
+          "minute": 8,
+          "second": 5,
+          "nano": 485721700
+        }
+      },
+      "id": "20134684-89ad-419c-be7e-c3a9407f5e54"
+    },
+    "4af08cd5-c3f2-43da-9c91-05ab7b8311d3": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "albumName": "gxdg",
+      "photoIds": [
+        "9f378e04-1c6c-427f-95d8-f47f13b1f2d3"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 15,
+          "minute": 11,
+          "second": 35,
+          "nano": 859845600
+        }
+      },
+      "id": "4af08cd5-c3f2-43da-9c91-05ab7b8311d3"
+    },
+    "f11838c4-cc19-4da7-93ab-1d989a9d57a2": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "albumName": "ty",
+      "photoIds": [],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 15,
+          "minute": 22,
+          "second": 40,
+          "nano": 760073600
+        }
+      },
+      "id": "f11838c4-cc19-4da7-93ab-1d989a9d57a2"
+    },
+    "48e195b0-c383-4936-904b-1d4b53223345": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "albumName": "ted",
+      "photoIds": [],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 15,
+          "minute": 24,
+          "second": 8,
+          "nano": 217071000
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 15,
+          "minute": 23,
+          "second": 9,
+          "nano": 349728900
+        }
+      },
+      "id": "48e195b0-c383-4936-904b-1d4b53223345"
+    },
+    "d5c91f41-6d07-42e1-aabb-c07dd0aca86c": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "albumName": "re",
+      "photoIds": [
+        "b6e68958-07b6-465f-81c4-51543e41ef07"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 15,
+          "minute": 27,
+          "second": 7,
+          "nano": 912196800
+        }
+      },
+      "id": "d5c91f41-6d07-42e1-aabb-c07dd0aca86c"
+    },
+    "31020bbc-0ce7-4405-b7d2-c569f6e8b354": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "albumName": "hi",
+      "photoIds": [],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 15,
+          "minute": 57,
+          "second": 2,
+          "nano": 582792500
+        }
+      },
+      "id": "31020bbc-0ce7-4405-b7d2-c569f6e8b354"
+    },
+    "ee413901-ad18-43a4-90ac-84c13e9f90e3": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "albumName": "new album",
+      "photoIds": [
+        "b35e664d-b244-416b-89e2-1193e41a39d4"
+      ],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 6,
+          "second": 37,
+          "nano": 421876600
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 1,
+          "second": 25,
+          "nano": 114188300
+        }
+      },
+      "id": "ee413901-ad18-43a4-90ac-84c13e9f90e3"
+    },
+    "8484d6ab-8ac0-4d2f-a9cd-8e802e7b866d": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "albumName": "new album",
+      "photoIds": [],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 7,
+          "second": 8,
+          "nano": 999364600
+        }
+      },
+      "id": "8484d6ab-8ac0-4d2f-a9cd-8e802e7b866d"
+    },
+    "4dcbe6c2-31db-4bfa-9a05-20e78aa5d092": {
+      "ownerId": "eafd0f9f-3385-4aa1-a2e7-2535bb286325",
+      "albumName": "hiii",
+      "photoIds": [],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 7,
+          "second": 21,
+          "nano": 905354500
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 6
+        },
+        "time": {
+          "hour": 16,
+          "minute": 7,
+          "second": 14,
+          "nano": 891548000
+        }
+      },
+      "id": "4dcbe6c2-31db-4bfa-9a05-20e78aa5d092"
+    }
+  }
+}
