@@ -56,6 +56,19 @@ flutter pub get
 flutter run
 ```
 
-## Project Structure
+## 📁 Project Structure
 
 ```text
+AP_Project/
+├── frontend/             # Flutter Mobile Application (MVVM)
+│   └── lib/              # Models, Views, ViewModels & Repositories
+│
+├── src/                  # Java Backend Source Code
+│   ├── main/            # Server Sockets, Models & Admin Panel
+│   └── test/            # JUnit Concurrency & Load Tests
+│
+├── files/                # Stored Application Files & Databases (.txt)
+├── images/               # Media & Uploaded User Images
+│
+├── .gitignore            # Git Ignore Configuration
+└── README.md             # Project Documentation
