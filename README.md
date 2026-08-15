@@ -2,13 +2,11 @@
 A modern photo manager platform with scalable architecture designed by two students of SBU.
 <img width="1536" height="1024" alt="ChatGPT Image Aug 15, 2026, 09_36_17 AM" src="https://github.com/user-attachments/assets/4bafbaf3-6f67-47e7-bf67-3a1eb3462d0e" />
 ## Multi-User Test
-<br/>
 <figure style="margin-bottom: 40px;">
   <img width="1149" height="1369" alt="ChatGPT Image Aug 15, 2026, 02_53_09 PM" src="https://github.com/user-attachments/assets/588407a1-6400-475b-b751-3557fe10edd1" />
 </figure>
 
 ## Test results
-<br/>
 
 <figure style="margin-bottom: 40px;">
   <img width="1920" height="1025" alt="Screenshot 2026-08-15 151743" src="https://github.com/user-attachments/assets/0a4021c6-bbb7-4721-8d72-6681df6a9da4" />
@@ -23,7 +21,9 @@ A modern photo manager platform with scalable architecture designed by two stude
 
 The maximum time was 19 seconds and the minimum was 13 seconds (for 1000 users).
 The maximum time was 13 seconds and the minimum was 6 seconds (for 500 users).
-We tried really hard to make our app thread safe and effiecient for thread safty but our biggest constraint was socket. In our design each user data is save in a separte file and this was for more effeicienty but it realy doesn't have a significant impact on the timing for the tests. but one valuable thing is that we can have as many inactive users as we want
+<br/>
+## Conclusion
+We put a lot of work into making the app thread-safe and efficient, but sockets ended up being our biggest bottleneck. We also tried storing each user's data in a separate file to boost performance, but benchmarking showed it didn't really make a noticeable difference in speed. Still, one major win from this design is that we can handle as many inactive users as we want without any issues.
 ## ✨ Features
 
 • Photo Management: adding and removing albums with multi_selection mode and adding photos from phone camera.
