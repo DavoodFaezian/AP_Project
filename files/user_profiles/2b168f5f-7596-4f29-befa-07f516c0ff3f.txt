@@ -1,0 +1,21 @@
+{
+  "className": "MainClasses.UserProfile",
+  "items": {
+    "82d163f5-47fb-4b04-9f21-99a1518f2654": {
+      "userId": "2b168f5f-7596-4f29-befa-07f516c0ff3f",
+      "theme": "SYSTEM",
+      "sessionIds": [
+        "23ddd3df-af02-45df-8702-80890172f4d2"
+      ],
+      "followersId": [
+        "4c3589b8-b0fc-4c76-aa60-fedc025ed466",
+        "e1210e67-5c71-4289-8b12-34c217468336"
+      ],
+      "followingsId": [
+        "4c3589b8-b0fc-4c76-aa60-fedc025ed466",
+        "e1210e67-5c71-4289-8b12-34c217468336"
+      ],
+      "id": "82d163f5-47fb-4b04-9f21-99a1518f2654"
+    }
+  }
+}

@@ -49,25 +49,7 @@ class PhotoRepository {
   }
 
   // 3. دریافت بایت‌های عکس (getPhotoBytes - Base64)
-  Future<String> getPhotoBytes(String photoId) async {
-    final requestMap = {
-      "actionName": "Photo/getPhotoBytes",
-      "payload": {
-        "sessionId": SessionManager.instance.sessionId,
-        "photoId": photoId,
-      }
-    };
 
-    String jsonRequest = jsonEncode(requestMap) + "\n";
-    String rawResponse = await SocketService.sendRequest(jsonRequest);
-    Map<String, dynamic> responseMap = jsonDecode(rawResponse);
-
-    if (responseMap['status'] == "200" ) {
-      return responseMap['payload']['photoData'] ?? responseMap['data']; // رشته Base64 بایت‌ها
-    } else {
-      throw Exception(responseMap['message'] ?? 'Failed to fetch photo bytes');
-    }
-  }
 
   // 4. آپلود بایت‌های عکس به سرور (uploadPhoto)
   Future<String> uploadPhoto(String base64PhotoData) async {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:test_app/services/session_manager.dart';
 import 'package:test_app/views/components/widgets/socket_image.dart';
 
+import '../../layout/screens/about/about_screen.dart';
 import '../../layout/screens/settings/setting_screen.dart';
 import '../dialogs/logout_confirmation_dialog.dart';
 
@@ -58,18 +59,7 @@ class CustomDrawer extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                         ),
-                        Positioned(
-                          bottom: -11,
-                          right: -11,
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.photo_camera,
-                              color: Colors.lightBlue,
-                              size: 35,
-                            ),
-                          ),
-                        ),
+
                       ],
                     ),
                     const SizedBox(height: 25),
@@ -104,7 +94,15 @@ class CustomDrawer extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.info),
                     title: const Text("About"),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AboutScreen(),
+                        ),
+                      );
+                    },
                   ),
                   const Divider(
                     thickness: 1,

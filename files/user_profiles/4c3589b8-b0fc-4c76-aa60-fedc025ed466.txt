@@ -1,0 +1,20 @@
+{
+  "className": "MainClasses.UserProfile",
+  "items": {
+    "2987c197-20c6-42f5-9d26-d7a11c373186": {
+      "userId": "4c3589b8-b0fc-4c76-aa60-fedc025ed466",
+      "profilePhotoName": "dadc9722-d244-44ed-b5a9-1734e36baf4a",
+      "theme": "SYSTEM",
+      "sessionIds": [],
+      "followersId": [
+        "2b168f5f-7596-4f29-befa-07f516c0ff3f",
+        "e1210e67-5c71-4289-8b12-34c217468336"
+      ],
+      "followingsId": [
+        "2b168f5f-7596-4f29-befa-07f516c0ff3f",
+        "e1210e67-5c71-4289-8b12-34c217468336"
+      ],
+      "id": "2987c197-20c6-42f5-9d26-d7a11c373186"
+    }
+  }
+}

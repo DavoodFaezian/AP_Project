@@ -1,3 +1,4 @@
+import DTO.SearchDto;
 import DTO.SessionIdDto;
 import DTO.User.*;
 import Exceptions.ActionFailedException;
@@ -268,7 +269,7 @@ public class UserTests {
 
         assertEquals(
                 1 , UserService.getInstance().searchUsers(
-                        new SearchUsersDto(
+                        new SearchDto(
                                 sessionId1 , "Unique_Name"
                         )
                 ).getUsers().size()

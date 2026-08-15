@@ -1,30 +1,20 @@
 {
   "className": "MainClasses.User",
   "items": {
-    "067f41a4-838b-4c03-beec-c014a48f43ca": {
-      "userName": "UniqueName",
-      "password": "Unique@1234",
-      "id": "067f41a4-838b-4c03-beec-c014a48f43ca"
+    "4c3589b8-b0fc-4c76-aa60-fedc025ed466": {
+      "userName": "Kamyar",
+      "password": "Twins@1386",
+      "id": "4c3589b8-b0fc-4c76-aa60-fedc025ed466"
     },
-    "8bd8dfdc-c67c-4e64-99bb-8313117899f4": {
+    "e1210e67-5c71-4289-8b12-34c217468336": {
+      "userName": "VIP",
+      "password": "Twins@1386",
+      "id": "e1210e67-5c71-4289-8b12-34c217468336"
+    },
+    "2b168f5f-7596-4f29-befa-07f516c0ff3f": {
       "userName": "Davood",
       "password": "Twins@1386",
-      "id": "8bd8dfdc-c67c-4e64-99bb-8313117899f4"
-    },
-    "eafd0f9f-3385-4aa1-a2e7-2535bb286325": {
-      "userName": "Danial2",
-      "password": "Twins@13865",
-      "id": "eafd0f9f-3385-4aa1-a2e7-2535bb286325"
-    },
-    "4804eec9-6627-4552-89a1-c5bcac7c877d": {
-      "userName": "Vahid",
-      "password": "Read@123",
-      "id": "4804eec9-6627-4552-89a1-c5bcac7c877d"
-    },
-    "13a0d339-1635-4113-9693-5efb523ceea2": {
-      "userName": "Ali",
-      "password": "Sabet@123",
-      "id": "13a0d339-1635-4113-9693-5efb523ceea2"
+      "id": "2b168f5f-7596-4f29-befa-07f516c0ff3f"
     }
   }
 }

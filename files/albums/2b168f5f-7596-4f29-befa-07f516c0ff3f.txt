@@ -1,0 +1,43 @@
+{
+  "className": "MainClasses.Album",
+  "items": {
+    "ce839d18-374b-4f2b-96e5-4126865b26b2": {
+      "ownerId": "2b168f5f-7596-4f29-befa-07f516c0ff3f",
+      "albumName": "cities",
+      "photoIds": [
+        "e7aaa1de-81ac-4d19-bb08-0215295d6d21",
+        "569bd39e-cb7e-450d-bac2-51ca69879413",
+        "60bbc421-6c8f-47b4-be8d-2f81e7ebc13c",
+        "0d318a1c-29dc-4126-ac64-e43641e7abd7"
+      ],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 23,
+          "second": 9,
+          "nano": 64442400
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 21,
+          "second": 28,
+          "nano": 146331100
+        }
+      },
+      "id": "ce839d18-374b-4f2b-96e5-4126865b26b2"
+    }
+  }
+}

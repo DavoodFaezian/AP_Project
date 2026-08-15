@@ -131,15 +131,25 @@ class _PhotoListPageState extends State<PhotoListPage> {
             ),
             FilledButton(
               onPressed: () async {
-                final addedAlbums = selectedAlbumIds.difference(initialAlbumIds);
-                final removedAlbums = initialAlbumIds.difference(selectedAlbumIds);
+                final addedAlbums = selectedAlbumIds.difference(
+                  initialAlbumIds,
+                );
+                final removedAlbums = initialAlbumIds.difference(
+                  selectedAlbumIds,
+                );
 
                 for (final albumId in addedAlbums) {
-                  await widget.photoRepository.addPhotoToAlbum(photo.id, albumId);
+                  await widget.photoRepository.addPhotoToAlbum(
+                    photo.id,
+                    albumId,
+                  );
                 }
 
                 for (final albumId in removedAlbums) {
-                  await widget.photoRepository.removePhotoFromAlbum(photo.id, albumId);
+                  await widget.photoRepository.removePhotoFromAlbum(
+                    photo.id,
+                    albumId,
+                  );
                 }
 
                 if (!dialogContext.mounted) {
@@ -168,18 +178,23 @@ class _PhotoListPageState extends State<PhotoListPage> {
           items: viewModel.photos,
           initialItemId: photoId,
           idBuilder: (photo) => photo.id,
-          titleBuilder: (photo) => photo.title.isNotEmpty ? photo.title : photo.photoName,
+          titleBuilder: (photo) =>
+              photo.title.isNotEmpty ? photo.title : photo.photoName,
           imageBuilder: (photo) {
             return SocketImage(
               photoName: photo.photoName,
               sessionId: SessionManager.instance.sessionId!,
               ownerId: photo.ownerId,
-              loadingPlaceholder: const Center(child: CircularProgressIndicator()),
-              errorPlaceholder: const Icon(Icons.broken_image, color: Colors.white, size: 48),
-              builder: (context, provider) => Image(
-                image: provider,
-                fit: BoxFit.contain,
+              loadingPlaceholder: const Center(
+                child: CircularProgressIndicator(),
               ),
+              errorPlaceholder: const Icon(
+                Icons.broken_image,
+                color: Colors.white,
+                size: 48,
+              ),
+              builder: (context, provider) =>
+                  Image(image: provider, fit: BoxFit.contain),
             );
           },
           onEyePressed: () {
@@ -187,7 +202,8 @@ class _PhotoListPageState extends State<PhotoListPage> {
               MaterialPageRoute(
                 builder: (_) => ImageDetailPage(
                   photoId: photoId,
-                  ownerId: widget.albumOwnerId ?? SessionManager.instance.userId!,
+                  ownerId:
+                      widget.albumOwnerId ?? SessionManager.instance.userId!,
                   photoRepository: widget.photoRepository,
                 ),
               ),
@@ -208,10 +224,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
         ),
         actions: [
           if (viewModel.isSingleSelection)
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: _openEditPage,
-            ),
+            IconButton(icon: const Icon(Icons.edit), onPressed: _openEditPage),
           if (viewModel.isSingleSelection)
             IconButton(
               icon: const Icon(Icons.drive_file_move_outline),
@@ -253,9 +266,18 @@ class _PhotoListPageState extends State<PhotoListPage> {
           },
           itemBuilder: (context) => [
             const PopupMenuItem(value: 'title_asc', child: Text('Title (A-Z)')),
-            const PopupMenuItem(value: 'title_desc', child: Text('Title (Z-A)')),
-            const PopupMenuItem(value: 'date_newest', child: Text('Date (Newest)')),
-            const PopupMenuItem(value: 'date_oldest', child: Text('Date (Oldest)')),
+            const PopupMenuItem(
+              value: 'title_desc',
+              child: Text('Title (Z-A)'),
+            ),
+            const PopupMenuItem(
+              value: 'date_newest',
+              child: Text('Date (Newest)'),
+            ),
+            const PopupMenuItem(
+              value: 'date_oldest',
+              child: Text('Date (Oldest)'),
+            ),
           ],
         ),
       ],
@@ -268,20 +290,19 @@ class _PhotoListPageState extends State<PhotoListPage> {
       curve: Curves.easeOut,
       padding: EdgeInsets.all(isSelected ? 4 : 0),
       decoration: BoxDecoration(
-        color: isSelected ? selectedColor.withOpacity(0.12) : Colors.transparent,
+        color: isSelected
+            ? selectedColor.withOpacity(0.12)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(16),
         border: isSelected ? Border.all(color: selectedColor, width: 2) : null,
       ),
-      child: SafeArea(child:Stack(
+      child: Stack(
         children: [
           DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Colors.grey.shade300,
-                width: 1,
-              ),
+              border: Border.all(color: Colors.grey.shade300, width: 1),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -302,10 +323,15 @@ class _PhotoListPageState extends State<PhotoListPage> {
                       photoName: photo.photoName,
                       sessionId: SessionManager.instance.sessionId!,
                       ownerId: photo.ownerId,
-                      loadingPlaceholder: const Center(child: CircularProgressIndicator()),
+                      loadingPlaceholder: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
                       errorPlaceholder: Container(
                         color: Colors.grey.shade200,
-                        child: const Icon(Icons.broken_image, color: Colors.grey),
+                        child: const Icon(
+                          Icons.broken_image,
+                          color: Colors.grey,
+                        ),
                       ),
                       builder: (context, provider) => Image(
                         image: provider,
@@ -336,14 +362,16 @@ class _PhotoListPageState extends State<PhotoListPage> {
                           spacing: 4,
                           children: photo.tags
                               .take(3)
-                              .map((tag) => Text(
-                                    '#$tag',
-                                    style: const TextStyle(
-                                      color: Colors.blue,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ))
+                              .map(
+                                (tag) => Text(
+                                  '#$tag',
+                                  style: const TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              )
                               .toList(),
                         ),
                       ],
@@ -369,17 +397,12 @@ class _PhotoListPageState extends State<PhotoListPage> {
                   ),
                 ),
                 child: isSelected
-                    ? const Icon(
-                        Icons.check,
-                        size: 16,
-                        color: Colors.white,
-                      )
+                    ? const Icon(Icons.check, size: 16, color: Colors.white)
                     : null,
               ),
             ),
         ],
       ),
-      )
     );
   }
 
@@ -393,9 +416,7 @@ class _PhotoListPageState extends State<PhotoListPage> {
           appBar: _buildAppBar(),
           floatingActionButton: viewModel.selectionMode
               ? null
-              : CustomFAB(
-                  onPressed: _openCreatePage,
-                ),
+              : CustomFAB(onPressed: _openCreatePage),
           body: Builder(
             builder: (context) {
               if (viewModel.isLoading) {
@@ -410,36 +431,46 @@ class _PhotoListPageState extends State<PhotoListPage> {
                 );
               }
 
-              return LayoutBuilder(
-                builder: (context, constraints) {
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: viewModel.photos.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: _crossAxisCount(constraints.maxWidth),
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.75,
-                    ),
-                    itemBuilder: (context, index) {
-                      final photo = viewModel.photos[index];
-                      final isSelected = viewModel.selectedPhotoIds.contains(photo.id);
-                      final selectedColor = Theme.of(context).colorScheme.primary;
+              return SafeArea(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: viewModel.photos.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: _crossAxisCount(constraints.maxWidth),
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 0.75,
+                      ),
+                      itemBuilder: (context, index) {
+                        final photo = viewModel.photos[index];
+                        final isSelected = viewModel.selectedPhotoIds.contains(
+                          photo.id,
+                        );
+                        final selectedColor = Theme.of(
+                          context,
+                        ).colorScheme.primary;
 
-                      return GestureDetector(
-                        onLongPress: () => viewModel.enterSelection(photo.id),
-                        onTap: () {
-                          if (viewModel.selectionMode) {
-                            viewModel.toggleSelection(photo.id);
-                            return;
-                          }
-                          _openPhotoSlider(photo.id);
-                        },
-                        child: _buildPhotoCard(photo, isSelected, selectedColor),
-                      );
-                    },
-                  );
-                },
+                        return GestureDetector(
+                          onLongPress: () => viewModel.enterSelection(photo.id),
+                          onTap: () {
+                            if (viewModel.selectionMode) {
+                              viewModel.toggleSelection(photo.id);
+                              return;
+                            }
+                            _openPhotoSlider(photo.id);
+                          },
+                          child: _buildPhotoCard(
+                            photo,
+                            isSelected,
+                            selectedColor,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               );
             },
           ),

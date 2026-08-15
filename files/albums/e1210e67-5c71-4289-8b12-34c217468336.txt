@@ -1,0 +1,68 @@
+{
+  "className": "MainClasses.Album",
+  "items": {
+    "b98bc015-f1c9-4320-97a4-9b3238007eac": {
+      "ownerId": "e1210e67-5c71-4289-8b12-34c217468336",
+      "albumName": "favorites",
+      "photoIds": [
+        "9c7b7e3c-72fe-42d4-9ed5-2bf5fa0df8cb",
+        "492f545e-6835-438f-96dc-484ef5f9f090",
+        "56f86305-9db6-4220-a532-378a3cea88d8",
+        "6cfd85c0-1eae-425d-87cf-41ad4aa0780f",
+        "9e087683-4da0-4e35-bed0-1cdb69154902"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 14,
+          "second": 16,
+          "nano": 16227300
+        }
+      },
+      "id": "b98bc015-f1c9-4320-97a4-9b3238007eac"
+    },
+    "933219d0-8bcc-456c-988a-9ea1b0517294": {
+      "ownerId": "e1210e67-5c71-4289-8b12-34c217468336",
+      "albumName": "music",
+      "photoIds": [
+        "51fd4173-297c-43af-b466-4c2caa336b5e",
+        "f2e3206d-0974-4a72-9d7b-72a195d1719e",
+        "9e087683-4da0-4e35-bed0-1cdb69154902"
+      ],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 27,
+          "second": 16,
+          "nano": 383271700
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 16,
+          "second": 38,
+          "nano": 225610700
+        }
+      },
+      "id": "933219d0-8bcc-456c-988a-9ea1b0517294"
+    }
+  }
+}

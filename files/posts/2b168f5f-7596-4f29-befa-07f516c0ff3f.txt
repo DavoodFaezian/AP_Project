@@ -1,0 +1,84 @@
+{
+  "className": "MainClasses.Post",
+  "items": {
+    "6caa6ce9-cd9f-4957-9b17-83ccb282a592": {
+      "ownerId": "2b168f5f-7596-4f29-befa-07f516c0ff3f",
+      "photoIds": [
+        "569bd39e-cb7e-450d-bac2-51ca69879413",
+        "0d318a1c-29dc-4126-ac64-e43641e7abd7"
+      ],
+      "albumIds": [
+        "93d36cac-701e-4873-931f-07a87c4b1084"
+      ],
+      "commentIds": [
+        "cc959163-96d2-47eb-b488-4bead9f5ecb8",
+        "30f97010-868b-4306-a340-6a3bcbffbe94"
+      ],
+      "commentsAllowed": true,
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 24,
+          "second": 17,
+          "nano": 976422800
+        }
+      },
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 24,
+          "second": 17,
+          "nano": 976422800
+        }
+      },
+      "id": "6caa6ce9-cd9f-4957-9b17-83ccb282a592"
+    },
+    "4e6b861a-a3d3-4253-a91e-5fc72789bc4a": {
+      "ownerId": "2b168f5f-7596-4f29-befa-07f516c0ff3f",
+      "photoIds": [
+        "60bbc421-6c8f-47b4-be8d-2f81e7ebc13c",
+        "0d318a1c-29dc-4126-ac64-e43641e7abd7"
+      ],
+      "albumIds": [],
+      "commentIds": [],
+      "commentsAllowed": false,
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 24,
+          "second": 34,
+          "nano": 607530800
+        }
+      },
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 24,
+          "second": 34,
+          "nano": 607530800
+        }
+      },
+      "id": "4e6b861a-a3d3-4253-a91e-5fc72789bc4a"
+    }
+  }
+}

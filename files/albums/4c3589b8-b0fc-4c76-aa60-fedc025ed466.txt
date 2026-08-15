@@ -1,0 +1,101 @@
+{
+  "className": "MainClasses.Album",
+  "items": {
+    "8c37f650-1ffe-4806-96df-138a46e403d2": {
+      "ownerId": "4c3589b8-b0fc-4c76-aa60-fedc025ed466",
+      "albumName": "new album",
+      "photoIds": [
+        "b30702e9-a4f2-4c61-81ea-3b73dff3a766",
+        "b743b08d-8636-43d5-a95b-0f38d1af69ab",
+        "bcad00cb-aa58-4123-887e-0ce3d8ee9710"
+      ],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 10,
+          "second": 32,
+          "nano": 129341600
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 21,
+          "minute": 56,
+          "second": 16,
+          "nano": 13303100
+        }
+      },
+      "id": "8c37f650-1ffe-4806-96df-138a46e403d2"
+    },
+    "55875d18-926d-4e17-8f96-f2c2f5d5d9ae": {
+      "ownerId": "4c3589b8-b0fc-4c76-aa60-fedc025ed466",
+      "albumName": "nature",
+      "photoIds": [
+        "81c36856-fcc5-4a9d-909d-6bb91d84a2db",
+        "827ecc85-c5be-43f0-8ebf-a65a60d8de4c"
+      ],
+      "postIds": [],
+      "lastModified": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 10,
+          "second": 21,
+          "nano": 347130300
+        }
+      },
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 21,
+          "minute": 57,
+          "second": 50,
+          "nano": 142626900
+        }
+      },
+      "id": "55875d18-926d-4e17-8f96-f2c2f5d5d9ae"
+    },
+    "c8298900-ff6a-46ee-810c-9e05f7f5c98b": {
+      "ownerId": "4c3589b8-b0fc-4c76-aa60-fedc025ed466",
+      "albumName": "sport",
+      "photoIds": [
+        "e4d46801-2083-4bc5-898e-e1b9c3bf2c9e",
+        "1316dd80-1f0a-4790-915e-9f5171323d7f"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 21,
+          "minute": 59,
+          "second": 14,
+          "nano": 290843800
+        }
+      },
+      "id": "c8298900-ff6a-46ee-810c-9e05f7f5c98b"
+    }
+  }
+}

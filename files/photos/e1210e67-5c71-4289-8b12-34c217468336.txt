@@ -1,0 +1,225 @@
+{
+  "className": "MainClasses.Photo",
+  "items": {
+    "9c7b7e3c-72fe-42d4-9ed5-2bf5fa0df8cb": {
+      "ownerId": "e1210e67-5c71-4289-8b12-34c217468336",
+      "photoName": "7aa267e4-9248-4423-ad9a-f557486226ac",
+      "title": "beach",
+      "tags": [
+        "beach",
+        "sea",
+        "blue",
+        "nature"
+      ],
+      "caption": "jdjshwvw",
+      "commentIds": [],
+      "albumIds": [
+        "b98bc015-f1c9-4320-97a4-9b3238007eac"
+      ],
+      "postIds": [
+        "cf3c0053-49fb-4149-8518-2cda77419a26",
+        "c41469d8-f478-4f17-b2d2-cdb2240da34c",
+        "7f3b0658-8cb2-4c43-8ebf-4e5fc6368a6a"
+      ],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 14,
+          "second": 50,
+          "nano": 35135900
+        }
+      },
+      "id": "9c7b7e3c-72fe-42d4-9ed5-2bf5fa0df8cb"
+    },
+    "492f545e-6835-438f-96dc-484ef5f9f090": {
+      "ownerId": "e1210e67-5c71-4289-8b12-34c217468336",
+      "photoName": "a416fc34-ef27-41e5-a92b-1019c1c49cb5",
+      "title": "butterfly",
+      "tags": [
+        "nature",
+        "purple",
+        "butterfly"
+      ],
+      "caption": "hfhdhebwh",
+      "commentIds": [],
+      "albumIds": [
+        "b98bc015-f1c9-4320-97a4-9b3238007eac"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 15,
+          "second": 29,
+          "nano": 865973400
+        }
+      },
+      "id": "492f545e-6835-438f-96dc-484ef5f9f090"
+    },
+    "56f86305-9db6-4220-a532-378a3cea88d8": {
+      "ownerId": "e1210e67-5c71-4289-8b12-34c217468336",
+      "photoName": "58bed95d-ed3b-4a80-a1f8-2bc8b3afb848",
+      "title": "moon",
+      "tags": [
+        "sky",
+        "moon"
+      ],
+      "caption": "dhhdge",
+      "commentIds": [],
+      "albumIds": [
+        "b98bc015-f1c9-4320-97a4-9b3238007eac"
+      ],
+      "postIds": [
+        "9e9d2148-8aaa-4ee8-96fd-eb73d6184e76"
+      ],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 15,
+          "second": 47,
+          "nano": 767437700
+        }
+      },
+      "id": "56f86305-9db6-4220-a532-378a3cea88d8"
+    },
+    "6cfd85c0-1eae-425d-87cf-41ad4aa0780f": {
+      "ownerId": "e1210e67-5c71-4289-8b12-34c217468336",
+      "photoName": "f75da0df-41b7-4ee5-90c0-c4a963e5bc20",
+      "title": "river",
+      "tags": [
+        "pink",
+        "nature",
+        "trees"
+      ],
+      "caption": "hdheheh",
+      "commentIds": [],
+      "albumIds": [
+        "b98bc015-f1c9-4320-97a4-9b3238007eac"
+      ],
+      "postIds": [
+        "cf3c0053-49fb-4149-8518-2cda77419a26"
+      ],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 16,
+          "second": 14,
+          "nano": 837650300
+        }
+      },
+      "id": "6cfd85c0-1eae-425d-87cf-41ad4aa0780f"
+    },
+    "51fd4173-297c-43af-b466-4c2caa336b5e": {
+      "ownerId": "e1210e67-5c71-4289-8b12-34c217468336",
+      "photoName": "39f1f94d-b44a-466e-9659-6e7359b2df20",
+      "title": "x",
+      "tags": [
+        "music",
+        "x"
+      ],
+      "caption": "hehehw",
+      "commentIds": [],
+      "albumIds": [
+        "933219d0-8bcc-456c-988a-9ea1b0517294"
+      ],
+      "postIds": [
+        "c41469d8-f478-4f17-b2d2-cdb2240da34c"
+      ],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 16,
+          "second": 54,
+          "nano": 352714800
+        }
+      },
+      "id": "51fd4173-297c-43af-b466-4c2caa336b5e"
+    },
+    "f2e3206d-0974-4a72-9d7b-72a195d1719e": {
+      "ownerId": "e1210e67-5c71-4289-8b12-34c217468336",
+      "photoName": "1aab88e9-89d9-4ed6-a02a-43e80086d15e",
+      "title": "beck",
+      "tags": [
+        "music",
+        "beck"
+      ],
+      "caption": "dhsjsj",
+      "commentIds": [],
+      "albumIds": [
+        "933219d0-8bcc-456c-988a-9ea1b0517294"
+      ],
+      "postIds": [],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 17,
+          "second": 18,
+          "nano": 905838300
+        }
+      },
+      "id": "f2e3206d-0974-4a72-9d7b-72a195d1719e"
+    },
+    "9e087683-4da0-4e35-bed0-1cdb69154902": {
+      "ownerId": "e1210e67-5c71-4289-8b12-34c217468336",
+      "photoName": "ed9316c7-db45-436a-ab39-87c12d50a796",
+      "title": "albums",
+      "tags": [
+        "music",
+        "nature"
+      ],
+      "caption": "hshsh",
+      "commentIds": [],
+      "albumIds": [
+        "933219d0-8bcc-456c-988a-9ea1b0517294",
+        "b98bc015-f1c9-4320-97a4-9b3238007eac"
+      ],
+      "postIds": [
+        "cf3c0053-49fb-4149-8518-2cda77419a26"
+      ],
+      "createdAt": {
+        "date": {
+          "year": 2026,
+          "month": 8,
+          "day": 14
+        },
+        "time": {
+          "hour": 22,
+          "minute": 17,
+          "second": 43,
+          "nano": 812740200
+        }
+      },
+      "id": "9e087683-4da0-4e35-bed0-1cdb69154902"
+    }
+  }
+}
