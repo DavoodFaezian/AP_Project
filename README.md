@@ -25,6 +25,9 @@ The maximum time was 13 seconds and the minimum was 6 seconds (for 500 users).
 <br/>
 ## Conclusion
 We put a lot of work into making the app thread-safe and efficient, but sockets ended up being our biggest bottleneck. We also tried storing each user's data in a separate file to boost performance, but benchmarking showed it didn't really make a noticeable difference in speed. Still, one major win from this design is that we can handle as many inactive users as we want without any issues.
+
+## AI usage
+The parts that have AI comments are ai generated. Front-end, GenericFileManager test mode, MultiUserTests and Admin CLI are all ai generated.
 ## ✨ Features
 
 • Photo Management: adding and removing albums with multi_selection mode and adding photos from phone camera.
