@@ -1,5 +1,6 @@
 # 📸 Pixora
 A modern photo manager platform with scalable architecture designed by two students of SBU.
+<img width="1536" height="1024" alt="ChatGPT Image Aug 15, 2026, 09_36_17 AM" src="https://github.com/user-attachments/assets/4bafbaf3-6f67-47e7-bf67-3a1eb3462d0e" />
 
 ## ✨ Features
 
@@ -72,3 +73,4 @@ AP_Project/
 │
 ├── .gitignore            # Git Ignore Configuration
 └── README.md             # Project Documentation
+
