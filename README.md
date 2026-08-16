@@ -3,9 +3,7 @@ A modern photo manager platform with scalable architecture designed by two stude
 <img width="1536" height="1024" alt="ChatGPT Image Aug 15, 2026, 09_36_17 AM" src="https://github.com/user-attachments/assets/4bafbaf3-6f67-47e7-bf67-3a1eb3462d0e" />
 ## Multi-User Test
 <figure style="margin-bottom: 40px;">
-  <img width="1148" height="1220" alt="image" src="https://github.com/user-attachments/assets/3e3257c3-cd7f-48a7-94f1-42bb659e3a7c" />
-
-
+  <img width="1199" height="1312" alt="ChatGPT Image Aug 16, 2026, 10_48_11 AM" src="https://github.com/user-attachments/assets/859a60ff-aea6-4f96-9d18-1fe2743553a8" />
 </figure>
 
 ## Test results
