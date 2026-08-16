@@ -1,0 +1,30 @@
+{
+  "className": "MainClasses.Session",
+  "items": {
+    "90f3d566-1c0f-4f9a-b5b5-c3110dc54640": {
+      "userId": "2b168f5f-7596-4f29-befa-07f516c0ff3f",
+      "token": "f72394fa-4de8-421d-bcb2-9b25b0b36e38",
+      "id": "90f3d566-1c0f-4f9a-b5b5-c3110dc54640"
+    },
+    "1715034a-45ed-4fef-9dbd-077ddffa02d1": {
+      "userId": "44058214-14cd-4135-8bcb-4f23eb388d7d",
+      "token": "e4a06cf8-a6bd-4c50-aceb-63af60ef32f0",
+      "id": "1715034a-45ed-4fef-9dbd-077ddffa02d1"
+    },
+    "59610965-6164-4870-8e3b-99c577372e45": {
+      "userId": "faeb4fc8-1201-406d-9f5f-f2634c9a6f41",
+      "token": "69752119-73fd-43a2-a7a5-89f65661bd01",
+      "id": "59610965-6164-4870-8e3b-99c577372e45"
+    },
+    "a1eb34c4-7bb8-4083-813c-842751c8dd60": {
+      "userId": "2b168f5f-7596-4f29-befa-07f516c0ff3f",
+      "token": "5f5d095e-9aa7-404a-acc6-336993b46caf",
+      "id": "a1eb34c4-7bb8-4083-813c-842751c8dd60"
+    },
+    "9085fa6a-c860-4bd7-87b0-64a18cee340c": {
+      "userId": "faeb4fc8-1201-406d-9f5f-f2634c9a6f41",
+      "token": "24d70bac-b02b-49ed-b967-1efd43f3ba90",
+      "id": "9085fa6a-c860-4bd7-87b0-64a18cee340c"
+    }
+  }
+}
