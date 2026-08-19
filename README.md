@@ -3,8 +3,7 @@ A modern photo manager platform with scalable architecture designed by two stude
 <img width="1536" height="1024" alt="ChatGPT Image Aug 15, 2026, 09_36_17 AM" src="https://github.com/user-attachments/assets/4bafbaf3-6f67-47e7-bf67-3a1eb3462d0e" />
 ## Multi-User Test
 <figure style="margin-bottom: 40px;">
-  <img width="1149" height="1369" alt="Untitled" src="https://github.com/user-attachments/assets/5b4eafa6-7044-4f35-9227-4c5d517ef5f5" />
-
+  <img width="1199" height="1312" alt="ChatGPT Image Aug 16, 2026, 10_48_11 AM" src="https://github.com/user-attachments/assets/859a60ff-aea6-4f96-9d18-1fe2743553a8" />
 </figure>
 
 ## Test results
@@ -22,9 +21,20 @@ A modern photo manager platform with scalable architecture designed by two stude
 
 The maximum time was 19 seconds and the minimum was 13 seconds (for 1000 users).
 The maximum time was 13 seconds and the minimum was 6 seconds (for 500 users).
+## new test result
 <br/>
+<figure style="margin-bottom: 40px;">
+<img width="1915" height="1029" alt="image" src="https://github.com/user-attachments/assets/33caf811-a08b-47be-a004-57af2062d5ad" />
+</figure>
+<br/>
+I did the same test but each user uploads 5 photos. We completed the test in 103 seconds which is nearly 5 times of 19 seconds. This means that users don't block each other's work and can run parallel to each other.
+<br/>
+
 ## Conclusion
 We put a lot of work into making the app thread-safe and efficient, but sockets ended up being our biggest bottleneck. We also tried storing each user's data in a separate file to boost performance, but benchmarking showed it didn't really make a noticeable difference in speed. Still, one major win from this design is that we can handle as many inactive users as we want without any issues.
+
+## AI usage
+The parts that have AI comments are ai generated. Front-end, GenericFileManager test mode, MultiUserTests and Admin CLI are all ai generated.
 ## ✨ Features
 
 • Photo Management: adding and removing albums with multi_selection mode and adding photos from phone camera.
