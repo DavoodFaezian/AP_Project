@@ -21,7 +21,15 @@ A modern photo manager platform with scalable architecture designed by two stude
 
 The maximum time was 19 seconds and the minimum was 13 seconds (for 1000 users).
 The maximum time was 13 seconds and the minimum was 6 seconds (for 500 users).
+## new test result
 <br/>
+<figure style="margin-bottom: 40px;">
+<img width="1915" height="1029" alt="image" src="https://github.com/user-attachments/assets/33caf811-a08b-47be-a004-57af2062d5ad" />
+</figure>
+<br/>
+I did the same test but each user uploads 5 photos. We completed the test in 103 seconds which is nearly 5 times of 19 seconds. This means that users don't block each other's work and can run parallel to each other.
+<br/>
+
 ## Conclusion
 We put a lot of work into making the app thread-safe and efficient, but sockets ended up being our biggest bottleneck. We also tried storing each user's data in a separate file to boost performance, but benchmarking showed it didn't really make a noticeable difference in speed. Still, one major win from this design is that we can handle as many inactive users as we want without any issues.
 
