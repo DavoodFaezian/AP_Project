@@ -21,7 +21,7 @@ A modern photo manager platform with scalable architecture designed by two stude
 
 The maximum time was 19 seconds and the minimum was 13 seconds (for 1000 users).
 The maximum time was 13 seconds and the minimum was 6 seconds (for 500 users).
-## new test result
+## another test result
 <br/>
 <figure style="margin-bottom: 40px;">
 <img width="1915" height="1029" alt="image" src="https://github.com/user-attachments/assets/33caf811-a08b-47be-a004-57af2062d5ad" />
